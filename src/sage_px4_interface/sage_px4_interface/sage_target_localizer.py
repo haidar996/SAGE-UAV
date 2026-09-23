@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import math
+import os
 
 import rclpy
 from rclpy.node import Node
@@ -18,6 +19,9 @@ from vision_msgs.msg import Detection2DArray
 
 from px4_msgs.msg import VehicleLocalPosition
 from px4_msgs.msg import VehicleAttitude
+
+
+WORLD = os.environ.get('SAGE_WORLD', 'sage_test')
 
 
 class SageTargetLocalizer(Node):
@@ -61,6 +65,14 @@ class SageTargetLocalizer(Node):
             self.get_parameter('attitude_source').value
         )
         self.gz_model_name = 'x500_mono_cam_0'
+
+        # Skip localization while the UAV is tilted (range error grows
+        # fast with pitch/roll error and image/pose time skew).
+        self.declare_parameter('max_tilt_deg', 8.0)
+        self.max_tilt_deg = float(
+            self.get_parameter('max_tilt_deg').value
+        )
+        self.last_tilt_warn = 0.0
 
         # =========================================================
         # Camera mounting position relative to PX4 body
@@ -131,7 +143,7 @@ class SageTargetLocalizer(Node):
 
         self.camera_info_sub = self.create_subscription(
             CameraInfo,
-            '/world/sage_test/model/'
+            f'/world/{WORLD}/model/'
             'x500_mono_cam_0/link/camera_link/'
             'sensor/imager/camera_info',
             self.camera_info_callback,
@@ -164,7 +176,7 @@ class SageTargetLocalizer(Node):
         if self.attitude_source == 'gz_truth':
             self.gz_pose_sub = self.create_subscription(
                 TFMessage,
-                '/world/sage_test/pose/info',
+                f'/world/{WORLD}/pose/info',
                 self.gz_pose_callback,
                 10,
             )
@@ -488,6 +500,25 @@ class SageTargetLocalizer(Node):
         ned_z = body_z
 
         use_q = self.use_attitude and self.vehicle_q is not None
+
+        if use_q:
+            # Tilt = angle between body Z and NED down.
+            _, _, tz = self.rotate_body_to_ned(
+                self.vehicle_q, (0.0, 0.0, 1.0)
+            )
+            tilt = math.degrees(math.acos(max(-1.0, min(1.0, tz))))
+
+            if tilt > self.max_tilt_deg:
+                now = self.get_clock().now().nanoseconds / 1e9
+
+                if now - self.last_tilt_warn > 5.0:
+                    self.last_tilt_warn = now
+                    self.get_logger().warn(
+                        f'3D localization skipped: UAV tilt '
+                        f'{tilt:.1f} deg > {self.max_tilt_deg:.1f}'
+                    )
+
+                return
 
         if use_q:
             ned_x, ned_y, ned_z = self.rotate_body_to_ned(

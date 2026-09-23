@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 
@@ -12,7 +13,11 @@ from cv_bridge import CvBridge
 from ultralytics import YOLO
 
 
-IMAGE_TOPIC = "/world/sage_test/model/x500_mono_cam_0/link/camera_link/sensor/imager/image"
+WORLD = os.environ.get("SAGE_WORLD", "sage_test")
+IMAGE_TOPIC = (
+    f"/world/{WORLD}/model/x500_mono_cam_0/link/camera_link/"
+    "sensor/imager/image"
+)
 DETECTION_TOPIC = "/sage/perception/detections"
 
 
