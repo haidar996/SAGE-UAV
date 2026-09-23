@@ -1,0 +1,561 @@
+#!/usr/bin/env python3
+
+import math
+
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import (
+    QoSProfile,
+    ReliabilityPolicy,
+    DurabilityPolicy,
+    HistoryPolicy,
+)
+
+from geometry_msgs.msg import PointStamped
+from sensor_msgs.msg import CameraInfo
+from vision_msgs.msg import Detection2DArray
+
+from px4_msgs.msg import VehicleLocalPosition
+
+
+class SageTargetLocalizer(Node):
+
+    def __init__(self):
+        super().__init__('sage_target_localizer')
+
+        # =========================================================
+        # Camera intrinsics
+        # =========================================================
+
+        self.fx = None
+        self.fy = None
+        self.cx = None
+        self.cy = None
+
+        # =========================================================
+        # PX4 vehicle state
+        # =========================================================
+
+        self.vehicle_x = None
+        self.vehicle_y = None
+        self.vehicle_z = None
+        self.vehicle_heading = None
+
+        # =========================================================
+        # Camera mounting position relative to PX4 body
+        #
+        # From x500_mono_cam model:
+        #
+        # x = 0.12
+        # y = 0.03
+        # z = 0.242
+        # =========================================================
+
+        self.camera_body_x = 0.12
+        self.camera_body_y = 0.03
+        self.camera_body_z = 0.242
+
+        # =========================================================
+        # Detection
+        # =========================================================
+
+        self.latest_detection = None
+
+        # Use an internal point near the bottom of the bbox.
+        #
+        # 0.50 = bbox center
+        # 0.90 = 90% from top toward bottom
+        #
+        self.anchor_fraction = 0.90
+
+        # =========================================================
+        # Localization safety parameters
+        # =========================================================
+
+        # Don't attempt ground localization when the camera is
+        # almost touching the ground.
+        #
+        # Camera height above ground must exceed this value.
+        self.min_camera_height = 0.30
+
+        # Reject rays that are too close to horizontal.
+        #
+        # ned_z is the downward component of the ray.
+        self.min_downward_component = 0.05
+
+        # Don't accept targets absurdly far from the UAV.
+        self.max_target_distance = 30.0
+
+        # =========================================================
+        # PX4 QoS
+        # =========================================================
+
+        px4_qos = QoSProfile(
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=10,
+        )
+
+        # =========================================================
+        # Subscribers
+        # =========================================================
+
+        self.detection_sub = self.create_subscription(
+            Detection2DArray,
+            '/sage/perception/detections',
+            self.detection_callback,
+            10,
+        )
+
+        self.camera_info_sub = self.create_subscription(
+            CameraInfo,
+            '/world/sage_test/model/'
+            'x500_mono_cam_0/link/camera_link/'
+            'sensor/imager/camera_info',
+            self.camera_info_callback,
+            10,
+        )
+
+        self.vehicle_position_sub = self.create_subscription(
+            VehicleLocalPosition,
+            '/fmu/out/vehicle_local_position',
+            self.vehicle_position_callback,
+            px4_qos,
+        )
+
+        # =========================================================
+        # Publisher
+        # =========================================================
+
+        self.target_pub = self.create_publisher(
+            PointStamped,
+            '/sage/perception/target_position',
+            10,
+        )
+
+        # =========================================================
+        # Timer
+        # =========================================================
+
+        self.timer = self.create_timer(
+            0.1,
+            self.localize_target,
+        )
+
+        self.get_logger().info(
+            'SAGE 3D target localizer started.'
+        )
+
+        self.get_logger().info(
+            f'BBox anchor fraction = '
+            f'{self.anchor_fraction:.2f}'
+        )
+
+        self.get_logger().info(
+            f'Minimum camera height = '
+            f'{self.min_camera_height:.2f} m'
+        )
+
+        self.get_logger().info(
+            f'Minimum downward ray component = '
+            f'{self.min_downward_component:.3f}'
+        )
+
+        self.get_logger().info(
+            'Waiting for camera/PX4 data...'
+        )
+
+    # =============================================================
+    # CameraInfo
+    # =============================================================
+
+    def camera_info_callback(self, msg):
+
+        self.fx = msg.k[0]
+        self.fy = msg.k[4]
+
+        self.cx = msg.k[2]
+        self.cy = msg.k[5]
+
+    # =============================================================
+    # Detection
+    # =============================================================
+
+    def detection_callback(self, msg):
+
+        if not msg.detections:
+            self.latest_detection = None
+            return
+
+        self.latest_detection = msg.detections[0]
+
+    # =============================================================
+    # PX4 local position
+    # =============================================================
+
+    def vehicle_position_callback(self, msg):
+
+        if not msg.xy_valid or not msg.z_valid:
+            return
+
+        self.vehicle_x = msg.x
+        self.vehicle_y = msg.y
+        self.vehicle_z = msg.z
+
+        self.vehicle_heading = msg.heading
+
+    # =============================================================
+    # Localization
+    # =============================================================
+
+    def localize_target(self):
+
+        # ---------------------------------------------------------
+        # Check detection
+        # ---------------------------------------------------------
+
+        if self.latest_detection is None:
+            return
+
+        # ---------------------------------------------------------
+        # Check camera intrinsics
+        # ---------------------------------------------------------
+
+        if (
+            self.fx is None
+            or self.fy is None
+            or self.cx is None
+            or self.cy is None
+        ):
+            return
+
+        # ---------------------------------------------------------
+        # Check PX4 state
+        # ---------------------------------------------------------
+
+        if (
+            self.vehicle_x is None
+            or self.vehicle_y is None
+            or self.vehicle_z is None
+        ):
+            return
+
+        if self.vehicle_heading is None:
+            return
+
+        detection = self.latest_detection
+
+        # ---------------------------------------------------------
+        # Bounding box
+        # ---------------------------------------------------------
+
+        bbox_center_x = detection.bbox.center.position.x
+        bbox_center_y = detection.bbox.center.position.y
+
+        bbox_width = detection.bbox.size_x
+        bbox_height = detection.bbox.size_y
+
+        if bbox_width <= 0.0 or bbox_height <= 0.0:
+            return
+
+        # ---------------------------------------------------------
+        # Camera height above ground
+        #
+        # PX4 NED:
+        #
+        # vehicle_z < 0 when above ground
+        #
+        # camera is 0.242 m below/above body according to
+        # the model's local Z convention.
+        # ---------------------------------------------------------
+
+        camera_ned_z = (
+            self.vehicle_z
+            - self.camera_body_z
+        )
+
+        camera_height = -camera_ned_z
+
+        # ---------------------------------------------------------
+        # Safety: UAV too close to ground
+        # ---------------------------------------------------------
+
+        if camera_height < self.min_camera_height:
+
+            self.get_logger().warn(
+                f'3D localization skipped: '
+                f'camera too close to ground | '
+                f'vehicle_z={self.vehicle_z:.3f} | '
+                f'camera_height={camera_height:.3f}'
+            )
+
+            return
+
+        # ---------------------------------------------------------
+        # BBox anchor
+        # ---------------------------------------------------------
+
+        v = (
+            bbox_center_y
+            + (
+                self.anchor_fraction - 0.50
+            ) * bbox_height
+        )
+
+        u = bbox_center_x
+
+        # ---------------------------------------------------------
+        # Image ray
+        # ---------------------------------------------------------
+
+        ray_x = (
+            u - self.cx
+        ) / self.fx
+
+        ray_y = (
+            v - self.cy
+        ) / self.fy
+
+        ray_z = 1.0
+
+        # ---------------------------------------------------------
+        # Normalize
+        # ---------------------------------------------------------
+
+        ray_norm = math.sqrt(
+            ray_x * ray_x
+            + ray_y * ray_y
+            + ray_z * ray_z
+        )
+
+        if ray_norm <= 1e-9:
+            return
+
+        ray_x /= ray_norm
+        ray_y /= ray_norm
+        ray_z /= ray_norm
+
+        # ---------------------------------------------------------
+        # Camera optical frame -> PX4 body frame
+        #
+        # Camera optical:
+        #
+        # X = right
+        # Y = down
+        # Z = forward
+        #
+        # PX4 body:
+        #
+        # X = forward
+        # Y = right
+        # Z = down
+        #
+        # ---------------------------------------------------------
+
+        body_x = ray_z
+        body_y = -ray_x
+        body_z = ray_y
+
+        # ---------------------------------------------------------
+        # Rotate body frame into PX4 local NED
+        #
+        # Heading rotates body X/Y into local X/Y.
+        # ---------------------------------------------------------
+
+        cos_h = math.cos(
+            self.vehicle_heading
+        )
+
+        sin_h = math.sin(
+            self.vehicle_heading
+        )
+
+        ned_x = (
+            cos_h * body_x
+            - sin_h * body_y
+        )
+
+        ned_y = (
+            sin_h * body_x
+            + cos_h * body_y
+        )
+
+        ned_z = body_z
+
+        # ---------------------------------------------------------
+        # IMPORTANT:
+        #
+        # For ground intersection the ray must point DOWN.
+        #
+        # In PX4 NED:
+        #
+        # positive Z = down
+        #
+        # ---------------------------------------------------------
+
+        if ned_z <= self.min_downward_component:
+
+            self.get_logger().warn(
+                f'3D localization skipped: '
+                f'ray too close to horizontal/upward | '
+                f'bbox_center_y={bbox_center_y:.1f} | '
+                f'bbox_height={bbox_height:.1f} | '
+                f'anchor_v={v:.1f} | '
+                f'cy={self.cy:.1f} | '
+                f'ray_y={ray_y:.4f} | '
+                f'ned_z={ned_z:.4f}'
+            )
+
+            return
+
+        # ---------------------------------------------------------
+        # Camera position in PX4 local NED
+        # ---------------------------------------------------------
+
+        camera_ned_x = (
+            self.vehicle_x
+            + cos_h * self.camera_body_x
+            - sin_h * self.camera_body_y
+        )
+
+        camera_ned_y = (
+            self.vehicle_y
+            + sin_h * self.camera_body_x
+            + cos_h * self.camera_body_y
+        )
+
+        # camera_ned_z already calculated above
+
+        # ---------------------------------------------------------
+        # Ground intersection
+        #
+        # Ground Z = 0
+        #
+        # P = camera + scale * ray
+        #
+        # 0 = camera_z + scale * ray_z
+        #
+        # scale = -camera_z / ray_z
+        # ---------------------------------------------------------
+
+        scale = (
+            -camera_ned_z
+        ) / ned_z
+
+        if scale <= 0:
+
+            self.get_logger().warn(
+                f'3D localization stopped: '
+                f'ground intersection behind camera | '
+                f'bbox_center_y={bbox_center_y:.1f} | '
+                f'bbox_height={bbox_height:.1f} | '
+                f'anchor_v={v:.1f} | '
+                f'cy={self.cy:.1f} | '
+                f'ray_y={ray_y:.4f} | '
+                f'ned_z={ned_z:.4f} | '
+                f'camera_ned_z={camera_ned_z:.4f} | '
+                f'scale={scale:.4f}'
+            )
+
+            return
+
+        # ---------------------------------------------------------
+        # Maximum range protection
+        # ---------------------------------------------------------
+
+        horizontal_distance = math.sqrt(
+            (scale * ned_x) ** 2
+            + (scale * ned_y) ** 2
+        )
+
+        if (
+            horizontal_distance
+            > self.max_target_distance
+        ):
+
+            self.get_logger().warn(
+                f'3D localization rejected: '
+                f'target too far | '
+                f'distance={horizontal_distance:.2f} m | '
+                f'ned_z={ned_z:.4f} | '
+                f'scale={scale:.2f}'
+            )
+
+            return
+
+        # ---------------------------------------------------------
+        # Target position
+        # ---------------------------------------------------------
+
+        target_x = (
+            camera_ned_x
+            + scale * ned_x
+        )
+
+        target_y = (
+            camera_ned_y
+            + scale * ned_y
+        )
+
+        target_z = 0.0
+
+        # ---------------------------------------------------------
+        # Publish
+        # ---------------------------------------------------------
+
+        msg = PointStamped()
+
+        msg.header.stamp = (
+            self.get_clock()
+            .now()
+            .to_msg()
+        )
+
+        msg.header.frame_id = (
+            'px4_local_ned'
+        )
+
+        msg.point.x = target_x
+        msg.point.y = target_y
+        msg.point.z = target_z
+
+        self.target_pub.publish(msg)
+
+        # ---------------------------------------------------------
+        # Debug
+        # ---------------------------------------------------------
+
+        self.get_logger().info(
+            f'Person 3D | '
+            f'pixel=({u:.1f},{v:.1f}) | '
+            f'position=('
+            f'{target_x:.2f},'
+            f'{target_y:.2f},'
+            f'{target_z:.2f}) | '
+            f'range={horizontal_distance:.2f} m'
+        )
+
+
+def main(args=None):
+
+    rclpy.init(args=args)
+
+    node = SageTargetLocalizer()
+
+    try:
+        rclpy.spin(node)
+
+    except KeyboardInterrupt:
+        pass
+
+    finally:
+
+        node.destroy_node()
+
+        if rclpy.ok():
+            rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
