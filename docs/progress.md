@@ -98,7 +98,7 @@ Roadmap status vs steps.md (its colour markers are stale; steps 11-19 still show
 - Steps 21-25: NOT started (search & rescue world, robustness, experiments A/B/C, results, demo). experiments/ and results/ (only one CSV) are empty of real work.
 
 Open issues found in this audit:
-1. LOCALIZATION ACCURACY UNVERIFIED / likely poor: person's true position is gz (4,0) = NED ~(0, 4); the verified report said (-0.17, 1.49), ~2.5 m off, and localizer output swings (e.g. (2.1,7.2)->(2.4,6.9) while moving). No ground-truth comparison has ever been done; a "found: locations" report is only as good as this. Needs a ground-truth error study (use gz pose of actor, static UAV at several viewpoints) before Step 21/experiments.
+1. LOCALIZATION ACCURACY (see 'Localization check' below; original note follows): person's true position is gz (4,0) = NED ~(0, 4); the verified report said (-0.17, 1.49), ~2.5 m off, and localizer output swings (e.g. (2.1,7.2)->(2.4,6.9) while moving). No ground-truth comparison has ever been done; a "found: locations" report is only as good as this. Needs a ground-truth error study (use gz pose of actor, static UAV at several viewpoints) before Step 21/experiments.
 2. World too simple for Steps 21+ (single static person). Need multi-person + distractors (vehicles/houses) to test quantity='all' and false detections.
 3. No git / backup; world file lives outside the project. Copy world into ~/SAGE-UAV/worlds and `git init`.
 4. Sim quirks still needed: NAV_DLL_ACT=0, force-disarm after LAND (land detector never fires).
@@ -113,3 +113,13 @@ Open issues found in this audit:
 ## 19 stage 2b — Ollama (local, keyless) backend added (2026-09-24)
 - No API key available -> added local backend in sage_mission_llm.py: `ollama_parse_mission` (HTTP to localhost:11434, schema-constrained JSON, temperature 0, keep_alive=0 so the model unloads right after each command and does not load the sim; default model qwen2.5:3b, env SAGE_OLLAMA_MODEL). `make_parser()` picks backend via env SAGE_LLM_BACKEND=claude|ollama|auto (auto: Claude if ANTHROPIC_API_KEY set, else Ollama if server up, else rules). Parser node logs which backend it uses; spec `source` = llm|ollama|rules. Backend is chosen at node startup.
 - Tests: 15 mission tests pass (mocked). Ollama itself NOT yet installed on this machine (no GPU, 7 GB RAM, ~9 GB disk free): install + `ollama pull qwen2.5:3b` then live-test.
+
+## Housekeeping done (2026-09-24)
+- Package moved into the project: ~/SAGE-UAV/src/sage_px4_interface (git-tracked); ~/sage_ws/src/sage_px4_interface is now a SYMLINK to it, colcon build verified. World copied to ~/SAGE-UAV/worlds/sage_test.sdf (the PX4 copy is still what the sim loads; keep them in sync). README.md written, .gitignore added (*.pt, build dirs, env files), `git init` on branch main + initial commit (local repo identity GitHub noreply identity; NOT pushed). Secret scan of tracked files: clean. Removed leftover bus.jpg (ultralytics sample image). docs/review.md (77 KB chat transcript) and the file `SAGE-UAV` (original plan paste) are tracked: decide whether to publish them.
+- Ollama attempt abandoned and fully removed (user will use the Claude API key instead).
+
+## Localization check (2026-09-24, partial)
+- Measured: 675 localizer samples over 70 s vs assumed truth NED (0, 4) [actor at gz (4,0)]: mean (N -1.74, E 3.45), std (0.47, 0.29), error median 1.82 m / p90 2.46 / max 2.88. So precision is OK (~0.3-0.5 m) but there is a consistent ~1.8 m offset (mostly lateral/north).
+- Ground truth is UNCERTAIN: the actor does not appear in gz pose/info or dynamic_pose/info, so its true position (and feet height) is only the SDF waypoint (4,0,1.0). Offset may be truth error, camera/attitude error, or both.
+- Likely contributors found: (1) localizer rotates the ray by HEADING only, ignoring roll/pitch, while the hovering UAV visibly tilts (gz quaternion showed ~15 deg roll/pitch) and wanders +-1.5 m around (0,0,-2); (2) sim runs at ~0.72x real time with load average ~12.8 on 4 cores (YOLO + PX4 + gz on one machine), so image, pose and time are skewed; (3) camera body offset assumed (0.12, 0.03, 0.242) fine.
+- Next: replace the actor (or add a static box with a known pose) as a measurable target, log gz drone pose+attitude with each detection, add roll/pitch to the projection, re-measure. Reduce CPU load first (lower YOLO rate / image size).
