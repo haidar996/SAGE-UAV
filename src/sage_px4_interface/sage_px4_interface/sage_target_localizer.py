@@ -12,6 +12,7 @@ from rclpy.qos import (
 )
 
 from geometry_msgs.msg import PointStamped
+from tf2_msgs.msg import TFMessage
 from sensor_msgs.msg import CameraInfo
 from vision_msgs.msg import Detection2DArray
 
@@ -50,6 +51,16 @@ class SageTargetLocalizer(Node):
             self.get_parameter('use_attitude').value
         )
         self.vehicle_q = None
+
+        # SITL-only: 'gz_truth' takes the attitude from Gazebo ground
+        # truth (needs ros_gz_bridge of /world/sage_test/pose/info as
+        # TFMessage) because PX4's yaw estimate is off in this sim.
+        # 'px4' (default) uses the estimator - the real-world path.
+        self.declare_parameter('attitude_source', 'px4')
+        self.attitude_source = str(
+            self.get_parameter('attitude_source').value
+        )
+        self.gz_model_name = 'x500_mono_cam_0'
 
         # =========================================================
         # Camera mounting position relative to PX4 body
@@ -150,6 +161,18 @@ class SageTargetLocalizer(Node):
             ),
         )
 
+        if self.attitude_source == 'gz_truth':
+            self.gz_pose_sub = self.create_subscription(
+                TFMessage,
+                '/world/sage_test/pose/info',
+                self.gz_pose_callback,
+                10,
+            )
+            self.get_logger().warn(
+                'attitude_source=gz_truth (SITL ground truth, '
+                'not the PX4 estimate).'
+            )
+
         self.target_pub = self.create_publisher(
             PointStamped,
             '/sage/perception/target_position',
@@ -227,7 +250,38 @@ class SageTargetLocalizer(Node):
 
         self.vehicle_heading = msg.heading
 
+    def gz_pose_callback(self, msg):
+        for tr in msg.transforms:
+            if tr.child_frame_id != self.gz_model_name:
+                continue
+
+            r = tr.transform.rotation
+
+            # ENU/FLU quaternion -> NED/FRD quaternion.
+            # q_ned_frd = q_ned_enu * q_enu_flu * q_flu_frd
+            # q_ned_enu = (0, s, s, 0), s = 1/sqrt(2)  (x<->y, z flip)
+            # q_flu_frd = (0, 1, 0, 0)                 (180 deg about x)
+            def mul(a, b):
+                aw, ax, ay, az = a
+                bw, bx, by, bz = b
+                return (
+                    aw * bw - ax * bx - ay * by - az * bz,
+                    aw * bx + ax * bw + ay * bz - az * by,
+                    aw * by - ax * bz + ay * bw + az * bx,
+                    aw * bz + ax * by - ay * bx + az * bw,
+                )
+
+            s2 = math.sqrt(0.5)
+            q = (r.w, r.x, r.y, r.z)
+            q = mul((0.0, s2, s2, 0.0), q)
+            q = mul(q, (0.0, 1.0, 0.0, 0.0))
+            self.vehicle_q = q
+            return
+
     def attitude_callback(self, msg):
+        if self.attitude_source == 'gz_truth':
+            return
+
         self.vehicle_q = (
             msg.q[0], msg.q[1], msg.q[2], msg.q[3]
         )
