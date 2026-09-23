@@ -16,6 +16,7 @@ from sensor_msgs.msg import CameraInfo
 from vision_msgs.msg import Detection2DArray
 
 from px4_msgs.msg import VehicleLocalPosition
+from px4_msgs.msg import VehicleAttitude
 
 
 class SageTargetLocalizer(Node):
@@ -40,6 +41,15 @@ class SageTargetLocalizer(Node):
         self.vehicle_y = None
         self.vehicle_z = None
         self.vehicle_heading = None
+
+        # Full attitude quaternion (w, x, y, z), body FRD -> NED.
+        # With use_attitude the ray is rotated by roll/pitch/yaw
+        # instead of heading only (False = old behaviour, for A/B).
+        self.declare_parameter('use_attitude', True)
+        self.use_attitude = bool(
+            self.get_parameter('use_attitude').value
+        )
+        self.vehicle_q = None
 
         # =========================================================
         # Camera mounting position relative to PX4 body
@@ -128,6 +138,18 @@ class SageTargetLocalizer(Node):
         # Publisher
         # =========================================================
 
+        self.attitude_sub = self.create_subscription(
+            VehicleAttitude,
+            '/fmu/out/vehicle_attitude',
+            self.attitude_callback,
+            QoSProfile(
+                reliability=ReliabilityPolicy.BEST_EFFORT,
+                durability=DurabilityPolicy.VOLATILE,
+                history=HistoryPolicy.KEEP_LAST,
+                depth=10,
+            ),
+        )
+
         self.target_pub = self.create_publisher(
             PointStamped,
             '/sage/perception/target_position',
@@ -204,6 +226,34 @@ class SageTargetLocalizer(Node):
         self.vehicle_z = msg.z
 
         self.vehicle_heading = msg.heading
+
+    def attitude_callback(self, msg):
+        self.vehicle_q = (
+            msg.q[0], msg.q[1], msg.q[2], msg.q[3]
+        )
+
+    @staticmethod
+    def rotate_body_to_ned(q, v):
+        w, x, y, z = q
+        n = math.sqrt(w * w + x * x + y * y + z * z)
+        w, x, y, z = w / n, x / n, y / n, z / n
+
+        r = (
+            (1 - 2 * (y * y + z * z),
+             2 * (x * y - w * z),
+             2 * (x * z + w * y)),
+            (2 * (x * y + w * z),
+             1 - 2 * (x * x + z * z),
+             2 * (y * z - w * x)),
+            (2 * (x * z - w * y),
+             2 * (y * z + w * x),
+             1 - 2 * (x * x + y * y)),
+        )
+
+        return tuple(
+            r[i][0] * v[0] + r[i][1] * v[1] + r[i][2] * v[2]
+            for i in range(3)
+        )
 
     # =============================================================
     # Localization
@@ -383,6 +433,13 @@ class SageTargetLocalizer(Node):
 
         ned_z = body_z
 
+        use_q = self.use_attitude and self.vehicle_q is not None
+
+        if use_q:
+            ned_x, ned_y, ned_z = self.rotate_body_to_ned(
+                self.vehicle_q, (body_x, body_y, body_z)
+            )
+
         # ---------------------------------------------------------
         # IMPORTANT:
         #
@@ -426,6 +483,16 @@ class SageTargetLocalizer(Node):
         )
 
         # camera_ned_z already calculated above
+
+        if use_q:
+            ox, oy, oz = self.rotate_body_to_ned(
+                self.vehicle_q,
+                (self.camera_body_x, self.camera_body_y,
+                 -self.camera_body_z)
+            )
+            camera_ned_x = self.vehicle_x + ox
+            camera_ned_y = self.vehicle_y + oy
+            camera_ned_z = self.vehicle_z + oz
 
         # ---------------------------------------------------------
         # Ground intersection
