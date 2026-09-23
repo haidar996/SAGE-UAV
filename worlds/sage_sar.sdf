@@ -179,20 +179,16 @@
       </script>
     </actor>
     <model name="house_1"><static>true</static><pose>-8 -7 1.5 0 0 0</pose>
-      <link name="l"><collision name="c"><geometry><box><size>6 5 3</size></box></geometry></collision>
-      <visual name="v"><geometry><box><size>6 5 3</size></box></geometry>
+      <link name="l"><visual name="v"><geometry><box><size>6 5 3</size></box></geometry>
       <material><ambient>0.6 0.55 0.5 1</ambient><diffuse>0.6 0.55 0.5 1</diffuse></material></visual></link></model>
     <model name="car_red"><static>true</static><pose>10 5 0.7 0 0 0.3</pose>
-      <link name="l"><collision name="c"><geometry><box><size>4.2 1.8 1.4</size></box></geometry></collision>
-      <visual name="v"><geometry><box><size>4.2 1.8 1.4</size></box></geometry>
+      <link name="l"><visual name="v"><geometry><box><size>4.2 1.8 1.4</size></box></geometry>
       <material><ambient>0.8 0.1 0.1 1</ambient><diffuse>0.8 0.1 0.1 1</diffuse></material></visual></link></model>
     <model name="truck_blue"><static>true</static><pose>-2 -10 1.2 0 0 1.2</pose>
-      <link name="l"><collision name="c"><geometry><box><size>6 2.2 2.4</size></box></geometry></collision>
-      <visual name="v"><geometry><box><size>6 2.2 2.4</size></box></geometry>
+      <link name="l"><visual name="v"><geometry><box><size>6 2.2 2.4</size></box></geometry>
       <material><ambient>0.1 0.2 0.7 1</ambient><diffuse>0.1 0.2 0.7 1</diffuse></material></visual></link></model>
     <model name="shed"><static>true</static><pose>2 9 1.25 0 0 0</pose>
-      <link name="l"><collision name="c"><geometry><box><size>3 3 2.5</size></box></geometry></collision>
-      <visual name="v"><geometry><box><size>3 3 2.5</size></box></geometry>
+      <link name="l"><visual name="v"><geometry><box><size>3 3 2.5</size></box></geometry>
       <material><ambient>0.3 0.5 0.3 1</ambient><diffuse>0.3 0.5 0.3 1</diffuse></material></visual></link></model>
   </world>
 </sdf>

@@ -13,7 +13,7 @@ B=~/PX4-Autopilot/build/px4_sitl_default/rootfs
 cd $B && HEADLESS=1 PX4_GZ_WORLD=$SAGE_WORLD PX4_SYS_AUTOSTART=4019 PX4_SIM_MODEL=gz_x500_mono_cam run px4 ../bin/px4 -d ../etc
 cd ~/Micro-XRCE-DDS-Agent/build && run xrce ./MicroXRCEAgent udp4 -p 8888
 until grep -q "Startup script returned" $S/px4.log 2>/dev/null; do sleep 2; done
-cd $B; ../bin/px4-param set NAV_DLL_ACT 0 >/dev/null; ../bin/px4-param set SIM_BAT_DRAIN $DRAIN >/dev/null; ../bin/px4-param set SIM_BAT_MIN_PCT 0 >/dev/null
+cd $B; ../bin/px4-param set NAV_DLL_ACT 0 >/dev/null; ../bin/px4-param set MPC_XY_VEL_MAX 3.5 >/dev/null; ../bin/px4-param set MPC_TILTMAX_AIR 30 >/dev/null; ../bin/px4-param set SIM_BAT_DRAIN $DRAIN >/dev/null; ../bin/px4-param set SIM_BAT_MIN_PCT 0 >/dev/null
 until grep -q "Ready for takeoff" $S/px4.log 2>/dev/null; do sleep 2; done
 run offboard ros2 run sage_px4_interface offboard_position_node
 # Arm BEFORE loading the CPU with perception (load starves the sim IMU).

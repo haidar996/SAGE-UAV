@@ -13,7 +13,7 @@ from rclpy.qos import (
     HistoryPolicy,
 )
 
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PointStamped, PoseStamped
 from px4_msgs.msg import VehicleLocalPosition
 from std_msgs.msg import Bool, Float32MultiArray, String
 from vision_msgs.msg import Detection3DArray, Detection2DArray
@@ -131,6 +131,13 @@ class SageViewpointPlanner(Node):
         # State
         # =========================================================
 
+        self.localized_sub = self.create_subscription(
+            PointStamped,
+            '/sage/perception/target_position',
+            self.localized_callback,
+            10
+        )
+
         self.latest_target = None
         self.vehicle_position = None
 
@@ -230,7 +237,7 @@ class SageViewpointPlanner(Node):
         self.arrival_tolerance = 0.35
 
         # Must remain compatible with Mission Manager.
-        self.max_step_distance = 2.0
+        self.max_step_distance = 0.7
 
         # Four viewpoints around the target.
         self.search_angles = [
@@ -273,8 +280,41 @@ class SageViewpointPlanner(Node):
         self.evidence_s = 0.0
         self.last_good_time = None
 
+        # Live localized person position (from the localizer), used as
+        # the evidence for verification instead of the stored track.
+        self.latest_localized = None        # (x, y, ros time)
+        self.evidence_pts = []
+        self.localization_gate = 2.0        # m, must match the track
+        self.verified_merge_dist = 2.5      # m, duplicates are merged
+
+        # Coverage search (Step 21): sweep the search area, scanning
+        # four headings at each waypoint, until covered.
+        self.declare_parameter('coverage_enabled', True)
+        self.declare_parameter('area', [-9.0, 9.0, -9.0, 9.0])
+        self.declare_parameter('coverage_spacing', 6.0)
+        self.declare_parameter('scan_hold_s', 3.0)
+        self.declare_parameter('candidate_timeout_s', 45.0)
+        self.coverage_enabled = bool(
+            self.get_parameter('coverage_enabled').value
+        )
+        self.area = [
+            float(v) for v in self.get_parameter('area').value
+        ]
+        self.coverage_spacing = float(
+            self.get_parameter('coverage_spacing').value
+        )
+        self.scan_hold_s = float(
+            self.get_parameter('scan_hold_s').value
+        )
+        self.candidate_timeout_s = float(
+            self.get_parameter('candidate_timeout_s').value
+        )
+        self.reset_coverage()
+        self.rejected_ids = set()
+        self.candidate_start = None
+
         # Give up (report what was found) after this long.
-        self.declare_parameter('mission_timeout_s', 300.0)
+        self.declare_parameter('mission_timeout_s', 900.0)
         self.mission_timeout_s = float(
             self.get_parameter('mission_timeout_s').value
         )
@@ -398,6 +438,10 @@ class SageViewpointPlanner(Node):
         self.evidence_s = 0.0
         self.last_good_time = None
         self.mission_start_time = self.get_clock().now()
+        self.reset_coverage()
+        self.rejected_ids = set()
+        self.candidate_start = None
+        self.evidence_pts = []
 
         # New mission: restart the search from scratch.
         self.current_target_id = None
@@ -420,9 +464,117 @@ class SageViewpointPlanner(Node):
     # Mission completion (Step 19)
     # =============================================================
 
+    def candidate_position_ok(self, detection):
+        """A track is only a candidate if it lies inside the search
+        area (plus a margin) and is not on an already verified
+        person (fragmented duplicate tracks)."""
+        pos = detection.results[0].pose.pose.position
+        x0, x1, y0, y1 = self.area
+        margin = 1.5
+
+        if not (
+            x0 - margin <= pos.x <= x1 + margin
+            and y0 - margin <= pos.y <= y1 + margin
+        ):
+            return False
+
+        return all(
+            math.hypot(v['x'] - pos.x, v['y'] - pos.y)
+            >= self.verified_merge_dist
+            for v in self.verified.values()
+        )
+
+    def localized_callback(self, msg):
+        self.latest_localized = (
+            msg.point.x,
+            msg.point.y,
+            self.get_clock().now()
+        )
+
+    def localized_matches_target(self):
+        """True (and records the point) if the live localized person
+        position is fresh and within the gate of the tracked target."""
+        if self.latest_localized is None or self.latest_target is None:
+            return False
+
+        lx, ly, stamp = self.latest_localized
+
+        if (
+            self.get_clock().now() - stamp
+        ).nanoseconds / 1e9 > self.detection_timeout:
+            return False
+
+        tx, ty, _ = self.latest_target
+
+        if math.hypot(lx - tx, ly - ty) > self.localization_gate:
+            return False
+
+        self.evidence_pts.append((lx, ly))
+        return True
+
+    def reset_target_state(self):
+        self.current_target_id = None
+        self.latest_target = None
+        self.desired_viewpoint = None
+        self.current_viewpoint = None
+        self.current_viewpoint_index = 0
+        self.visited_indices = set()
+        self.observation_sufficient = False
+        self.evidence_s = 0.0
+        self.evidence_pts = []
+        self.last_good_time = None
+        self.candidate_start = None
+        self.cov_phase = 'travel'
+
+    def check_candidate_timeout(self):
+        if (
+            self.latest_target is None
+            or self.current_target_id is None
+            or self.candidate_start is None
+        ):
+            return
+
+        waited = (
+            self.get_clock().now() - self.candidate_start
+        ).nanoseconds / 1e9
+
+        if waited > self.candidate_timeout_s:
+            self.rejected_ids.add(self.current_target_id)
+            self.get_logger().warn(
+                'CANDIDATE REJECTED | '
+                f'id={self.current_target_id} | not confirmed in '
+                f'{self.candidate_timeout_s:.0f} s | '
+                'resuming coverage.'
+            )
+            self.reset_target_state()
+
     def verify_current_target(self):
         target_id = self.current_target_id
-        x, y, z = self.latest_target
+
+        # Position = mean of the live localizations collected as
+        # evidence (falls back to the stored track).
+        if self.evidence_pts:
+            n = len(self.evidence_pts)
+            x = sum(p[0] for p in self.evidence_pts) / n
+            y = sum(p[1] for p in self.evidence_pts) / n
+        else:
+            x, y, _ = self.latest_target
+
+        duplicate = [
+            v for v in self.verified.values()
+            if math.hypot(v['x'] - x, v['y'] - y)
+            < self.verified_merge_dist
+        ]
+
+        if duplicate:
+            self.rejected_ids.add(target_id)
+            self.get_logger().info(
+                'DUPLICATE TRACK MERGED | '
+                f'id={target_id} | position=({x:.2f}, {y:.2f}) | '
+                f"same as verified id={duplicate[0]['id']}"
+            )
+            self.reset_target_state()
+            return
 
         self.verified[target_id] = {
             'id': target_id,
@@ -439,24 +591,128 @@ class SageViewpointPlanner(Node):
             f'id={target_id} | '
             f'position=({x:.2f}, {y:.2f}) | '
             f'confidence={self.latest_person_confidence:.3f} | '
+            f'evidence_points={len(self.evidence_pts)} | '
             f'verified_total={len(self.verified)}'
         )
 
-        # Prepare to look for the next unverified target.
-        self.current_target_id = None
-        self.latest_target = None
-        self.desired_viewpoint = None
-        self.current_viewpoint = None
-        self.current_viewpoint_index = 0
-        self.visited_indices = set()
-        self.observation_sufficient = False
-        self.evidence_s = 0.0
-        self.last_good_time = None
+        self.reset_target_state()
 
         quantity = self.mission['quantity']
 
         if isinstance(quantity, int) and len(self.verified) >= quantity:
             self.complete_mission('quantity_reached')
+
+    # =============================================================
+    # Coverage search (Step 21)
+    # =============================================================
+
+    def reset_coverage(self):
+        self.cov_waypoints = None
+        self.cov_index = 0
+        self.cov_phase = 'travel'
+        self.cov_scan_k = 0
+        self.cov_scan_start = None
+        self.in_coverage = False
+
+    def build_coverage(self):
+        x0, x1, y0, y1 = self.area
+
+        def centers(lo, hi):
+            n = max(1, int(math.ceil((hi - lo) / self.coverage_spacing)))
+            step = (hi - lo) / n
+            return [lo + (i + 0.5) * step for i in range(n)]
+
+        xs = centers(x0, x1)
+        ys = centers(y0, y1)
+
+        waypoints = []
+
+        for i, x in enumerate(xs):
+            row = ys if i % 2 == 0 else list(reversed(ys))
+            waypoints += [(x, y) for y in row]
+
+        # Start from whichever end of the sweep is nearer the UAV.
+        ux, uy, _ = self.vehicle_position
+
+        if (
+            math.hypot(waypoints[-1][0] - ux, waypoints[-1][1] - uy)
+            < math.hypot(waypoints[0][0] - ux, waypoints[0][1] - uy)
+        ):
+            waypoints.reverse()
+
+        self.cov_waypoints = waypoints
+
+        self.get_logger().info(
+            'COVERAGE START | '
+            f'area x[{x0:.0f},{x1:.0f}] y[{y0:.0f},{y1:.0f}] | '
+            f'{len(waypoints)} waypoints | '
+            f'scan {self.scan_hold_s:.0f} s x 4 headings each'
+        )
+
+    def coverage_step(self):
+        self.in_coverage = True
+
+        if self.cov_waypoints is None:
+            self.build_coverage()
+
+        if self.cov_index >= len(self.cov_waypoints):
+            self.complete_mission('area_covered')
+            return
+
+        wx, wy = self.cov_waypoints[self.cov_index]
+        now = self.get_clock().now()
+
+        if self.cov_phase == 'travel':
+            ux, uy, _ = self.vehicle_position
+
+            self.desired_viewpoint = (
+                wx,
+                wy,
+                self.viewpoint_altitude,
+                math.atan2(wy - uy, wx - ux)
+            )
+
+            next_viewpoint = self.calculate_reachable_viewpoint()
+
+            if next_viewpoint is None:
+                return
+
+            self.current_viewpoint = next_viewpoint
+            self.publish_viewpoint()
+
+            if (
+                self.viewpoint_reached()
+                and self.desired_viewpoint_reached()
+            ):
+                self.cov_phase = 'scan'
+                self.cov_scan_k = 0
+                self.cov_scan_start = now
+                self.get_logger().info(
+                    'COVERAGE WAYPOINT | '
+                    f'{self.cov_index + 1}/{len(self.cov_waypoints)} '
+                    f'at ({wx:.1f}, {wy:.1f}) | scanning'
+                )
+
+            return
+
+        # Scan phase: hold position, rotate through four headings.
+        self.current_viewpoint = (
+            wx,
+            wy,
+            self.viewpoint_altitude,
+            self.cov_scan_k * math.pi / 2.0
+        )
+        self.publish_viewpoint()
+
+        if (
+            now - self.cov_scan_start
+        ).nanoseconds / 1e9 >= self.scan_hold_s:
+            self.cov_scan_k += 1
+            self.cov_scan_start = now
+
+            if self.cov_scan_k >= 4:
+                self.cov_index += 1
+                self.cov_phase = 'travel'
 
     def complete_mission(self, reason, request_return=True):
         if not self.mission_active:
@@ -911,17 +1167,15 @@ class SageViewpointPlanner(Node):
 
             # Step 19: only consider targets not yet verified.
             unverified = [
-                d for d in persons if d.id not in self.verified
+                d for d in persons
+                if d.id not in self.verified
+                and d.id not in self.rejected_ids
+                and self.candidate_position_ok(d)
             ]
 
             if not unverified:
-                self.latest_target = None
-
-                if (
-                    self.mission['quantity'] == 'all'
-                    and len(self.verified) >= 1
-                ):
-                    self.complete_mission('all_tracked_verified')
+                if self.latest_target is not None:
+                    self.reset_target_state()
 
                 return
 
@@ -971,6 +1225,9 @@ class SageViewpointPlanner(Node):
         if target_id != self.current_target_id:
 
             self.current_target_id = target_id
+            self.candidate_start = self.get_clock().now()
+            self.evidence_s = 0.0
+            self.evidence_pts = []
 
             self.current_viewpoint_index = 0
             self.desired_viewpoint = None
@@ -1225,6 +1482,35 @@ class SageViewpointPlanner(Node):
                 return
 
         # ---------------------------------------------------------
+        # Step 21: no candidate -> sweep the search area.
+        # ---------------------------------------------------------
+
+        if (
+            self.mission_active
+            and self.coverage_enabled
+            and self.vehicle_position is not None
+        ):
+            self.check_candidate_timeout()
+
+            if self.latest_target is None:
+                self.coverage_step()
+                return
+
+            if self.in_coverage:
+                # Candidate found: leave the sweep, observe it.
+                self.in_coverage = False
+                self.desired_viewpoint = None
+                self.visited_indices = set()
+                self.current_viewpoint_index = 0
+                self.observation_sufficient = False
+                self.evidence_s = 0.0
+                self.evidence_pts = []
+                self.get_logger().info(
+                    'CANDIDATE FOUND | leaving sweep to verify '
+                    f'target_id={self.current_target_id}'
+                )
+
+        # ---------------------------------------------------------
         # Require target and UAV position.
         # ---------------------------------------------------------
 
@@ -1243,7 +1529,25 @@ class SageViewpointPlanner(Node):
         if self.mission_active:
             now = self.get_clock().now()
 
-            if self.observation_is_sufficient():
+            suff = self.observation_is_sufficient()
+            match = suff and self.localized_matches_target()
+
+            if self.latest_target is not None:
+                ux, uy, _ = self.vehicle_position
+                tx, ty, _ = self.latest_target
+                self.get_logger().info(
+                    'CANDIDATE STATUS | '
+                    f'id={self.current_target_id} | '
+                    f'track=({tx:.1f},{ty:.1f}) | '
+                    f'uav=({ux:.1f},{uy:.1f}) | '
+                    f'range={math.hypot(tx - ux, ty - uy):.1f} m | '
+                    f'sufficient={suff} | matches_track={match} | '
+                    f'evidence={self.evidence_s:.1f}/'
+                    f'{self.verify_evidence_s:.1f} s',
+                    throttle_duration_sec=4.0
+                )
+
+            if match:
                 self.evidence_s += 0.2
                 self.last_good_time = now
 
@@ -1257,6 +1561,7 @@ class SageViewpointPlanner(Node):
                 > self.evidence_gap_s
             ):
                 self.evidence_s = 0.0
+                self.evidence_pts = []
                 self.last_good_time = None
 
         # ---------------------------------------------------------

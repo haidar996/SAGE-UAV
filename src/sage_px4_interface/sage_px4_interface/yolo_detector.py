@@ -49,8 +49,13 @@ class YOLODetector(Node):
             10,
         )
 
+        # Inference rate cap (Hz). The simulator, PX4 and YOLO share
+        # one CPU; unthrottled YOLO starves the simulator (real-time
+        # factor < 0.5 -> PX4 estimator failures).
+        detector_hz = float(os.environ.get("SAGE_YOLO_HZ", "5"))
+
         self.timer = self.create_timer(
-            0.05,
+            1.0 / detector_hz,
             self.process_latest_frame,
         )
 
