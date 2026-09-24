@@ -212,3 +212,7 @@ Tools (scratch, /tmp, not in repo): perc_debug.py (projects the known people/box
 - Sim is slow when other things run (RTF 0.37-0.72): trials are not comparable unless the machine is otherwise idle.
 - Script fix (uncommitted): stack_verified.sh now does `mkdir -p /tmp/sage_logs` (a missing dir made the first trial launch stall). Do not use `pkill -f rt.sh` from a tool shell (it kills the calling shell).
 - Next: (1) widen the static-vs-moving merge in `same_person` from 1.5 m to 2.5 m (fixes the S3 pattern); (2) decide how to handle walker duplicates 5-6 m apart (time/path-based merge risks merging two real people); (3) run >= 5 trials with the machine idle; (4) commit; (5) then the earlier list: explain the `no_report` run 0924_050428 and the missed person in 0924_040647, shorten missions (phantom rejections), live-test the Claude parser (Individual API key, prepaid credit, SAGE_LLM_MODEL=claude-haiku-4-5-20251001 suggested), Step 22 robustness, Step 23 experiments.
+
+## Session 2026-09-25: static-vs-moving merge widened
+- sage_viewpoint_planner.py `same_person`: static candidate vs verified walker now merges within 2.5 m (was 1.5 m), targeting the sage_hard S3 duplicate (verified twice 1.5-1.7 m apart). Built; NOT yet validated by trials.
+- Next: >= 5 sage_hard trials with the machine idle (`scripts/run_trials.sh 5 sage_hard`, copy the script to /tmp first), then walker-duplicate handling (5-6 m apart), Claude parser live test, Step 22/23.

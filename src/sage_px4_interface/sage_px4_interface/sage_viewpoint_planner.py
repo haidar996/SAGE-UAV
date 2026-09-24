@@ -696,8 +696,9 @@ class SageViewpointPlanner(Node):
 
             if v.get('moving'):
                 # static candidate vs verified walker: it can only be
-                # the walker if practically on the same spot.
-                return d < 1.5
+                # the walker if close to the same spot; 2.5 m covers
+                # static persons first misread as moving (sage_hard S3).
+                return d < 2.5
 
             # verified person is static: a 'moving' reading of a static
             # person is speed noise (localization jitter), so both
