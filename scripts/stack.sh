@@ -12,9 +12,10 @@ run(){ n=$1; shift; setsid nohup "$@" > $S/$n.log 2>&1 < /dev/null & }
 B=~/PX4-Autopilot/build/px4_sitl_default/rootfs
 cd $B && HEADLESS=1 PX4_GZ_WORLD=$SAGE_WORLD PX4_SYS_AUTOSTART=4019 PX4_SIM_MODEL=gz_x500_mono_cam run px4 ../bin/px4 -d ../etc
 cd ~/Micro-XRCE-DDS-Agent/build && run xrce ./MicroXRCEAgent udp4 -p 8888
-until grep -q "Startup script returned" $S/px4.log 2>/dev/null; do sleep 2; done
+wait_for(){ pat=$1; limit=$2; for i in $(seq 1 $limit); do grep -q "$pat" $S/px4.log 2>/dev/null && return 0; sleep 2; done; return 1; }
+wait_for "Startup script returned" 60 || { echo "STARTUP_TIMEOUT"; exit 2; }
 cd $B; ../bin/px4-param set NAV_DLL_ACT 0 >/dev/null; ../bin/px4-param set MPC_XY_VEL_MAX 3.5 >/dev/null; ../bin/px4-param set MPC_TILTMAX_AIR 30 >/dev/null; ../bin/px4-param set SIM_BAT_DRAIN $DRAIN >/dev/null; ../bin/px4-param set SIM_BAT_MIN_PCT 0 >/dev/null
-until grep -q "Ready for takeoff" $S/px4.log 2>/dev/null; do sleep 2; done
+wait_for "Ready for takeoff" 60 || { echo "PREFLIGHT_NOT_READY: $(grep -E 'Preflight Fail' $S/px4.log | tail -1)"; exit 3; }
 run offboard ros2 run sage_px4_interface offboard_position_node
 # Arm BEFORE loading the CPU with perception (load starves the sim IMU).
 for i in $(seq 1 40); do
