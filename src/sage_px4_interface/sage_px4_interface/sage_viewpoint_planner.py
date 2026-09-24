@@ -289,6 +289,8 @@ class SageViewpointPlanner(Node):
         self.evidence_pts = []
         self.localization_gate = 2.0        # m, must match the track
         self.verified_merge_dist = 2.5      # m, duplicates are merged
+        self.moving_speed_threshold = 0.3   # m/s from the evidence window
+        self.walker_speed = 1.2             # m/s, dedupe growth radius
 
         # Coverage search (Step 21): sweep the search area, scanning
         # four headings at each waypoint, until covered.
@@ -522,8 +524,11 @@ class SageViewpointPlanner(Node):
         ):
             return False
 
+        # Only STATIC verified persons block a candidate here; a moving
+        # person has walked away from where it was verified.
         return all(
-            math.hypot(v['x'] - pos.x, v['y'] - pos.y)
+            v.get('moving')
+            or math.hypot(v['x'] - pos.x, v['y'] - pos.y)
             >= self.verified_merge_dist
             for v in self.verified.values()
         )
@@ -553,7 +558,9 @@ class SageViewpointPlanner(Node):
         if math.hypot(lx - tx, ly - ty) > self.localization_gate:
             return False
 
-        self.evidence_pts.append((lx, ly))
+        self.evidence_pts.append(
+            (lx, ly, self.get_clock().now().nanoseconds / 1e9)
+        )
         return True
 
     def reset_target_state(self):
@@ -650,11 +657,50 @@ class SageViewpointPlanner(Node):
         else:
             x, y, _ = self.latest_target
 
-        duplicate = [
-            v for v in self.verified.values()
-            if math.hypot(v['x'] - x, v['y'] - y)
-            < self.verified_merge_dist
-        ]
+        # Motion estimate from the evidence window (least-squares slope).
+        speed = 0.0
+
+        if len(self.evidence_pts) >= 4:
+            t0 = self.evidence_pts[0][2]
+            ts = [p[2] - t0 for p in self.evidence_pts]
+            span = ts[-1]
+
+            if span >= 1.5:
+                tm = sum(ts) / len(ts)
+                den = sum((t - tm) ** 2 for t in ts)
+
+                if den > 1e-6:
+                    vx = sum(
+                        (t - tm) * p[0]
+                        for t, p in zip(ts, self.evidence_pts)
+                    ) / den
+                    vy = sum(
+                        (t - tm) * p[1]
+                        for t, p in zip(ts, self.evidence_pts)
+                    ) / den
+                    speed = math.hypot(vx, vy)
+
+        moving = speed > self.moving_speed_threshold
+        now_s = self.get_clock().now().nanoseconds / 1e9
+
+        def same_person(v):
+            d = math.hypot(v['x'] - x, v['y'] - y)
+
+            if moving and v.get('moving'):
+                # both walk: the earlier one may have moved on
+                return d < min(
+                    8.0,
+                    self.verified_merge_dist
+                    + self.walker_speed * (now_s - v['t'])
+                )
+
+            if not moving and not v.get('moving'):
+                return d < self.verified_merge_dist
+
+            # static vs moving: only if practically on top of each other
+            return d < 1.0
+
+        duplicate = [v for v in self.verified.values() if same_person(v)]
 
         if duplicate:
             self.rejected_ids.add(target_id)
@@ -674,6 +720,9 @@ class SageViewpointPlanner(Node):
                 float(self.latest_person_confidence), 3
             ),
             'viewpoint': self.current_viewpoint_index + 1,
+            'moving': moving,
+            'speed': round(speed, 2),
+            't': now_s,
         }
 
         self.get_logger().info(
@@ -682,6 +731,7 @@ class SageViewpointPlanner(Node):
             f'position=({x:.2f}, {y:.2f}) | '
             f'confidence={self.latest_person_confidence:.3f} | '
             f'evidence_points={len(self.evidence_pts)} | '
+            f'speed={speed:.2f} m/s' + (' MOVING' if moving else '') + ' | '
             f'verified_total={len(self.verified)}'
         )
 
@@ -730,6 +780,12 @@ class SageViewpointPlanner(Node):
             < math.hypot(waypoints[0][0] - ux, waypoints[0][1] - uy)
         ):
             waypoints.reverse()
+
+        if self.inflated_obstacles:
+            waypoints = [
+                om.project_free(w, self.inflated_obstacles)
+                for w in waypoints
+            ]
 
         self.cov_waypoints = waypoints
 
