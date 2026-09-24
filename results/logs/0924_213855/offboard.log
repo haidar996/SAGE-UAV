@@ -1,0 +1,11 @@
+[INFO] [1790275348.649317435] [offboard_position_node]: SAGE PX4 interface started.
+[INFO] [1790275348.649841418] [offboard_position_node]: Waiting for validated viewpoints on /sage/mission/validated_viewpoint
+[INFO] [1790275348.650255781] [offboard_position_node]: Safe fallback position: [0.0, 0.0, -2.0]
+[INFO] [1790275348.652172123] [offboard_position_node]: Publishing OffboardControlMode + TrajectorySetpoint.
+[INFO] [1790275349.583392007] [offboard_position_node]: Requesting OFFBOARD mode...
+[INFO] [1790275349.584031691] [offboard_position_node]: Publishing VehicleCommand: command=176, param1=1.0, param2=6.0
+[INFO] [1790275349.584605902] [offboard_position_node]: Publishing VehicleCommand: command=176, param1=1.0, param2=6.0
+[INFO] [1790275349.633321065] [offboard_position_node]: PX4 entered OFFBOARD. Requesting ARM...
+[INFO] [1790275349.633787537] [offboard_position_node]: Publishing VehicleCommand: command=400, param1=1.0, param2=0.0
+[INFO] [1790275422.929804774] [offboard_position_node]: VALIDATED VIEWPOINT RECEIVED
+[INFO] [1790275422.931789559] [offboard_position_node]: PX4 target updated: position=(0.29, 0.62, -2.00), yaw=3.14 rad

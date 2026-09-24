@@ -289,7 +289,7 @@ class SageViewpointPlanner(Node):
         self.evidence_pts = []
         self.localization_gate = 2.0        # m, must match the track
         self.verified_merge_dist = 2.5      # m, duplicates are merged
-        self.moving_speed_threshold = 0.45  # m/s from the evidence window
+        self.moving_speed_threshold = 0.25  # m/s; static <=0.16, walkers >=0.30 in sage_hard
         self.walker_speed = 1.2             # m/s, dedupe growth radius
 
         # Coverage search (Step 21): sweep the search area, scanning

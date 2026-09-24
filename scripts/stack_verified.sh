@@ -2,7 +2,7 @@
 # Start the full stack and check the UAV is healthy (hovering near the origin,
 # simulator near real time); retry up to 3 times. usage: stack_verified.sh [drain_s]
 # env: SAGE_WORLD (default sage_test)
-S=/tmp/sage_logs
+S=/tmp/sage_logs; mkdir -p $S
 source /opt/ros/humble/setup.bash; source ~/sage_ws/install/setup.bash
 for attempt in 1 2 3; do
   ~/SAGE-UAV/scripts/killall.sh >/dev/null 2>&1; sleep 3

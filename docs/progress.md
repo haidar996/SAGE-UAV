@@ -197,3 +197,18 @@ Tools (scratch, /tmp, not in repo): perc_debug.py (projects the known people/box
 - **New world `sage_hard`** (worlds/make_worlds.py generates it plus config/sage_hard.env and config/truth_<world>.json): 24 x 24 m area, 5 people (3 static, 2 WALKERS at 0.6 m/s along fixed paths), 2 buildings, a wall and 3 trees WITH collision, 3 visual-only distractors. Scoring accepts a walker report within 1.5 m of its path. scripts/start_mission_nodes.sh reads config/<world>.env (search area, obstacle map); run_trials.sh reads SAGE_DRAIN from it.
 - First sage_hard trial (before motion-aware dedupe): area_covered, found 5, TP 4, FP 1 (walker verified twice), FN 1 (static person 2.3 m from the walker's verified spot was merged into it), mean err 0.53 m, 632 s. Fixes then made: motion estimate from the evidence window (speed > 0.3 m/s = moving), moving-aware duplicate merge (growth radius 1.2 m/s, cap 8 m), static candidates no longer blocked by a moving person's old position, sweep waypoints projected out of obstacles (114 needless 'inside obstacle' rejections).
 - Do not edit scripts/run_trials.sh while a batch runs (bash reads scripts incrementally); batches are run from a copy (/tmp/rt.sh).
+
+## Session 2026-09-24 (night): sage_hard false-positive analysis, threshold change, trials
+- Committed sage_hard trial logs (b1ea9cb). No git remote yet: nothing is backed up off this machine. Decide on a remote and whether to publish docs/review.md and the `SAGE-UAV` plan-paste file.
+- **sage_hard "false positives" are mostly DUPLICATES of one real person, not phantoms**: walkers (W1 path (4.5,-11)->(4.5,-5); W2 path (-5,5)->(-5,11)) were verified as static at several points along their path (5-6 m apart, outside the 2.5 m merge radius), and static S3 (8,-8) was verified twice 1.5-1.7 m apart because the first reading was flagged MOVING and the static-vs-moving merge rule only merges within 1.5 m.
+- Speed from the 11-point / 2 s evidence window is noisy: over 13 verified targets, static <= 0.16 m/s, walkers >= 0.30 m/s in the first analysis, but later runs gave a walker reading of 0.16 and a static reading of 0.49.
+- Change made: planner `moving_speed_threshold` 0.45 -> 0.25 (sage_viewpoint_planner.py:292). NOT yet committed.
+- Trials with 0.25 (results/trials_sage_hard.csv; old rows copied to trials_sage_hard_v2_thr045.csv):
+  | run | TP | FP | FN | mean err | duration |
+  | 0924_220557 | 5 | 1 | 0 | 0.39 m | 556 s (area_covered) |
+  | 0924_213855 | no_report: hit the runner's 800 s cutoff at waypoint 9/16, 7 verified; by hand 4 correct + 2 duplicates (W1 twice, W2 twice) | | | | >800 s |
+  | 0924_215730 | stack_failed (sim real-time factor 0.38 < 0.5 health gate, load 2-3) | | | | |
+  Only one clean run, so the 0.25 threshold is NOT validated. The remaining FP in 220557 is S3 verified at (6.43,-8.64) and (7.97,-8.81).
+- Sim is slow when other things run (RTF 0.37-0.72): trials are not comparable unless the machine is otherwise idle.
+- Script fix (uncommitted): stack_verified.sh now does `mkdir -p /tmp/sage_logs` (a missing dir made the first trial launch stall). Do not use `pkill -f rt.sh` from a tool shell (it kills the calling shell).
+- Next: (1) widen the static-vs-moving merge in `same_person` from 1.5 m to 2.5 m (fixes the S3 pattern); (2) decide how to handle walker duplicates 5-6 m apart (time/path-based merge risks merging two real people); (3) run >= 5 trials with the machine idle; (4) commit; (5) then the earlier list: explain the `no_report` run 0924_050428 and the missed person in 0924_040647, shorten missions (phantom rejections), live-test the Claude parser (Individual API key, prepaid credit, SAGE_LLM_MODEL=claude-haiku-4-5-20251001 suggested), Step 22 robustness, Step 23 experiments.
