@@ -238,6 +238,7 @@ class SageViewpointPlanner(Node):
 
         # Must remain compatible with Mission Manager.
         self.max_step_distance = 0.7
+        self.max_lead_distance = 3.0
 
         # Four viewpoints around the target.
         self.search_angles = [
@@ -1406,6 +1407,21 @@ class SageViewpointPlanner(Node):
         else:
 
             start_x, start_y, _, _ = self.current_viewpoint
+
+        # Never let the waypoint run away from the UAV: the carrot
+        # advances at max_step_distance / 0.2 s, about the UAV's speed
+        # limit, so the lead could grow beyond the Mission Manager's
+        # 8 m limit (every viewpoint rejected, UAV holding, deadlock).
+        if (
+            self.current_viewpoint is not None
+            and self.vehicle_position is not None
+        ):
+            ux, uy, _ = self.vehicle_position
+
+            if math.hypot(
+                start_x - ux, start_y - uy
+            ) > self.max_lead_distance:
+                return self.current_viewpoint
 
         target_x, target_y, target_z, target_yaw = (
             self.desired_viewpoint
