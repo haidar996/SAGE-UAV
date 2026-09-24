@@ -293,7 +293,7 @@ class SageViewpointPlanner(Node):
         self.declare_parameter('area', [-9.0, 9.0, -9.0, 9.0])
         self.declare_parameter('coverage_spacing', 6.0)
         self.declare_parameter('scan_hold_s', 3.0)
-        self.declare_parameter('candidate_timeout_s', 45.0)
+        self.declare_parameter('candidate_timeout_s', 25.0)
         self.coverage_enabled = bool(
             self.get_parameter('coverage_enabled').value
         )
@@ -312,6 +312,21 @@ class SageViewpointPlanner(Node):
         self.reset_coverage()
         self.rejected_ids = set()
         self.candidate_start = None
+
+        # Candidate refinement: the track of a person seen only from far
+        # away can be 2-3 m off. Live localizations of a confidently
+        # detected person within refine_gate of the candidate pull the
+        # candidate position (EMA) onto the person, so the observation
+        # viewpoints end up around the real person.
+        self.refine_gate = 4.0
+        self.refine_alpha = 0.3
+        self.refine_min_confidence = 0.5
+        self.refined = {}                # track id -> (x, y)
+
+        # A candidate with no person detection at all for this long
+        # (after min_age) is a phantom track: reject it early.
+        self.phantom_min_age_s = 15.0
+        self.phantom_silence_s = 10.0
 
         # Give up (report what was found) after this long.
         self.declare_parameter('mission_timeout_s', 900.0)
@@ -442,6 +457,7 @@ class SageViewpointPlanner(Node):
         self.rejected_ids = set()
         self.candidate_start = None
         self.evidence_pts = []
+        self.refined = {}
 
         # New mission: restart the search from scratch.
         self.current_target_id = None
@@ -526,6 +542,37 @@ class SageViewpointPlanner(Node):
         self.candidate_start = None
         self.cov_phase = 'travel'
 
+    def refine_candidate(self):
+        """Pull the candidate position onto the live localization of a
+        confidently detected person close to it."""
+        if (
+            self.latest_target is None
+            or self.current_target_id is None
+            or self.latest_localized is None
+            or self.latest_person_confidence is None
+            or self.latest_person_confidence < self.refine_min_confidence
+        ):
+            return
+
+        lx, ly, stamp = self.latest_localized
+
+        if (
+            self.get_clock().now() - stamp
+        ).nanoseconds / 1e9 > self.detection_timeout:
+            return
+
+        tx, ty, tz = self.latest_target
+
+        if math.hypot(lx - tx, ly - ty) > self.refine_gate:
+            return
+
+        a = self.refine_alpha
+        nx = tx + a * (lx - tx)
+        ny = ty + a * (ly - ty)
+
+        self.refined[self.current_target_id] = (nx, ny)
+        self.latest_target = (nx, ny, tz)
+
     def check_candidate_timeout(self):
         if (
             self.latest_target is None
@@ -538,13 +585,28 @@ class SageViewpointPlanner(Node):
             self.get_clock().now() - self.candidate_start
         ).nanoseconds / 1e9
 
-        if waited > self.candidate_timeout_s:
+        silent = (
+            self.last_detection_time is None
+            or (
+                self.get_clock().now() - self.last_detection_time
+            ).nanoseconds / 1e9 > self.phantom_silence_s
+            or self.last_detection_time < self.candidate_start
+        )
+
+        if waited > self.candidate_timeout_s or (
+            waited > self.phantom_min_age_s and silent
+        ):
             self.rejected_ids.add(self.current_target_id)
             self.get_logger().warn(
                 'CANDIDATE REJECTED | '
-                f'id={self.current_target_id} | not confirmed in '
-                f'{self.candidate_timeout_s:.0f} s | '
-                'resuming coverage.'
+                f'id={self.current_target_id} | '
+                + (
+                    'no person visible (phantom)'
+                    if waited <= self.candidate_timeout_s
+                    else f'not confirmed in '
+                    f'{self.candidate_timeout_s:.0f} s'
+                )
+                + ' | resuming coverage.'
             )
             self.reset_target_state()
 
@@ -1218,6 +1280,9 @@ class SageViewpointPlanner(Node):
 
         target_id = selected_target.id
 
+        if self.mission_active and target_id in self.refined:
+            x, y = self.refined[target_id]
+
         # ---------------------------------------------------------
         # Detect new target.
         # ---------------------------------------------------------
@@ -1528,6 +1593,8 @@ class SageViewpointPlanner(Node):
 
         if self.mission_active:
             now = self.get_clock().now()
+
+            self.refine_candidate()
 
             suff = self.observation_is_sufficient()
             match = suff and self.localized_matches_target()
