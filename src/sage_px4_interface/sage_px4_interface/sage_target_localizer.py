@@ -66,8 +66,17 @@ class SageTargetLocalizer(Node):
             self.get_parameter('attitude_source').value
         )
         self.gz_model_name = 'x500_mono_cam_0'
+
+        # Camera frames reach the detector ~0.6 s after the pose they
+        # belong to (render + bridge latency, measured with the sweep of
+        # pose offsets that minimises the projection error, ~19 px vs
+        # ~81 px at 0). Load dependent, so it is a parameter.
+        self.declare_parameter('pose_delay_s', 0.6)
+        self.pose_delay_s = float(
+            self.get_parameter('pose_delay_s').value
+        )
         # (t_s, n, e, d, q) history of the Gazebo pose, node clock.
-        self.gz_history = deque(maxlen=400)
+        self.gz_history = deque(maxlen=800)
 
         # Skip localization while the UAV is tilted (range error grows
         # fast with pitch/roll error and image/pose time skew).
@@ -407,7 +416,9 @@ class SageTargetLocalizer(Node):
         # was captured (YOLO adds ~0.3 s latency; the UAV moves meanwhile).
         if self.attitude_source == 'gz_truth':
             stamp = detection.header.stamp
-            pose = self.gz_pose_at(stamp.sec + stamp.nanosec * 1e-9)
+            pose = self.gz_pose_at(
+                stamp.sec + stamp.nanosec * 1e-9 - self.pose_delay_s
+            )
 
             if pose is None:
                 return

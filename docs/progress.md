@@ -165,3 +165,14 @@ Tools (scratch, /tmp, not in repo): perc_debug.py (projects the known people/box
 3. **YOLO detects the distractors as people**: with the UAV sweeping, of 154 person detections 35 were real people, 47 were on the house/car/truck/shed (conf up to 0.66-0.78, bbox aspect similar to a person: 1.5-3), the rest were mismatches from unsynchronized frames. Bbox aspect ratio does not separate them. These are real false positives (useful for Step 22 robustness); verification must be made more robust (e.g. multi-view consistency / larger confidence / person-height check from the localized range).
 4. Camera images tilt strongly while the UAV moves (roll ~20 deg); projection with the synchronized true pose agrees with detections to ~10-20 px (bbox height 249 px vs 239 projected), so the camera model and geometry are right.
 5. Startup flake: some boots the UAV was already 12-35 m away before the mission (arming while the EKF is unsettled / High Gyro Bias preflight). TODO: gate mission start on a position check and auto-retry stack start.
+
+## Perception debugging part 2 + FIRST SUCCESSFUL STEP 21 RUN (2026-09-24)
+- **Camera/pose time offset**: swept the pose lookup offset against the projection of the known people; error minimum at 0.6 s (median 19 px vs 81 px at 0, 100+ px beyond 0.9 s). Localizer param `pose_delay_s` (default 0.6, gz_truth mode) looks up the Gazebo pose at (detection arrival - 0.6 s). Load dependent (measured with YOLO 5 Hz, RTF 1). With it: 218/226 localizations (96 %) within 2 m of a real person while the UAV moves, median 0.47 m (0.23 m when hovering).
+- **Full mission in sage_sar** ("Find all people in this area and report their locations", fresh battery, stack.sh 1200): MISSION COMPLETE status=area_covered, found=3, duration 283 s, all 9 coverage waypoints scanned, 1 unconfirmed candidate rejected, 0 phantom verifications, then HOME REACHED -> LAND -> DISARM, 0 tracebacks.
+  | found | true (NED) | error |
+  | (0.1, 4.1) | (0, 4) | 0.14 m |
+  | (4.9, -5.8) | (5, -6) | 0.22 m |
+  | (-6.0, 6.7) | (-6, 7) | 0.30 m |
+- Caveats to state in any demo/paper: localization uses SITL ground-truth attitude and pose (attitude_source=gz_truth) with a tuned 0.6 s camera delay; the PX4-estimate path works too (0.70 m median in a boot with 8 deg heading error) but has a random per-boot yaw offset and no delay compensation. Distractors are visual-only (no obstacle avoidance). Static people only. One run, one world: repeat runs needed for statistics (Step 23/24).
+- Reproduce: `SAGE_WORLD=sage_sar scripts/stack.sh 1200` -> `scripts/start_mission_nodes.sh` -> publish the mission on /sage/mission/command.
+- Next: repeat runs for statistics; startup-health gate + retry in stack.sh; verification robustness vs distractors (Step 22); real-world path (PX4 attitude with delay compensation); Claude/LLM parser live test (needs ANTHROPIC_API_KEY).
