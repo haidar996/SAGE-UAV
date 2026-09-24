@@ -14,7 +14,7 @@ for t in $(seq 1 $N); do
   if ! ~/SAGE-UAV/scripts/stack_verified.sh $DRAIN; then echo "$id,$(date +%F),$SAGE_WORLD,stack_failed,,,,,,,," >> $CSV; continue; fi
   ~/SAGE-UAV/scripts/start_mission_nodes.sh; sleep 10
   ros2 topic pub --once /sage/mission/command std_msgs/msg/String "{data: '$MISSION'}" >/dev/null
-  for i in $(seq 1 200); do grep -q "MISSION COMPLETE" /tmp/sage_logs/planner.log && break; sleep 4; done
+  for i in $(seq 1 400); do grep -q "MISSION COMPLETE" /tmp/sage_logs/planner.log && break; sleep 4; done
   sleep 25   # let it return home and land
   mkdir -p $R/logs/$id; cp /tmp/sage_logs/{planner,mission,offboard,energy,localizer,world}.log $R/logs/$id/ 2>/dev/null
   echo "$id,$(date +%F),$SAGE_WORLD,$(python3 ~/SAGE-UAV/scripts/score_trial.py /tmp/sage_logs/planner.log $SAGE_WORLD)" >> $CSV

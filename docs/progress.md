@@ -216,3 +216,10 @@ Tools (scratch, /tmp, not in repo): perc_debug.py (projects the known people/box
 ## Session 2026-09-25: static-vs-moving merge widened
 - sage_viewpoint_planner.py `same_person`: static candidate vs verified walker now merges within 2.5 m (was 1.5 m), targeting the sage_hard S3 duplicate (verified twice 1.5-1.7 m apart). Built; NOT yet validated by trials.
 - Next: >= 5 sage_hard trials with the machine idle (`scripts/run_trials.sh 5 sage_hard`, copy the script to /tmp first), then walker-duplicate handling (5-6 m apart), Claude parser live test, Step 22/23.
+
+## 5-trial batch on sage_hard with 2.5 m merge (2026-09-25): inconclusive
+- Results: trial 1 area_covered TP5/FP1/FN0, 714 s. Trials 2, 4, 5: `no_report`, cut off by run_trials.sh's 800 s wait (not by the mission). Trial 3: UAV flew away (~20 m from the candidate, outside the area), skipped by hand and logged as `skipped_flyaway`; PX4 failure reason NOT checked (no flight log for that run).
+- Trials 2 and 4 logs: all 5 people verified at correct positions, 0 duplicates, 0 false positives, 0 tracebacks. They had reached waypoint 11/16 and 15/16 at cutoff. 55-65 % of run time is candidate handling (420-540 s), 8-14 rejected candidates per run. Sweep alone is ~12-15 s per waypoint.
+- Mission Manager: 57-74 "viewpoint jump too large" rejections per run (3.1-4.3 m), in bursts; effect not traced.
+- Change: run_trials.sh wait cutoff raised 800 s -> 1600 s (mission_timeout_s is 900 s, so a report is always produced). candidate_timeout_s is already 25 s in code (older entries say 45 s); not changed.
+- Next: rerun the batch; look at why so many phantom candidates arise (world model tracks from distractors / walkers) rather than only shortening timeouts; check the flyaway cause.
