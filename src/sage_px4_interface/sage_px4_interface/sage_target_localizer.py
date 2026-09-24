@@ -77,6 +77,15 @@ class SageTargetLocalizer(Node):
         )
         # (t_s, n, e, d, q) history of the Gazebo pose, node clock.
         self.gz_history = deque(maxlen=800)
+        # Same for the PX4 estimate (position + attitude), so the
+        # real-world path is also matched to the frame capture time.
+        self.px4_history = deque(maxlen=800)
+
+        # Camera mounted pitched down by this angle (deg, + = down).
+        self.declare_parameter('camera_pitch_deg', 0.0)
+        self.camera_pitch = math.radians(
+            float(self.get_parameter('camera_pitch_deg').value)
+        )
 
         # Skip localization while the UAV is tilted (range error grows
         # fast with pitch/roll error and image/pose time skew).
@@ -307,10 +316,10 @@ class SageTargetLocalizer(Node):
             ))
             return
 
-    def gz_pose_at(self, t):
+    def pose_at(self, history, t):
         """Gazebo pose (n, e, d, q) at node-clock time t (s), linearly
         interpolated; None if the history does not cover t."""
-        h = self.gz_history
+        h = history
 
         if len(h) < 2 or t < h[0][0] or t > h[-1][0] + 0.05:
             return None
@@ -347,6 +356,13 @@ class SageTargetLocalizer(Node):
         self.vehicle_q = (
             msg.q[0], msg.q[1], msg.q[2], msg.q[3]
         )
+
+        if self.vehicle_x is not None:
+            self.px4_history.append((
+                self.get_clock().now().nanoseconds / 1e9,
+                self.vehicle_x, self.vehicle_y, self.vehicle_z,
+                self.vehicle_q
+            ))
 
     @staticmethod
     def rotate_body_to_ned(q, v):
@@ -412,11 +428,19 @@ class SageTargetLocalizer(Node):
 
         detection = self.latest_detection
 
-        # Ground-truth mode: use the Gazebo pose at the time the frame
-        # was captured (YOLO adds ~0.3 s latency; the UAV moves meanwhile).
-        if self.attitude_source == 'gz_truth':
+        # Use the pose at the time the frame was captured: YOLO adds
+        # ~0.3 s and the camera stream lags the pose by ~0.6 s, and the
+        # UAV moves/rotates meanwhile. Both the Gazebo ground truth and
+        # the PX4 estimate are looked up in their pose history.
+        if self.use_attitude:
             stamp = detection.header.stamp
-            pose = self.gz_pose_at(
+            history = (
+                self.gz_history
+                if self.attitude_source == 'gz_truth'
+                else self.px4_history
+            )
+            pose = self.pose_at(
+                history,
                 stamp.sec + stamp.nanosec * 1e-9 - self.pose_delay_s
             )
 
@@ -535,9 +559,15 @@ class SageTargetLocalizer(Node):
         #
         # ---------------------------------------------------------
 
-        body_x = ray_z
+        # (camera pitched down by self.camera_pitch: the optical forward
+        # axis is (cos p, 0, sin p) in the body frame, optical down is
+        # (-sin p, 0, cos p); p = 0 gives the plain axis mapping.)
+        cp = math.cos(self.camera_pitch)
+        sp = math.sin(self.camera_pitch)
+
+        body_x = ray_z * cp - ray_y * sp
         body_y = ray_x
-        body_z = ray_y
+        body_z = ray_z * sp + ray_y * cp
 
         # ---------------------------------------------------------
         # Rotate body frame into PX4 local NED

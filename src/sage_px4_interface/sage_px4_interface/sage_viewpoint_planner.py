@@ -18,6 +18,8 @@ from px4_msgs.msg import VehicleLocalPosition
 from std_msgs.msg import Bool, Float32MultiArray, String
 from vision_msgs.msg import Detection3DArray, Detection2DArray
 
+from sage_px4_interface import obstacle_map as om
+
 
 class SageViewpointPlanner(Node):
 
@@ -290,6 +292,13 @@ class SageViewpointPlanner(Node):
 
         # Coverage search (Step 21): sweep the search area, scanning
         # four headings at each waypoint, until covered.
+        # Known static obstacles: 'x0,x1,y0,y1;x0,x1,y0,y1;...' (NED).
+        self.declare_parameter('obstacles', '')
+        self.declare_parameter('obstacle_margin', 1.5)
+        # 'rotate' = continuous 360 deg yaw sweep at each waypoint,
+        # 'stepped' = four 90 deg headings, each held scan_hold_s.
+        self.declare_parameter('scan_mode', 'rotate')
+        self.declare_parameter('scan_yaw_rate_deg', 45.0)
         self.declare_parameter('coverage_enabled', True)
         self.declare_parameter('area', [-9.0, 9.0, -9.0, 9.0])
         self.declare_parameter('coverage_spacing', 6.0)
@@ -310,6 +319,24 @@ class SageViewpointPlanner(Node):
         self.candidate_timeout_s = float(
             self.get_parameter('candidate_timeout_s').value
         )
+        self.scan_mode = str(self.get_parameter('scan_mode').value)
+        self.scan_yaw_rate = math.radians(
+            float(self.get_parameter('scan_yaw_rate_deg').value)
+        )
+        obstacle_text = str(self.get_parameter('obstacles').value)
+        rects = om.parse_rects([
+            float(v)
+            for part in obstacle_text.split(';') if part.strip()
+            for v in part.split(',')
+        ])
+        self.inflated_obstacles = om.inflate(
+            rects, float(self.get_parameter('obstacle_margin').value)
+        )
+        if rects:
+            self.get_logger().info(
+                f'OBSTACLE MAP | {len(rects)} known obstacles, '
+                f"margin {self.get_parameter('obstacle_margin').value} m"
+            )
         self.reset_coverage()
         self.rejected_ids = set()
         self.candidate_start = None
@@ -675,6 +702,7 @@ class SageViewpointPlanner(Node):
         self.cov_phase = 'travel'
         self.cov_scan_k = 0
         self.cov_scan_start = None
+        self.cov_scan_yaw0 = 0.0
         self.in_coverage = False
 
     def build_coverage(self):
@@ -709,7 +737,12 @@ class SageViewpointPlanner(Node):
             'COVERAGE START | '
             f'area x[{x0:.0f},{x1:.0f}] y[{y0:.0f},{y1:.0f}] | '
             f'{len(waypoints)} waypoints | '
-            f'scan {self.scan_hold_s:.0f} s x 4 headings each'
+            + (
+                f'continuous {math.degrees(self.scan_yaw_rate):.0f} '
+                'deg/s yaw sweep each'
+                if self.scan_mode == 'rotate'
+                else f'scan {self.scan_hold_s:.0f} s x 4 headings each'
+            )
         )
 
     def coverage_step(self):
@@ -727,6 +760,11 @@ class SageViewpointPlanner(Node):
 
         if self.cov_phase == 'travel':
             ux, uy, _ = self.vehicle_position
+
+            if self.inflated_obstacles:
+                wx, wy = om.project_free(
+                    (wx, wy), self.inflated_obstacles
+                )
 
             self.desired_viewpoint = (
                 wx,
@@ -750,6 +788,7 @@ class SageViewpointPlanner(Node):
                 self.cov_phase = 'scan'
                 self.cov_scan_k = 0
                 self.cov_scan_start = now
+                self.cov_scan_yaw0 = self.desired_viewpoint[3]
                 self.get_logger().info(
                     'COVERAGE WAYPOINT | '
                     f'{self.cov_index + 1}/{len(self.cov_waypoints)} '
@@ -758,7 +797,25 @@ class SageViewpointPlanner(Node):
 
             return
 
-        # Scan phase: hold position, rotate through four headings.
+        # Scan phase: hold position and look around.
+        if self.scan_mode == 'rotate':
+            elapsed = (now - self.cov_scan_start).nanoseconds / 1e9
+
+            self.current_viewpoint = (
+                wx,
+                wy,
+                self.viewpoint_altitude,
+                self.cov_scan_yaw0 + self.scan_yaw_rate * elapsed
+            )
+            self.publish_viewpoint()
+
+            if elapsed * self.scan_yaw_rate >= 2.0 * math.pi:
+                self.cov_index += 1
+                self.cov_phase = 'travel'
+
+            return
+
+        # 'stepped': rotate through four headings.
         self.current_viewpoint = (
             wx,
             wy,
@@ -1347,6 +1404,12 @@ class SageViewpointPlanner(Node):
 
         viewpoint_z = self.viewpoint_altitude
 
+        # Never plan a viewpoint inside a known obstacle.
+        if self.inflated_obstacles:
+            viewpoint_x, viewpoint_y = om.project_free(
+                (viewpoint_x, viewpoint_y), self.inflated_obstacles
+            )
+
         # Face the target.
         yaw = math.atan2(
             target_y - viewpoint_y,
@@ -1426,6 +1489,20 @@ class SageViewpointPlanner(Node):
         target_x, target_y, target_z, target_yaw = (
             self.desired_viewpoint
         )
+
+        # Route around known obstacles (visibility graph over the
+        # inflated rectangles); head for the first path waypoint.
+        if self.inflated_obstacles:
+            path = om.plan_path(
+                (start_x, start_y),
+                (target_x, target_y),
+                self.inflated_obstacles
+            )
+
+            if path is None:
+                return self.current_viewpoint
+
+            target_x, target_y = path[0]
 
         dx = target_x - start_x
         dy = target_y - start_y

@@ -1,0 +1,36 @@
+{
+ "world": "sage_sar",
+ "tolerance_m": 1.5,
+ "people": [
+  {
+   "id": "P1",
+   "type": "static",
+   "points": [
+    [
+     0.0,
+     4.0
+    ]
+   ]
+  },
+  {
+   "id": "P2",
+   "type": "static",
+   "points": [
+    [
+     -6.0,
+     7.0
+    ]
+   ]
+  },
+  {
+   "id": "P3",
+   "type": "static",
+   "points": [
+    [
+     5.0,
+     -6.0
+    ]
+   ]
+  }
+ ]
+}

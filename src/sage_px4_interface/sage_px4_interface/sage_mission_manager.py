@@ -12,6 +12,7 @@ from rclpy.qos import (
 )
 
 from geometry_msgs.msg import PoseStamped
+from sage_px4_interface import obstacle_map as om
 from std_msgs.msg import Bool
 from px4_msgs.msg import VehicleLocalPosition
 
@@ -20,6 +21,20 @@ class SageMissionManager(Node):
 
     def __init__(self):
         super().__init__('sage_mission_manager')
+
+        # Safety net: reject viewpoints inside known static obstacles
+        # ('x0,x1,y0,y1;...' NED, inflated by obstacle_margin).
+        self.declare_parameter('obstacles', '')
+        self.declare_parameter('obstacle_margin', 1.0)
+        text = str(self.get_parameter('obstacles').value)
+        self.obstacles = om.inflate(
+            om.parse_rects([
+                float(v)
+                for part in text.split(';') if part.strip()
+                for v in part.split(',')
+            ]),
+            float(self.get_parameter('obstacle_margin').value)
+        )
 
         # PX4 uORB topics use BEST_EFFORT reliability.
         px4_qos = QoSProfile(
@@ -200,6 +215,10 @@ class SageMissionManager(Node):
             self.reject(
                 f'altitude outside limits: z={z:.2f} m'
             )
+            return
+
+        if self.obstacles and om.inside((x, y), self.obstacles):
+            self.reject('viewpoint inside a known obstacle')
             return
 
         # ---------------------------------------------------------

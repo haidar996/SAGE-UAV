@@ -6,10 +6,12 @@ MISSION=${3:-"Find all people in this area and report their locations"}
 R=~/SAGE-UAV/results; mkdir -p $R/logs; CSV=$R/trials_$SAGE_WORLD.csv
 [ -f $CSV ] || echo "trial,date,world,status,found,tp,fp,fn,mean_err_m,max_err_m,duration_s,rejected_candidates" > $CSV
 source /opt/ros/humble/setup.bash; source ~/sage_ws/install/setup.bash
+[ -f ~/SAGE-UAV/config/$SAGE_WORLD.env ] && source ~/SAGE-UAV/config/$SAGE_WORLD.env
+DRAIN=${SAGE_DRAIN:-1200}
 for t in $(seq 1 $N); do
   id=$(date +%m%d_%H%M%S)
   echo "=== trial $t/$N ($id)"
-  if ! ~/SAGE-UAV/scripts/stack_verified.sh 1200; then echo "$id,$(date +%F),$SAGE_WORLD,stack_failed,,,,,,,," >> $CSV; continue; fi
+  if ! ~/SAGE-UAV/scripts/stack_verified.sh $DRAIN; then echo "$id,$(date +%F),$SAGE_WORLD,stack_failed,,,,,,,," >> $CSV; continue; fi
   ~/SAGE-UAV/scripts/start_mission_nodes.sh; sleep 10
   ros2 topic pub --once /sage/mission/command std_msgs/msg/String "{data: '$MISSION'}" >/dev/null
   for i in $(seq 1 200); do grep -q "MISSION COMPLETE" /tmp/sage_logs/planner.log && break; sleep 4; done
