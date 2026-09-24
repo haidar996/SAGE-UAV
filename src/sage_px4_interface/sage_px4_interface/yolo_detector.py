@@ -75,7 +75,11 @@ class YOLODetector(Node):
 
             with self.frame_lock:
                 self.latest_frame = frame
-                self.latest_header = msg.header
+                # Stamp with the arrival time (node clock) so consumers can
+                # match the detection to the UAV pose at capture time.
+                header = msg.header
+                header.stamp = self.get_clock().now().to_msg()
+                self.latest_header = header
 
             self.frame_count += 1
 

@@ -2,6 +2,7 @@
 
 import math
 import os
+from collections import deque
 
 import rclpy
 from rclpy.node import Node
@@ -57,7 +58,7 @@ class SageTargetLocalizer(Node):
         self.vehicle_q = None
 
         # SITL-only: 'gz_truth' takes the attitude from Gazebo ground
-        # truth (needs ros_gz_bridge of /world/sage_test/pose/info as
+        # truth (needs ros_gz_bridge of /world/<world>/dynamic_pose/info as
         # TFMessage) because PX4's yaw estimate is off in this sim.
         # 'px4' (default) uses the estimator - the real-world path.
         self.declare_parameter('attitude_source', 'px4')
@@ -65,6 +66,8 @@ class SageTargetLocalizer(Node):
             self.get_parameter('attitude_source').value
         )
         self.gz_model_name = 'x500_mono_cam_0'
+        # (t_s, n, e, d, q) history of the Gazebo pose, node clock.
+        self.gz_history = deque(maxlen=400)
 
         # Skip localization while the UAV is tilted (range error grows
         # fast with pitch/roll error and image/pose time skew).
@@ -176,7 +179,7 @@ class SageTargetLocalizer(Node):
         if self.attitude_source == 'gz_truth':
             self.gz_pose_sub = self.create_subscription(
                 TFMessage,
-                f'/world/{WORLD}/pose/info',
+                f'/world/{WORLD}/dynamic_pose/info',
                 self.gz_pose_callback,
                 10,
             )
@@ -263,10 +266,9 @@ class SageTargetLocalizer(Node):
         self.vehicle_heading = msg.heading
 
     def gz_pose_callback(self, msg):
-        for tr in msg.transforms:
-            if tr.child_frame_id != self.gz_model_name:
-                continue
-
+        # The bridged TFMessage carries no frame names; in
+        # dynamic_pose/info the first entry is the UAV model itself.
+        for tr in msg.transforms[:1]:
             r = tr.transform.rotation
 
             # ENU/FLU quaternion -> NED/FRD quaternion.
@@ -288,7 +290,46 @@ class SageTargetLocalizer(Node):
             q = mul((0.0, s2, s2, 0.0), q)
             q = mul(q, (0.0, 1.0, 0.0, 0.0))
             self.vehicle_q = q
+
+            t = tr.transform.translation
+            self.gz_history.append((
+                self.get_clock().now().nanoseconds / 1e9,
+                t.y, t.x, -t.z, q
+            ))
             return
+
+    def gz_pose_at(self, t):
+        """Gazebo pose (n, e, d, q) at node-clock time t (s), linearly
+        interpolated; None if the history does not cover t."""
+        h = self.gz_history
+
+        if len(h) < 2 or t < h[0][0] or t > h[-1][0] + 0.05:
+            return None
+
+        prev = h[0]
+
+        for cur in h:
+            if cur[0] >= t:
+                break
+            prev = cur
+
+        if cur[0] <= prev[0]:
+            return cur[1], cur[2], cur[3], cur[4]
+
+        a = (t - prev[0]) / (cur[0] - prev[0])
+        a = max(0.0, min(1.0, a))
+
+        n = prev[1] + a * (cur[1] - prev[1])
+        e = prev[2] + a * (cur[2] - prev[2])
+        d = prev[3] + a * (cur[3] - prev[3])
+
+        # nlerp (shortest arc)
+        q0, q1 = prev[4], cur[4]
+        sign = 1.0 if sum(x * y for x, y in zip(q0, q1)) >= 0 else -1.0
+        q = tuple(x + a * (sign * y - x) for x, y in zip(q0, q1))
+        norm = math.sqrt(sum(x * x for x in q))
+
+        return n, e, d, tuple(x / norm for x in q)
 
     def attitude_callback(self, msg):
         if self.attitude_source == 'gz_truth':
@@ -361,6 +402,20 @@ class SageTargetLocalizer(Node):
             return
 
         detection = self.latest_detection
+
+        # Ground-truth mode: use the Gazebo pose at the time the frame
+        # was captured (YOLO adds ~0.3 s latency; the UAV moves meanwhile).
+        if self.attitude_source == 'gz_truth':
+            stamp = detection.header.stamp
+            pose = self.gz_pose_at(stamp.sec + stamp.nanosec * 1e-9)
+
+            if pose is None:
+                return
+
+            (
+                self.vehicle_x, self.vehicle_y, self.vehicle_z,
+                self.vehicle_q
+            ) = pose
 
         # ---------------------------------------------------------
         # Bounding box
@@ -470,7 +525,7 @@ class SageTargetLocalizer(Node):
         # ---------------------------------------------------------
 
         body_x = ray_z
-        body_y = -ray_x
+        body_y = ray_x
         body_z = ray_y
 
         # ---------------------------------------------------------

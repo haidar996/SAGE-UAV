@@ -29,7 +29,7 @@ run bridge_info ros2 run ros_gz_bridge parameter_bridge "$P/camera_info@sensor_m
 run yolo ~/sage_vision_env/bin/python ~/sage_ws/install/sage_px4_interface/lib/sage_px4_interface/yolo_detector_launcher.py
 # SITL: PX4 yaw estimate is ~28 deg off here, so the localizer uses Gazebo
 # ground-truth attitude by default (ATT=px4 to use the PX4 estimate).
-run bridge_pose ros2 run ros_gz_bridge parameter_bridge "/world/$SAGE_WORLD/pose/info@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V"
+run bridge_pose ros2 run ros_gz_bridge parameter_bridge "/world/$SAGE_WORLD/dynamic_pose/info@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V"
 run localizer ros2 run sage_px4_interface sage_target_localizer --ros-args -p attitude_source:=${ATT:-gz_truth}
 run world ros2 run sage_px4_interface sage_semantic_world_model
 run energy ros2 run sage_px4_interface sage_energy_monitor
