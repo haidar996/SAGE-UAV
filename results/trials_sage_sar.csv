@@ -1,0 +1,6 @@
+trial,date,world,status,found,tp,fp,fn,mean_err_m,max_err_m,duration_s,rejected_candidates
+0924_035915,2026-09-24,sage_sar,area_covered,3,3,0,0,0.29,0.36,340,2
+0924_040647,2026-09-24,sage_sar,area_covered,2,2,0,1,0.34,0.45,610,8
+0924_042005,2026-09-24,sage_sar,area_covered,3,3,0,0,0.35,0.50,395,3
+0924_042855,2026-09-24,sage_sar,area_covered,3,3,0,0,0.34,0.71,588,7
+0924_044317,2026-09-24,sage_sar,area_covered,3,3,0,0,0.23,0.32,360,3

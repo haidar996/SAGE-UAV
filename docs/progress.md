@@ -176,3 +176,15 @@ Tools (scratch, /tmp, not in repo): perc_debug.py (projects the known people/box
 - Caveats to state in any demo/paper: localization uses SITL ground-truth attitude and pose (attitude_source=gz_truth) with a tuned 0.6 s camera delay; the PX4-estimate path works too (0.70 m median in a boot with 8 deg heading error) but has a random per-boot yaw offset and no delay compensation. Distractors are visual-only (no obstacle avoidance). Static people only. One run, one world: repeat runs needed for statistics (Step 23/24).
 - Reproduce: `SAGE_WORLD=sage_sar scripts/stack.sh 1200` -> `scripts/start_mission_nodes.sh` -> publish the mission on /sage/mission/command.
 - Next: repeat runs for statistics; startup-health gate + retry in stack.sh; verification robustness vs distractors (Step 22); real-world path (PX4 attitude with delay compensation); Claude/LLM parser live test (needs ANTHROPIC_API_KEY).
+
+## Trial infrastructure + 5-run repeat in sage_sar (2026-09-24)
+- New scripts: `stack_verified.sh` (starts the stack, checks the UAV hovers within 4 m of the origin at z -0.8..-3.5 and RTF > 0.5, retries up to 3x; it correctly rejected/retried bad starts), `run_trials.sh N world [mission]` (repeats stack start -> mission -> wait for MISSION COMPLETE -> save logs to results/logs/<id>/ -> append a scored row to results/trials_<world>.csv), `score_trial.py` (matches reported locations to the known people within 1.5 m: tp/fp/fn/mean+max error/duration/rejected candidates), `restart_perception.sh`. PX4 flight logs (~2.6 GB of old .ulg under PX4-Autopilot/build/px4_sitl_default/rootfs/log) were deleted to free disk; each run creates ~30-100 MB more, clean them periodically.
+- **Results, 5 runs, mission "Find all people in this area and report their locations", sage_sar (3 people), gz_truth attitude, YOLO 5 Hz:**
+  | run | found | TP | FP | FN | mean err | max err | duration | rejected cand. |
+  | 1 | 3 | 3 | 0 | 0 | 0.29 | 0.36 | 340 s | 2 |
+  | 2 | 2 | 2 | 0 | 1 | 0.34 | 0.45 | 610 s | 8 |
+  | 3 | 3 | 3 | 0 | 0 | 0.35 | 0.50 | 395 s | 3 |
+  | 4 | 3 | 3 | 0 | 0 | 0.34 | 0.71 | 588 s | 7 |
+  | 5 | 3 | 3 | 0 | 0 | 0.23 | 0.32 | 360 s | 3 |
+  Summary: recall 14/15 = 93 %, precision 100 % (0 false positives), mean position error ~0.31 m, all runs ended `area_covered`, duration 340-610 s (median 395 s), 2-8 phantom candidates rejected per run (each costs up to 45 s and is the main driver of duration).
+- Run 2 missed one person (not yet analysed; logs in results/logs/0924_040647). Ideas: shorter candidate timeout (45 -> 25 s), reject candidates that were only seen from far away, a second sweep pass over unscanned regions when fewer than expected... (the mission has no known count).
