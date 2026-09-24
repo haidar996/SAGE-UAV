@@ -82,6 +82,15 @@ class SageTargetLocalizer(Node):
         self.px4_history = deque(maxlen=800)
 
         # Camera mounted pitched down by this angle (deg, + = down).
+        # Empirical calibration (sweep of this offset against the known
+        # people in the SITL world, best at -0.3 m: 0.11 m error at 4 m,
+        # 0.53 m at 10 m): PX4's local z plus this offset gives the height
+        # used for the ground intersection.
+        self.declare_parameter('px4_height_offset_m', -0.3)
+        self.px4_height_offset = float(
+            self.get_parameter('px4_height_offset_m').value
+        )
+
         self.declare_parameter('camera_pitch_deg', 0.0)
         self.camera_pitch = math.radians(
             float(self.get_parameter('camera_pitch_deg').value)
@@ -360,7 +369,8 @@ class SageTargetLocalizer(Node):
         if self.vehicle_x is not None:
             self.px4_history.append((
                 self.get_clock().now().nanoseconds / 1e9,
-                self.vehicle_x, self.vehicle_y, self.vehicle_z,
+                self.vehicle_x, self.vehicle_y,
+                self.vehicle_z - self.px4_height_offset,
                 self.vehicle_q
             ))
 
