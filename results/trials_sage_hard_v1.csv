@@ -1,1 +1,2 @@
 trial,date,world,status,found,tp,fp,fn,mean_err_m,max_err_m,duration_s,rejected_candidates
+0924_072026,2026-09-24,sage_hard,area_covered,7,4,3,1,0.63,1.14,783,9

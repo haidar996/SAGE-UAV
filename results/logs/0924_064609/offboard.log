@@ -1,0 +1,15 @@
+[INFO] [1790221811.739933825] [offboard_position_node]: SAGE PX4 interface started.
+[INFO] [1790221811.740589600] [offboard_position_node]: Waiting for validated viewpoints on /sage/mission/validated_viewpoint
+[INFO] [1790221811.741361512] [offboard_position_node]: Safe fallback position: [0.0, 0.0, -2.0]
+[INFO] [1790221811.743441886] [offboard_position_node]: Publishing OffboardControlMode + TrajectorySetpoint.
+[INFO] [1790221812.675210821] [offboard_position_node]: Requesting OFFBOARD mode...
+[INFO] [1790221812.676587412] [offboard_position_node]: Publishing VehicleCommand: command=176, param1=1.0, param2=6.0
+[INFO] [1790221813.874835779] [offboard_position_node]: Publishing VehicleCommand: command=176, param1=1.0, param2=6.0
+[INFO] [1790221813.925485528] [offboard_position_node]: PX4 entered OFFBOARD. Requesting ARM...
+[INFO] [1790221813.926481397] [offboard_position_node]: Publishing VehicleCommand: command=400, param1=1.0, param2=0.0
+[INFO] [1790221865.070277694] [offboard_position_node]: VALIDATED VIEWPOINT RECEIVED
+[INFO] [1790221865.071006768] [offboard_position_node]: PX4 target updated: position=(0.41, 0.56, -2.00), yaw=3.14 rad
+[WARN] [1790222186.444720118] [offboard_position_node]: LAND requested by Mission Manager.
+[INFO] [1790222186.449683080] [offboard_position_node]: Publishing VehicleCommand: command=21, param1=0.0, param2=0.0
+[WARN] [1790222194.077824688] [offboard_position_node]: On ground after LAND | DISARM.
+[INFO] [1790222194.078762978] [offboard_position_node]: Publishing VehicleCommand: command=400, param1=0.0, param2=21196.0

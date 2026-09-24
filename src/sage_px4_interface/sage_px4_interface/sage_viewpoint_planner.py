@@ -289,7 +289,7 @@ class SageViewpointPlanner(Node):
         self.evidence_pts = []
         self.localization_gate = 2.0        # m, must match the track
         self.verified_merge_dist = 2.5      # m, duplicates are merged
-        self.moving_speed_threshold = 0.3   # m/s from the evidence window
+        self.moving_speed_threshold = 0.45  # m/s from the evidence window
         self.walker_speed = 1.2             # m/s, dedupe growth radius
 
         # Coverage search (Step 21): sweep the search area, scanning
@@ -694,11 +694,15 @@ class SageViewpointPlanner(Node):
                     + self.walker_speed * (now_s - v['t'])
                 )
 
-            if not moving and not v.get('moving'):
-                return d < self.verified_merge_dist
+            if v.get('moving'):
+                # static candidate vs verified walker: it can only be
+                # the walker if practically on the same spot.
+                return d < 1.5
 
-            # static vs moving: only if practically on top of each other
-            return d < 1.0
+            # verified person is static: a 'moving' reading of a static
+            # person is speed noise (localization jitter), so both
+            # cases merge within the normal radius.
+            return d < self.verified_merge_dist
 
         duplicate = [v for v in self.verified.values() if same_person(v)]
 
