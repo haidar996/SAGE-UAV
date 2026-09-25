@@ -60,3 +60,6 @@ if your home directory differs.
 - Extra Gazebo cameras and the Gazebo GUI cost real-time factor; below about 0.5 the drone becomes unreliable. Record with the light logger
   (`SAGE_RECORD=1`) and render offline; keep the GUI off (`SAGE_GUI=1` turns it on).
 - The `px4-param` values, arming-check relaxations and the force-disarm after landing are simulation-only shortcuts (`docs/limitations.md`).
+
+## Optional: social-media encoding
+`pip install imageio-ffmpeg` (bundles ffmpeg) enables `scripts/tools/encode_social.py`, which encodes videos to the platforms' recommended settings (H.264 High, yuv420p, 30 fps, AAC, faststart).

@@ -290,6 +290,13 @@ python3 scripts/make_collage.py results/raw/<run id> demo/pictures    # pictures
 The renderer runs after the flight so the simulator is not slowed; both videos are web-optimised (H.264, index first). The drone-top view comes from a
 camera link added to the drone model by `environment/patch_px4.sh`.
 
+For social media (LinkedIn accepts one video per post, MP4 H.264 + AAC, 30 fps):
+```bash
+python3 scripts/render_showcase.py results/raw/<run id> --planner-log results/logs/<run id>/planner.log --speed 2 --fps 30   # 1080p split screen + picture slides
+pip install imageio-ffmpeg && python3 scripts/tools/encode_social.py results/raw/<run id>/demo_showcase.mp4 demo/linkedin/video.mp4
+python3 scripts/make_carousel.py                                                                                          # picture carousel (PDF)
+```
+
 ---
 
 ## ✅ Tests

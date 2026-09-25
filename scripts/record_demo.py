@@ -205,6 +205,81 @@ class Scene:
         put(img, f'{self.speed:g}x speed', (W - 170, y0 + 170), 0.5, (150, 150, 150))
         return img
 
+    def compose_showcase(self, cam, top):
+        """1920x1080 split screen for social media: onboard camera (left) + Gazebo view from above the drone (right),
+        mission HUD across the bottom, small map at the bottom right."""
+        Wc, Hc = 1920, 1080
+        img = np.full((Hc, Wc, 3), BG, np.uint8)
+        cv2.rectangle(img, (0, 0), (Wc, 80), (38, 30, 26), -1)
+        put(img, 'SAGE-UAV', (30, 56), 1.5, (255, 255, 255), 2)
+        put(img, 'Semantic AI-Guided Exploration & Active Search', (290, 54), 0.95, (205, 205, 205))
+        put(img, 'ROS 2 | PX4 | Gazebo | YOLO', (1420, 54), 0.85, ACC)
+        # left: onboard camera (4:3)
+        if cam is not None:
+            img[80:800, 0:960] = cv2.resize(cam, (960, 720))
+        cv2.rectangle(img, (0, 80), (960, 116), (0, 0, 0), -1)
+        put(img, 'ONBOARD CAMERA + YOLO', (14, 106), 0.75, (255, 255, 255))
+        # right: view from above the drone (circle, north up)
+        tv = self.compose_top(top)[0:720, 0:716]
+        img[80:800, 960:1920] = np.full((720, 960, 3), (24, 20, 18), np.uint8)
+        img[80:800, 1082:1798] = tv
+        cv2.rectangle(img, (960, 80), (1920, 116), (0, 0, 0), -1)
+        put(img, 'GAZEBO VIEW FROM ABOVE THE DRONE', (974, 106), 0.75, (255, 255, 255))
+        cv2.line(img, (960, 80), (960, 800), ACC, 2)
+        # bottom HUD
+        y0 = 800
+        cv2.rectangle(img, (0, y0), (Wc, Hc), (30, 25, 22), -1)
+        cv2.line(img, (0, y0), (Wc, y0), ACC, 3)
+        put(img, 'MISSION', (30, y0 + 44), 0.8, ACC)
+        put(img, f'"{self.mission}"', (170, y0 + 44), 1.0, (255, 255, 255))
+        st = self.stage()
+        x = 30
+        for i, name in enumerate(STAGES):
+            tw = cv2.getTextSize(name, FONT, 0.75, 1)[0][0]
+            col = ACC if i == st else ((90, 110, 90) if i < st else (70, 70, 70))
+            cv2.rectangle(img, (x - 10, y0 + 70), (x + tw + 10, y0 + 112), col, -1 if i == st else 2)
+            put(img, name, (x, y0 + 100), 0.75, (20, 20, 20) if i == st else (205, 205, 205))
+            x += tw + 44
+        el = self.now() - self.t0
+        alt = f'{-self.pose[2]:.1f} m' if self.pose else '--'
+        put(img, f'TIME {int(el // 60):02d}:{int(el % 60):02d}', (30, y0 + 175), 1.15, (255, 255, 255))
+        put(img, f'ALT {alt}', (330, y0 + 175), 1.15, (255, 255, 255))
+        wp = self.events['wp']
+        put(img, f'WAYPOINT {wp[0]}/{wp[1]}' if wp[1] else 'WAYPOINT --', (600, y0 + 175), 1.15, (255, 255, 255))
+        put(img, f'FOUND {len(self.verified)}', (30, y0 + 240), 1.6, GREEN, 3)
+        for k, (n, e) in enumerate(self.verified, 1):
+            put(img, f'P{k} ({n:.1f}, {e:.1f})', (330 + (k - 1) * 235, y0 + 240), 0.75, (190, 240, 190))
+        b = self.batt if self.batt is not None else 100.0
+        put(img, 'BATTERY', (1000, y0 + 175), 0.85, (200, 200, 200))
+        cv2.rectangle(img, (1170, y0 + 150), (1470, y0 + 184), (90, 90, 90), 2)
+        cv2.rectangle(img, (1173, y0 + 153), (1173 + int(294 * max(0, min(100, b)) / 100), y0 + 181),
+                      GREEN if b > 30 else (60, 60, 230), -1)
+        put(img, f'{b:.0f}%', (1490, y0 + 180), 0.9, (255, 255, 255))
+        put(img, f'{self.speed:g}x speed', (1420, y0 + 245), 0.8, (150, 150, 150))
+        # mini map
+        MS, mx0, my0 = 250, 1630, y0 + 15
+        n0, n1, e0, e1 = self.area
+        bn0, bn1, be0, be1 = n0 - 2.5, n1 + 2.5, e0 - 2.5, e1 + 2.5
+        ms = MS / (bn1 - bn0)
+
+        def mm(n, e):
+            return (int(mx0 + (e - be0) * ms), int(my0 + (bn1 - n) * ms))
+        cv2.rectangle(img, (mx0, my0), (mx0 + MS, my0 + MS), (46, 60, 44), -1)
+        cv2.rectangle(img, mm(n1, e0), mm(n0, e1), (150, 200, 150), 1)
+        for o in self.obst:
+            cv2.rectangle(img, mm(o[1], o[2]), mm(o[0], o[3]), (90, 110, 130), -1)
+        tr = self.trail[-self.trail_keep:] if self.trail_keep else self.trail
+        for i in range(1, len(tr)):
+            cv2.line(img, mm(*tr[i - 1]), mm(*tr[i]), (255, 200, 90), 1, cv2.LINE_AA)
+        for k, (n, e) in enumerate(self.verified, 1):
+            cv2.circle(img, mm(n, e), 6, GREEN, -1)
+        if self.pose is not None:
+            p = mm(self.pose[0], self.pose[1])
+            hd = self.pose[3]
+            cv2.circle(img, p, 5, (40, 140, 255), -1)
+            cv2.line(img, p, (int(p[0] + 14 * math.sin(hd)), int(p[1] - 14 * math.cos(hd))), (40, 140, 255), 2)
+        return img
+
     def compose_top(self, top):
         """Gazebo view from a camera 5 m above the drone (drone-mounted, looks straight down).
         The raw image has the drone's nose up; it is rotated so that NORTH is up, shown in a circular window.
@@ -223,7 +298,7 @@ class Scene:
             view = np.full((S, S, 3), (60, 60, 60), np.uint8)
         mask = np.zeros((S, S), np.uint8)
         cv2.circle(mask, (S // 2, S // 2), S // 2 - 6, 255, -1)
-        img[0:S, 0:S] = cv2.bitwise_and(view, view, mask=mask)
+        img[0:S, 0:S][mask > 0] = view[mask > 0]          # corners keep the panel colour
         cv2.circle(img, (S // 2, S // 2), S // 2 - 6, (230, 230, 230), 2, cv2.LINE_AA)
         # (no rings drawn on people: the drone-mounted camera tilts with the drone, so a ring computed from the
         #  level-camera geometry can be ~1 m off; the real render shows the people, the map lists their positions)
@@ -309,9 +384,9 @@ class Scene:
         return img
 
 
-def open_writer(path, fps):
+def open_writer(path, fps, size=(W, H)):
     for cc in ('avc1', 'H264', 'mp4v'):
-        w = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*cc), fps, (W, H))
+        w = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*cc), fps, size)
         if w.isOpened():
             return w, cc
     raise RuntimeError('no video codec available')

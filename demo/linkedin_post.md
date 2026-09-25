@@ -1,7 +1,20 @@
 # LinkedIn post - SAGE-UAV
 
-Attach the two videos of the SAME flight: `demo/sage_uav_camera_view.mp4` (onboard camera + YOLO + map) and `demo/sage_uav_drone_top_view.mp4` (Gazebo view from above the drone), each 6.1 min at 2x real speed (4 of 4 people found, no duplicate). Then the pictures in this order:
-1. `results/figures/linkedin_card.png`  2. `demo/pictures/collage_2x2.png` (and `demo/pictures/drone_top_view/top_verified_4.png`)  3. `results/figures/architecture.png`  4. `results/figures/results_overview.png`
+## What LinkedIn accepts (checked)
+- **Video:** MP4 with H.264 video and AAC audio is the recommended format (30 fps, up to 4096 x 2304, under 10 min on mobile / 15 min on desktop, up to 5 GB).
+- **One video per post, and a video cannot be combined with images.** A post is *either* one video, *or* up to 20 images, *or* a PDF document (carousel).
+  Sources: [LinkedIn video specs 2026](https://www.yansmedia.com/blog/linkedin-video-specs), [LinkedIn media limits](https://help.postpone.app/platforms/linkedin/media-limits).
+
+## Files (all in `demo/linkedin/` on your machine)
+| file | use |
+|---|---|
+| `SAGE-UAV-linkedin-video.mp4` | **the video to upload**: 1920x1080, 30 fps, H.264 High + AAC, 6:30. It contains both views side by side (onboard camera + Gazebo view from above the drone) and the pictures as slides (architecture, results, frames), so nothing else needs uploading with it. Not stored in git (47 MB); regenerate with `scripts/render_showcase.py` + `scripts/tools/encode_social.py` |
+| `SAGE-UAV-carousel.pdf`, `pages/page_1..6.png` | the pictures as a 6-page document (PDF carousel) or as images |
+| `../sage_uav_camera_view.mp4`, `../sage_uav_drone_top_view.mp4` | the two separate 720p videos (30 fps, AAC) for other places |
+
+## How to post
+1. **Best:** one post with `SAGE-UAV-linkedin-video.mp4` + the text below. Put the repository link in the text.
+2. **Pictures:** as a second post (`SAGE-UAV-carousel.pdf` as a document, or `pages/*.png` as a multi-image post), or one image in the first comment.
 
 ---
 

@@ -19,3 +19,6 @@ results/raw/*/*.mp4
 # private planning material (chat transcript, plan paste): kept locally, never pushed
 docs/private/
 !models/yolo/yolo26n.pt
+
+# the 1080p social-media video is large; regenerate with scripts/render_showcase.py + scripts/tools/encode_social.py
+demo/linkedin/*.mp4
