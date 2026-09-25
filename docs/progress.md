@@ -229,3 +229,7 @@ Tools (scratch, /tmp, not in repo): perc_debug.py (projects the known people/box
 - Both FPs are walker W2 (path (-5,5)-(-5,11)) verified twice: 2.7 m apart (trial 1; missed by the 2.5 m rule) and 6.0 m apart (trial 5; second reading speed 0.25, not > threshold). S1, S2, S3, W1 never duplicated.
 - sage_sar (easy world) has 0 FP in 12 scored trials; the duplicates, long runs (707-900 s vs 200-610 s) and phantom candidates (7-14 vs 0-8) are sage_hard specific.
 - Change: static-vs-walker merge radius 2.5 -> 3.2 m (fixes the trial-1 pattern; capped below 4.0 m because static S2 sits 4.0 m from the W2 path). The 6 m pattern (trial 5) is NOT fixed: a distance rule that large would swallow S2. Needs path/time-aware merging or a better speed estimate.
+
+## 3.2 m merge trial: REVERTED to 2.5 m (2026-09-25)
+- Trial 0925_040416 (3.2 m): area_covered, found 5, TP4/FP1/FN1, 875 s. FN = static S3 (8,-8): 6 S3 candidates were merged into verified walker W1 (5.12,-7.34); two at 2.6-2.8 m would have survived at 2.5 m. S3 is ~3.5 m from the W1 path, S2 ~4.0 m from the W2 path, so a larger distance radius cannot work here. FP = W2 verified twice (static reading first at (-4.57,5.12), then MOVING at (-6.47,7.88), 3.4 m apart; the verified-static rule uses 2.5 m).
+- Radius back to 2.5 m. Open: walker duplicates need path-aware/time-aware merging or a better speed estimate (walker readings 0.18-1.39 m/s).
