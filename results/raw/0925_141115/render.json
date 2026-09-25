@@ -1,0 +1,38 @@
+{
+ "world": "sage_rescue",
+ "report": {
+  "status": "area_covered",
+  "found": 4,
+  "duration_s": 611,
+  "locations": [
+   [
+    -0.2,
+    5.4
+   ],
+   [
+    -8.4,
+    8.2
+   ],
+   [
+    3.9,
+    -9.6
+   ],
+   [
+    9.8,
+    -9.1
+   ]
+  ]
+ },
+ "true_positives": 4,
+ "errors_m": [
+  0.44721359549995826,
+  1.0000000000000004,
+  0.6000000000000001,
+  0.2236067977499782
+ ],
+ "speed": 2.0,
+ "frames_camera": 2066,
+ "frames_overhead": 713,
+ "output_frames": 6219,
+ "codec": "avc1"
+}

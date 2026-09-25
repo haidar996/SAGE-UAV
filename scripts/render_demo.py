@@ -30,6 +30,7 @@ ap.add_argument('--mission', default='Find all people in this area and report th
 ap.add_argument('--speed', type=float, default=2.0)
 ap.add_argument('--fps', type=int, default=20)
 ap.add_argument('--trail-s', type=float, default=25.0)
+ap.add_argument('--test-from', type=float, default=None, help='quick test: render only ~10 s starting this many s after mission start')
 a = ap.parse_args()
 os.makedirs(os.path.join(a.raw, 'stills'), exist_ok=True)
 
@@ -80,6 +81,9 @@ if ev['start'] is None or not cam_t or not pose:
 
 t_begin = ev['start'] - 3.0
 t_end = (ev['complete'] or pose_t[-1]) + 8.0
+if a.test_from is not None:
+    t_begin = ev['start'] + a.test_from
+    t_end = t_begin + 10 * a.speed
 n_frames = int((t_end - t_begin) * a.fps / a.speed)
 print(f'{len(cam_f)} camera frames, {len(top_f)} overhead frames, {len(pose)} poses; '
       f'{n_frames} output frames = {n_frames / a.fps:.0f} s per video at {a.speed:g}x')

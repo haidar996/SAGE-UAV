@@ -277,3 +277,10 @@ Problem list and what is left (importance / rough effort):
 6. Push: git repository has no remote; final step below.
 
 Push: repository pushed to a PRIVATE GitHub repo https://github.com/haidar996/SAGE-UAV (branch main, all commits, demo video, figures, logs). Make it public only after deciding about docs/review.md (77 KB chat transcript) and the `SAGE-UAV` plan-paste file, which are tracked.
+
+## Session 2026-09-25 (afternoon): two-view demo videos, slower and clearer
+Request: a flight that finds ALL people, the battery must be correct (early recordings showed 1 %: fixed - the energy topic is a fraction), slower playback, and two videos of the same flight (onboard camera + Gazebo overhead).
+- Added a fixed overhead Gazebo camera to sage_rescue (30 m above the origin, north up). Live video composition/encoding during the flight starved the simulator (YOLO fell to 1.4 Hz, choppy video, two flyaways, both flights ended `uav_lost` with the drone ~100 m away after a frozen position stream). Redesign: a light logger (scripts/record_raw.py, JPEG frames + poses + battery only) during the flight and an offline renderer (scripts/render_demo.py) afterwards; overhead camera cut to 384x384 at 2 Hz.
+- Demo flight 0925_141115: area_covered, 4/4 people, 0 false reports, mean error 0.57 m, 611 s, normal landing. Videos: demo/sage_uav_camera_view.mp4 and demo/sage_uav_gazebo_overhead.mp4 (2x speed, 5.3 min each), pictures in demo/pictures/, zip demo/linkedin_pictures.zip. Earlier videos moved to demo/archive/.
+- The overhead render updates only ~1.2 Hz (the sim was near its limit); overlays (drone, trail) are smooth. The walker phase in the overhead view is the real one of that flight.
+- Excluded from statistics (disclosed in docs/results.md): 0925_133529 and 0925_135407 (`uav_lost`).

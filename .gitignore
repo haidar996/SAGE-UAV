@@ -10,3 +10,8 @@ log/
 
 # per-world config (area, obstacle map) is not a secret
 !config/*.env
+
+# raw in-flight frames are large (re-creatable from a flight); videos and small logs are tracked
+results/raw/*/cam/
+results/raw/*/top/
+results/raw/*/*.mp4

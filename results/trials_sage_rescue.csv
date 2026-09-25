@@ -5,3 +5,5 @@ trial,date,world,status,found,tp,fp,fn,mean_err_m,max_err_m,duration_s,rejected_
 0925_071213,2026-09-25,sage_rescue,timeout,4,4,0,0,0.31,0.45,1200,10,0,0,0
 0925_073827,2026-09-25,sage_rescue,area_covered,3,3,0,1,0.76,0.81,827,17,0,0,1
 0925_133529,2026-09-25,sage_rescue,uav_lost,3,3,0,1,0.31,0.51,719,15,0,0,1
+0925_135407,2026-09-25,sage_rescue,uav_lost,3,3,0,1,0.51,1.08,689,13,0,0,1
+0925_141115,2026-09-25,sage_rescue,area_covered,4,4,0,0,0.57,1.00,611,9,0,0,0
