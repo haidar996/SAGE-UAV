@@ -41,7 +41,7 @@ mkdir -p ~/Micro-XRCE-DDS-Agent/build && cd ~/Micro-XRCE-DDS-Agent/build && cmak
 
 # 6. vision environment (the node's launcher uses this exact interpreter path)
 python3 -m venv ~/sage_vision_env
-~/sage_vision_env/bin/pip install -r ~/SAGE-UAV/environment/requirements-vision.txt
+~/sage_vision_env/bin/pip install --extra-index-url https://download.pytorch.org/whl/cpu -r ~/SAGE-UAV/environment/requirements-vision.txt
 cp ~/SAGE-UAV/models/yolo/yolo26n.pt ~/sage_ws/          # weights are loaded by file name
 
 # 7. run
