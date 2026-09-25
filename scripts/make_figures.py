@@ -133,11 +133,11 @@ def results():
     for i, s in enumerate(sets):
         axs[0].text(i - w / 2, s['recall'] + 1.5, f"{s['recall']:.0f}%", ha='center', fontsize=9, color=INK)
         axs[0].text(i + w / 2, s['precision'] + 1.5, f"{s['precision']:.0f}%", ha='center', fontsize=9, color=INK)
-    axs[0].set_ylim(0, 115)
+    axs[0].set_ylim(0, 128)
     axs[0].set_xticks(list(x))
     axs[0].set_xticklabels(names, fontsize=8)
     axs[0].set_title('Detection quality (people found)', loc='left', fontsize=11, color=INK, fontweight='bold')
-    axs[0].legend(frameon=False, fontsize=8, loc='lower left')
+    axs[0].legend(frameon=False, fontsize=8, loc='upper center', ncol=2)
     for i, s in enumerate(sets):
         ds = [r['dur'] for r in s['rows']]
         axs[1].scatter([i] * len(ds), ds, s=46, color=ORANGE, zorder=3)
@@ -158,12 +158,11 @@ def results():
     plt.close(fig)
 
     with open(os.path.join(RES, 'summary.md'), 'w') as f:
-        f.write('| world | runs | recall | precision | false pos. | mean error | time median (min-max) | battery used |\n')
-        f.write('|---|---|---|---|---|---|---|---|\n')
+        f.write('| world | runs | recall | precision | false pos. | mean error | time median (min-max) |\n')
+        f.write('|---|---|---|---|---|---|---|\n')
         for s in sets:
             f.write(f"| {s['name'].splitlines()[0]} | {s['runs']} | {s['recall']:.0f}% | {s['precision']:.0f}% | "
-                    f"{s['fp']} | {s['err']:.2f} m | {s['dur_med']:.0f} s ({s['dur_min']:.0f}-{s['dur_max']:.0f}) | "
-                    f"{s['energy']:.1f}% |\n")
+                    f"{s['fp']} | {s['err']:.2f} m | {s['dur_med']:.0f} s ({s['dur_min']:.0f}-{s['dur_max']:.0f}) |\n")
     return sets
 
 

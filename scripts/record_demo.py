@@ -8,6 +8,7 @@ It ends by itself ~25 s after MISSION COMPLETE appears in the planner log (or on
 Output: <out>/demo.mp4 (time-lapse, --speed x), <out>/stills/*.png, <out>/summary.json
 """
 import argparse
+import collections
 import json
 import math
 import os
@@ -121,12 +122,12 @@ class Scene:
             return 2
         return 1 if ev['accepted'] else 0
 
-    def compose(self, cam):
+    def compose(self, cam, boxes=()):
         img = self.base.copy()
         # camera panel
         if cam is not None:
             small = cv2.resize(cam, (640, PANEL_H))
-            for (cx, cy, bw, bh, conf) in (self.boxes if time.time() - self.boxes_t < 0.7 else []):
+            for (cx, cy, bw, bh, conf) in boxes:
                 x1, y1, x2, y2 = [int(v / 2) for v in (cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2)]
                 cv2.rectangle(small, (x1, y1), (x2, y2), GREEN, 2)
                 cv2.rectangle(small, (x1, y1 - 20), (x1 + 118, y1), GREEN, -1)
@@ -248,15 +249,16 @@ def main():
     ap.add_argument('--world', default='sage_rescue')
     ap.add_argument('--out', required=True)
     ap.add_argument('--mission', default='Find all people in this area and report their locations')
-    ap.add_argument('--speed', type=float, default=4.0, help='time-lapse factor (capture 6 Hz, play 24 fps)')
+    ap.add_argument('--speed', type=float, default=4.0, help='time-lapse factor (one frame per YOLO result = 5 Hz, played at 20 fps)')
     ap.add_argument('--tail-s', type=float, default=25.0)
     ap.add_argument('--planner-log', default='/tmp/sage_logs/planner.log')
     ap.add_argument('--selftest', action='store_true')
     a = ap.parse_args()
     os.makedirs(os.path.join(a.out, 'stills'), exist_ok=True)
     sc = Scene(a.world, a.mission, a.speed)
-    writer, codec = open_writer(os.path.join(a.out, 'demo.mp4'), 24)
+    writer, codec = open_writer(os.path.join(a.out, 'demo.mp4'), 20)
     still_n = {'k': 0}
+    last_frame = [None]
 
     def still(name, img):
         cv2.imwrite(os.path.join(a.out, 'stills', name + '.png'), img)
@@ -268,7 +270,7 @@ def main():
     emit(sc.title_card([('SAGE-UAV', 2.4, (255, 255, 255)),
                         ('Semantic AI-Guided Exploration & Active Search', 0.95, (210, 210, 210))],
                        ['Autonomous search-and-rescue drone  |  ROS 2 - PX4 - Gazebo - YOLO',
-                        f'Mission: "{a.mission}"']), 24 * 4)
+                        f'Mission: "{a.mission}"']), 20 * 4)
 
     if a.selftest:
         sc.events.update(accepted=True, wp=(6, 9))
@@ -280,7 +282,7 @@ def main():
         sc.boxes, sc.boxes_t = [(500, 560, 60, 150, 0.83)], time.time()
         cam = np.full((960, 1280, 3), (120, 160, 110), np.uint8)
         cv2.rectangle(cam, (0, 0), (1280, 380), (200, 170, 130), -1)
-        frame = sc.compose(cam)
+        frame = sc.compose(cam, sc.boxes)
         still('selftest', frame)
         emit(frame, 48)
         emit(sc.title_card([('MISSION COMPLETE', 1.6, GREEN)], ['3 / 3 people found']), 48)
@@ -306,6 +308,7 @@ def main():
             self.create_subscription(Detection3DArray, '/sage/world_model/targets', self.on_tracks, q)
             self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.on_pos, q)
             self.create_subscription(Float32MultiArray, '/sage/energy/status', self.on_energy, q)
+            self.ring = collections.OrderedDict()
             self.last_frame = 0.0
             self.log_pos = 0
             self.t_done = None
@@ -326,9 +329,26 @@ def main():
                 sc.batt = float(m.data[0])
 
         def on_det(self, m):
-            sc.boxes = [(d.bbox.center.position.x, d.bbox.center.position.y, d.bbox.size_x, d.bbox.size_y,
-                         d.results[0].hypothesis.score if d.results else 0.0) for d in m.detections]
-            sc.boxes_t = time.time()
+            boxes = [(d.bbox.center.position.x, d.bbox.center.position.y, d.bbox.size_x, d.bbox.size_y,
+                      d.results[0].hypothesis.score if d.results else 0.0) for d in m.detections]
+            sc.boxes, sc.boxes_t = boxes, time.time()
+            self.poll_log()
+            key = (m.header.stamp.sec, m.header.stamp.nanosec)
+            cam = self.ring.get(key)
+            if cam is None:               # frame already dropped from the ring: skip, never misalign
+                return
+            frame = sc.compose(cam, boxes)
+            writer.write(frame)
+            self.frames += 1
+            if boxes and not self.first_det_saved:
+                still('first_detection', frame)
+                self.first_det_saved = True
+            if self.pending_still:
+                still(self.pending_still, frame)
+                self.pending_still = None
+            if self.frames == 40:
+                still('search_start', frame)
+            last_frame[0] = frame
 
         def on_tracks(self, m):
             sc.tracks = [(d.results[0].pose.pose.position.x, d.results[0].pose.pose.position.y)
@@ -371,24 +391,12 @@ def main():
         pending_still = None
 
         def on_image(self, m):
-            now = time.time()
-            if now - self.last_frame < 1 / 6.0:
-                return
-            self.last_frame = now
-            self.poll_log()
+            """Keep every recent camera frame, keyed by its stamp; frames are written when YOLO answers."""
             arr = np.frombuffer(m.data, np.uint8).reshape(m.height, m.width, -1)
             cam = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR) if m.encoding == 'rgb8' else arr[:, :, :3].copy()
-            frame = sc.compose(cam)
-            writer.write(frame)
-            self.frames += 1
-            if sc.boxes and not self.first_det_saved and now - sc.boxes_t < 0.5:
-                still('first_detection', frame)
-                self.first_det_saved = True
-            if self.pending_still:
-                still(self.pending_still, frame)
-                self.pending_still = None
-            if self.frames == 40:
-                still('search_start', frame)
+            self.ring[(m.header.stamp.sec, m.header.stamp.nanosec)] = cv2.resize(cam, (1280, 960))
+            while len(self.ring) > 45:
+                self.ring.popitem(last=False)
 
     rclpy.init()
     node = Rec()
@@ -401,11 +409,11 @@ def main():
         pass
     finally:
         node.poll_log()
-        last = sc.compose(None)
+        last = last_frame[0] if last_frame[0] is not None else sc.compose(None)
         if sc.report:
             tp, errs = score(sc.truth, sc.report['locations'])
             mean = sum(errs) / len(errs) if errs else float('nan')
-            emit(last, 24)
+            emit(last, 20)
             still('mission_complete', last)
             card = sc.title_card(
                 [('MISSION COMPLETE', 1.8, GREEN),
@@ -414,7 +422,7 @@ def main():
                  f"battery {sc.batt if sc.batt is not None else 0:.0f}% left",
                  'Returned home and landed autonomously'])
             still('result_card', card)
-            emit(card, 24 * 5)
+            emit(card, 20 * 5)
             json.dump({'world': a.world, 'report': sc.report, 'true_positives': tp, 'errors_m': errs,
                        'codec': codec, 'frames': node.frames}, open(os.path.join(a.out, 'summary.json'), 'w'))
         writer.release()
