@@ -208,4 +208,8 @@ if ev['report']:
                'codec': codec}, open(os.path.join(a.raw, 'render.json'), 'w'), indent=1)
 w_a.release()
 w_b.release()
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tools'))
+import faststart   # noqa: E402  (index first, so the videos stream in browsers / GitHub / LinkedIn)
+for v in ('demo_camera.mp4', 'demo_overhead.mp4'):
+    faststart.main(os.path.join(a.raw, v))
 print('done:', os.path.join(a.raw, 'demo_camera.mp4'), os.path.join(a.raw, 'demo_overhead.mp4'))

@@ -4,7 +4,7 @@ package_name = 'sage_px4_interface'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='0.1.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -16,10 +16,10 @@ setup(
     scripts=[
         'sage_px4_interface/yolo_detector_launcher.py',
     ],
-    maintainer='haidar',
-    maintainer_email='haidar@todo.todo',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    maintainer='Haidar Saad',
+    maintainer_email='117441256+haidar996@users.noreply.github.com',
+    description='SAGE-UAV: mission-driven autonomous person search for a PX4 quadrotor',
+    license='MIT',
     extras_require={
         'test': [
             'pytest',

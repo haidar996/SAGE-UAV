@@ -2,13 +2,20 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>sage_px4_interface</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="haidar@todo.todo">haidar</maintainer>
-  <license>TODO: License declaration</license>
+  <version>0.1.0</version>
+  <description>SAGE-UAV: mission-driven autonomous person search for a PX4 quadrotor (perception, 3D localization, semantic world model, active planner, safety manager, energy monitor).</description>
+  <maintainer email="117441256+haidar996@users.noreply.github.com">Haidar Saad</maintainer>
+  <license>MIT</license>
+  <url type="repository">https://github.com/haidar996/SAGE-UAV</url>
 
   <depend>rclpy</depend>
   <depend>px4_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>vision_msgs</depend>
+  <depend>tf2_msgs</depend>
+  <depend>cv_bridge</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
