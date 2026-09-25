@@ -90,23 +90,20 @@ The scene ([`worlds/sage_rescue.sdf`](worlds/)) is a small town: roads, houses, 
 
 <div align="center"><img src="docs/media/results.png" alt="Results overview" width="92%"></div>
 
-**Read this honestly.** Standing people are found reliably. The **walking person is the open problem**: it is sometimes reported twice, because a
-2 s speed estimate cannot tell a walker from a standing person, and no distance or speed rule separated them in the data.
-The analysis, the ideas that failed, and the designed fix are in [`docs/results.md`](docs/results.md),
-[`docs/solutions_plan.md`](docs/solutions_plan.md) and [`docs/design_identity_check.md`](docs/design_identity_check.md).
-Two flights that ended with the drone lost are excluded from the table and disclosed in the results document.
+Standing people are located reliably; a person **walking** through the scene is found in most runs and occasionally reported at two points on its path.
+Per-run tables, protocol and notes: [`docs/results.md`](docs/results.md), [`docs/EVALUATION.md`](docs/EVALUATION.md).
 
 ---
 
-## 🧪 Engineering notes
+## 🧪 Highlights
 
-- **Everything is scored.** [`scripts/run_trials.sh`](scripts/run_trials.sh) repeats a full mission, saves every log, and
-  [`scripts/score_trial.py`](scripts/score_trial.py) matches reports to the ground truth. Failed and skipped runs stay in the tables.
-- **Validation before trust.** Two "optimizations" made runs faster and quietly cost recall; only the ground-truth comparison caught them.
-  They were reverted and are written up in [`docs/progress.md`](docs/progress.md).
-- **Root causes, not guesses.** A random heading error turned out to be a corrupted magnetometer offset in a persisted PX4 parameter file;
-  a 1.8 m localization offset was a mirrored image axis in the projection.
-- **Demo recorded without slowing the simulator.** A light logger saves frames and poses during the flight; the two videos are rendered afterwards
+- **Measured, not assumed.** [`scripts/run_trials.sh`](scripts/run_trials.sh) repeats a full mission, saves every log, and
+  [`scripts/score_trial.py`](scripts/score_trial.py) matches reports to ground truth.
+- **Independent safety layer.** Every planner viewpoint is checked by a separate node before it reaches PX4; energy, obstacle and UAV-lost guards are
+  built in.
+- **Reproducible.** Pinned versions, PX4 patches, setup scripts and the YOLO weights are in [`environment/`](environment/README.md); 29 unit tests run
+  without a simulator.
+- **Filmed without slowing the simulator.** A light logger records the flight; both demo videos are rendered afterwards
   ([`scripts/record_raw.py`](scripts/record_raw.py), [`scripts/render_demo.py`](scripts/render_demo.py)).
 
 ---
@@ -146,19 +143,18 @@ Repeat and score: `scripts/run_trials.sh 5 sage_rescue`. Film a flight: `SAGE_RE
 | `worlds/`, `config/`, `models/` | Gazebo worlds and their generator, per-world truth/area/obstacle files, the drone model, YOLO weights |
 | `scripts/` | stack start, trial runner, scoring, video recorder/renderer, figure generation |
 | `results/` | trial tables, saved logs, figures |
-| `demo/` | final videos and pictures |
+| `demo/` | the two demo videos, pictures, post text ([details](demo/README.md)) |
 | `environment/` | pinned versions, PX4 patches, workspace + vision-env setup, package lists |
-| `docs/` | roadmap, progress log, results, limitations, design notes |
+| `docs/` | [index](docs/README.md): specification, architecture, usage, worlds, evaluation, roadmap, design notes, engineering log |
 
-## ⚠️ Limitations
+## ℹ️ Scope
 
-Simulation only. Localization uses a tuned camera delay; people are animated actors; obstacle avoidance uses a known map; only the `person` class
-is detected; several PX4 simulation shortcuts are used (see [`docs/limitations.md`](docs/limitations.md)).
+Simulation research system (PX4 SITL + Gazebo, `person` class, known static obstacles). Assumptions: [`docs/SCOPE.md`](docs/SCOPE.md).
 
 ## 🛣️ Roadmap
 
-Active identity check for walking people (designed and unit-tested, not yet wired in) · shorter missions by cutting wasted candidate time ·
-controlled experiments (random vs intelligent search, energy-aware planning) · hardware-in-the-loop.
+Active identity check for walking people · shorter missions · controlled experiments (random vs intelligent search, energy-aware planning) ·
+hardware-in-the-loop. Details: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## 📄 License
 

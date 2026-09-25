@@ -1,3 +1,7 @@
+# Development log
+
+Chronological engineering diary of the project (decisions, measurements, experiments). For the current state read the [documentation index](README.md).
+
 # SAGE-UAV progress log
 
 ## 2026-09-23 — restart baseline + 18.3a

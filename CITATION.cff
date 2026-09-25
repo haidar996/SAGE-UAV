@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use SAGE-UAV, please cite it as below."
+title: "SAGE-UAV: Semantic AI-Guided Exploration and Active Search for autonomous UAVs"
+type: software
+authors:
+  - family-names: Saad
+    given-names: Haidar
+license: MIT
+repository-code: "https://github.com/haidar996/SAGE-UAV"
+keywords: [UAV, ROS 2, PX4, Gazebo, search and rescue, computer vision, active perception, semantic mapping]
+version: 0.1.0
+date-released: "2026-09-25"

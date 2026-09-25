@@ -54,7 +54,7 @@ cd ~/SAGE-UAV && SAGE_WORLD=sage_rescue scripts/stack_verified.sh 1800 && SAGE_W
 `src/sage_px4_interface/sage_px4_interface/yolo_detector_launcher.py` starts with `#!/home/haidar/sage_vision_env/bin/python`; edit the first line
 if your home directory differs.
 
-## Things that bit us (worth knowing)
+## Practical notes
 
 - Delete PX4's persisted `parameters.bson` before each SITL start (`stack.sh` does): a learned bad magnetometer offset broke yaw alignment.
 - Extra Gazebo cameras and the Gazebo GUI cost real-time factor; below about 0.5 the drone becomes unreliable. Record with the light logger

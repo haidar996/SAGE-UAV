@@ -189,7 +189,7 @@ def linkedin_card(sets):
         ax.text(x, 1.9, small, fontsize=12, color='#b8c7d6')
     ax.text(0.62, 0.7, 'ROS 2  |  PX4  |  Gazebo  |  YOLO  |  semantic mapping  |  active perception',
             fontsize=12, color='#6f8296')
-    ax.text(0.62, 0.32, f"Simulation results, {best['runs']} scored runs (see docs/limitations.md)",
+    ax.text(0.62, 0.32, f"Simulation results, {best['runs']} scored runs (see docs/SCOPE.md)",
             fontsize=9.5, color='#56697c')
     fig.savefig(os.path.join(FIG, 'linkedin_card.png'), facecolor=fig.get_facecolor())
     plt.close(fig)

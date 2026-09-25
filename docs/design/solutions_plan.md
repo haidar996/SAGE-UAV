@@ -45,13 +45,13 @@ k=5: static 86 % vs walker 32 %; k=8: static 59 % vs walker 11 %; k=12: 41 % vs 
 "confirmed static" with ~87 % precision, but 41 % of static entries never reach it, so it cannot drive merging
 alone without dropping real people.
 Plan: (a) use it to skip revisits for confirmed-static entries in the active identity check
-(docs/design_identity_check.md) - the check then covers only unconfirmed entries that have a neighbour
+(docs/design/identity_check.md) - the check then covers only unconfirmed entries that have a neighbour
 within 8 m, roughly halving its cost; (b) merge only on positive absence evidence (both ends ABSENT/MOVER at
 the revisit), never on speed or distance. Free negative information (a verified spot inside the camera view
 with no detection) is a cheaper second source once the localizer exposes the camera model to the planner.
 
 ## P4 - Reproducibility and honesty (MEDIUM)
-docs/limitations.md lists all simulation-only shortcuts. Trials: >= 5 per configuration on an idle machine,
+docs/SCOPE.md lists all simulation-only shortcuts. Trials: >= 5 per configuration on an idle machine,
 health gate + retries stay; report skipped/lost runs explicitly in the tables.
 
 ## Order of work
