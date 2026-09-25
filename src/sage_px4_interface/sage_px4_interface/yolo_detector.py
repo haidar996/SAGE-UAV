@@ -152,9 +152,14 @@ class YOLODetector(Node):
                     cv2.rectangle(vis, (p1[0], p1[1] - 20), (p1[0] + 118, p1[1]), (96, 201, 66), -1)
                     cv2.putText(vis, f"person {confidence:.2f}", (p1[0] + 4, p1[1] - 6),
                                 cv2.FONT_HERSHEY_DUPLEX, 0.5, (20, 20, 20), 1, cv2.LINE_AA)
-                out = self.bridge.cv2_to_imgmsg(vis, encoding="bgr8")
+                # built by hand: cv_bridge.cv2_to_imgmsg fails inside the vision venv
+                out = Image()
                 if header is not None:
                     out.header = header
+                out.height, out.width = vis.shape[0], vis.shape[1]
+                out.encoding = "bgr8"
+                out.step = vis.shape[1] * 3
+                out.data = vis.tobytes()
                 self.annotated_pub.publish(out)
 
             detection_msg = Detection2DArray()
