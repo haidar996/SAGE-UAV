@@ -15,3 +15,6 @@ log/
 results/raw/*/cam/
 results/raw/*/top/
 results/raw/*/*.mp4
+
+# private planning material (chat transcript, plan paste): kept locally, never pushed
+docs/private/
