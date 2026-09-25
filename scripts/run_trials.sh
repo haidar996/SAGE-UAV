@@ -13,6 +13,10 @@ for t in $(seq 1 $N); do
   echo "=== trial $t/$N ($id)"
   if ! ~/SAGE-UAV/scripts/stack_verified.sh $DRAIN; then echo "$id,$(date +%F),$SAGE_WORLD,stack_failed,,,,,,,," >> $CSV; continue; fi
   ~/SAGE-UAV/scripts/start_mission_nodes.sh; sleep 10
+  if [ -n "$SAGE_RECORD" ]; then   # SAGE_RECORD=1: film this trial (results/demo/<id>/demo.mp4)
+    setsid nohup python3 ~/SAGE-UAV/scripts/record_demo.py --world $SAGE_WORLD --out $R/demo/$id --mission "$MISSION" > /tmp/sage_logs/recorder.log 2>&1 < /dev/null &
+    sleep 3
+  fi
   ros2 topic pub --once /sage/mission/command std_msgs/msg/String "{data: '$MISSION'}" >/dev/null
   for i in $(seq 1 400); do grep -q "MISSION COMPLETE" /tmp/sage_logs/planner.log && break; sleep 4; done
   sleep 25   # let it return home and land
