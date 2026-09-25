@@ -20,7 +20,14 @@ An autonomous quadrotor that understands a mission such as *"Find all people in 
 
 ## Results (simulation)
 
-See `results/summary.md`, `results/figures/`, `docs/progress.md` (full log), `docs/limitations.md` (read this before quoting numbers).
+| world | runs | people found | precision | mean error | mission time (median) |
+|---|---|---|---|---|---|
+| `sage_sar` - 3 standing people | 5 | 100% | 100% | 0.30 m | 242 s |
+| `sage_rescue` - rich scene, 3 standing + 1 walking | 5 | 85% | 85% | 0.44 m | 630 s |
+| `sage_hard` - 3 standing + 2 walking, obstacles | 4 | 100% | 91% | 0.43 m | 895 s |
+
+The walking person is the open problem (reported twice in some runs). Details: `docs/results.md`, `results/summary.md`,
+`docs/progress.md` (full log), `docs/limitations.md` (read this before quoting numbers). Demo: `demo/sage_uav_demo.mp4`.
 
 ![results](results/figures/results_overview.png)
 

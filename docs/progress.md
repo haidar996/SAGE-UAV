@@ -256,3 +256,22 @@ Findings and changes (all committed):
 - Docs: docs/limitations.md (all simulation-only shortcuts), docs/solutions_plan.md, docs/design_identity_check.md (active identity check, NOT implemented; pure logic + 8 tests exist in identity_resolution.py).
 - Web search summary: re-identification research relies on appearance (useless with identical actors); PX4 leaves offboard on setpoint loss (COM_OF_LOSS_T) then runs COM_OBL_RC_ACT; ROS_LOCALHOST_ONLY restricts DDS to loopback (not applied: unproven and every launch script would need it). GLiNER/spaCy are keyless local alternatives to the Claude parser (not installed: 4.5 GB disk free); the rule-based parser stays the default.
 - Mistakes made this session (kept for honesty): 3.2 m merge radius lost S3; early candidate drop lost S3/W2; several `pgrep -f` kills terminated the tool shell or left stray runners.
+
+## FINAL STATE at the 08:00 stop (2026-09-25) - written when work was stopped
+Everything was stopped (no simulation, recorder or runner left running). Note: the wall clock showed ~13:07 when the stop was applied, i.e. the last trial (0925_073827) finished after the 08:00 deadline in the background; no further work was started after that, only packaging.
+
+Trial results (details in docs/results.md, results/trials_*.csv, results/summary.md):
+- sage_sar (3 static), 5 runs: 100 % found, 0 false, 0.30 m, median 242 s.
+- sage_rescue (new, rich scene, 3 static + 1 walker), 5 runs: 17/20 found, 3 false (walker reported twice), 0.44 m mean error, median 630 s (518-1200 s).
+- sage_hard (3 static + 2 walkers), 4 scored runs of the final merge config: 20/20 found, 2 false, 0.43 m, median 895 s. sage_hard_long (longer walker paths): 2 runs, both hit the 900 s timeout, W1 never swept.
+- Demo: demo/sage_uav_demo.mp4 (96 s, 12x time-lapse of run 0925_071213: 4/4 people, no duplicate, but the run hit the 1200 s mission timeout), demo/sage_uav_demo_full.mp4, demo/pictures/*, figures in results/figures/ (architecture, results_overview, linkedin_card), post text in docs/linkedin_post.md.
+
+Late changes made during the last hours: annotated frames (YOLO publishes JPEG frames with boxes when SAGE_YOLO_ANNOTATE=1, set by SAGE_RECORD=1) for frame-exact video; recorder tail fixes; per-world .env files now tracked; scripts/finalize_demo.py and scripts/cut_short.py.
+
+Problem list and what is left (importance / rough effort):
+1. HIGH - mission time and lost coverage: ~28 % of run time is candidate handling; some runs hit the timeout (rescue 0925_071213 at 1200 s). Needs per-tick evidence logging to design a safe early abort, or fewer phantom tracks. 0.5-1 day.
+2. HIGH - reliability: ~37 % of start attempts fail the RTF health gate, ~7 % startup flip, one unexplained 17 s stall + flyaway. Guards exist (uav_lost, Hold on offboard loss, 5 start attempts); root cause not found. 0.5 day.
+3. MEDIUM - walker duplicates: active identity check designed (docs/design_identity_check.md), decision logic + 8 tests exist (identity_resolution.py), NOT wired into the planner. 0.5-1 day.
+4. MEDIUM - experiments A-F from steps.md not run (no controlled comparisons yet) and the energy model is time-based only. 1-2 days mostly sim time.
+5. LOW (parked): Claude parser live test (needs API key; rule parser is the default), world-model motion label quality, energy-model realism.
+6. Push: git repository has no remote; final step below.
