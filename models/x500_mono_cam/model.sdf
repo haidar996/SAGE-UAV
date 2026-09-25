@@ -13,7 +13,7 @@
       <child>camera_link</child>
       <pose relative_to="base_link">.12 .03 .242 0 0 0</pose>
     </joint>
-      <!-- SAGE demo: nadir camera 10 m above the drone (sees the drone from the top); negligible mass -->
+      <!-- SAGE demo: nadir camera 5 m above the drone (sees the drone from the top); negligible mass -->
     <link name="top_cam_link">
       <pose>0 0 0.3 0 0 0</pose>
       <inertial>
@@ -21,7 +21,7 @@
         <inertia><ixx>1e-6</ixx><ixy>0</ixy><ixz>0</ixz><iyy>1e-6</iyy><iyz>0</iyz><izz>1e-6</izz></inertia>
       </inertial>
       <sensor name="top_cam" type="camera">
-        <pose>0 0 9.7 0 1.5708 0</pose>
+        <pose>0 0 4.7 0 1.5708 0</pose>
         <always_on>1</always_on>
         <update_rate>2</update_rate>
         <topic>uav_top_cam</topic>

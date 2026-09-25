@@ -206,14 +206,14 @@ class Scene:
         return img
 
     def compose_top(self, top):
-        """Gazebo view from a camera 10 m above the drone (drone-mounted, looks straight down).
+        """Gazebo view from a camera 5 m above the drone (drone-mounted, looks straight down).
         The raw image has the drone's nose up; it is rotated so that NORTH is up, shown in a circular window.
         Nothing is drawn over the drone itself; verified people appear as rings when they are in view."""
         img = np.full((H, W, 3), BG, np.uint8)
         S = 720
         alt = max(0.5, -self.pose[2]) if self.pose else 2.0
         heading = self.pose[3] if self.pose else 0.0
-        ground_w = 2.0 * (10.0 + alt) * math.tan(0.4)          # metres across the image (hfov 0.8 rad)
+        ground_w = 2.0 * (5.0 + alt) * math.tan(0.4)           # metres across the image (camera 5 m above the drone, hfov 0.8 rad)
         scale = S / ground_w
         if top is not None:
             M = cv2.getRotationMatrix2D((top.shape[1] / 2.0, top.shape[0] / 2.0), -math.degrees(heading), 1.0)
