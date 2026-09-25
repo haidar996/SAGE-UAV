@@ -54,7 +54,8 @@ class Scene:
         self.pose = None            # north, east, down, heading
         self.batt = None
         self.boxes, self.boxes_t = [], 0.0
-        self.t0 = time.time()
+        self.now = time.time
+        self.t0 = self.now()
         self.events = {'accepted': False, 'candidate': False, 'complete': False, 'landed': False,
                        'localizing': 0.0, 'wp': (0, 0)}
         self.report = None
@@ -67,6 +68,7 @@ class Scene:
         self.scale = self.msize / (self.bounds[1] - self.bounds[0])
         self.base = self.make_base()
         self.top = None
+        self.trail_keep = None      # keep only the last N trail points (None = all)
 
     def m2p(self, n, e):
         b = self.bounds
@@ -117,9 +119,9 @@ class Scene:
             return 5
         if ev['candidate']:
             return 4
-        if time.time() - ev['localizing'] < 2.0:
+        if self.now() - ev['localizing'] < 2.0:
             return 3
-        if time.time() - self.boxes_t < 1.0 and self.boxes:
+        if self.now() - self.boxes_t < 1.0 and self.boxes:
             return 2
         return 1 if ev['accepted'] else 0
 
@@ -143,8 +145,9 @@ class Scene:
         # map layers
         for w in self.visited:
             cv2.circle(img, self.m2p(*w), 3, (120, 150, 120), -1)
-        for i in range(1, len(self.trail)):
-            cv2.line(img, self.m2p(*self.trail[i - 1]), self.m2p(*self.trail[i]), (255, 200, 90), 2, cv2.LINE_AA)
+        tr = self.trail[-self.trail_keep:] if self.trail_keep else self.trail
+        for i in range(1, len(tr)):
+            cv2.line(img, self.m2p(*tr[i - 1]), self.m2p(*tr[i]), (255, 200, 90), 2, cv2.LINE_AA)
         for (n, e) in self.tracks:
             p = self.m2p(n, e)
             cv2.drawMarker(img, p, (60, 220, 240), cv2.MARKER_CROSS, 9, 1)
@@ -184,7 +187,7 @@ class Scene:
             cv2.rectangle(img, (x - 6, y0 + 46), (x + tw + 6, y0 + 74), col, -1 if i == st else 1)
             put(img, name, (x, y0 + 66), 0.5, (20, 20, 20) if i == st else (200, 200, 200))
             x += tw + 26
-        el = time.time() - self.t0
+        el = self.now() - self.t0
         sim_s = el * self.speed if False else el
         put(img, f'TIME {int(sim_s // 60):02d}:{int(sim_s % 60):02d}', (18, y0 + 110), 0.7, (255, 255, 255))
         alt = f'{-self.pose[2]:.1f} m' if self.pose else '--'
@@ -214,8 +217,11 @@ class Scene:
             return (int(S / 2 + e * scale), int(S / 2 - n * scale))
         n0, n1, e0, e1 = self.area
         cv2.rectangle(img, tp(n1, e0), tp(n0, e1), (210, 235, 210), 1)
-        for i in range(1, len(self.trail)):
-            cv2.line(img, tp(*self.trail[i - 1]), tp(*self.trail[i]), (255, 200, 90), 2, cv2.LINE_AA)
+        tr = self.trail[-self.trail_keep:] if self.trail_keep else self.trail
+        for i in range(1, len(tr)):
+            f = i / max(1, len(tr) - 1)              # 0 = oldest (faint) ... 1 = newest (bright)
+            col = (int(60 + 195 * f), int(90 + 110 * f), int(40 + 50 * f))
+            cv2.line(img, tp(*tr[i - 1]), tp(*tr[i]), col, 1 + int(2 * f), cv2.LINE_AA)
         for k, (n, e) in enumerate(self.verified, 1):
             p = tp(n, e)
             cv2.circle(img, p, 22, GREEN, 3, cv2.LINE_AA)
@@ -254,7 +260,7 @@ class Scene:
             col = ACC if i == st else ((90, 110, 90) if i < st else (70, 70, 70))
             cv2.rectangle(img, (x0, y), (x0 + 200, y + 26), col, -1 if i == st else 1)
             put(img, f'{i + 1}  {name}', (x0 + 10, y + 19), 0.5, (20, 20, 20) if i == st else (200, 200, 200))
-        el = time.time() - self.t0
+        el = self.now() - self.t0
         put(img, f'TIME {int(el // 60):02d}:{int(el % 60):02d}', (x0, 500), 0.75, (255, 255, 255))
         alt = f'{-self.pose[2]:.1f} m' if self.pose else '--'
         put(img, f'ALT {alt}', (x0 + 210, 500), 0.75, (255, 255, 255))
