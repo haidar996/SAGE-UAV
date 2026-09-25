@@ -206,38 +206,39 @@ class Scene:
         return img
 
     def compose_top(self, top):
-        """Gazebo overhead view (fixed camera 30 m up, north up) + overlays + status panel."""
+        """Gazebo view from a camera 10 m above the drone (drone-mounted, looks straight down).
+        The raw image has the drone's nose up; it is rotated so that NORTH is up, shown in a circular window.
+        Nothing is drawn over the drone itself; verified people appear as rings when they are in view."""
         img = np.full((H, W, 3), BG, np.uint8)
         S = 720
+        alt = max(0.5, -self.pose[2]) if self.pose else 2.0
+        heading = self.pose[3] if self.pose else 0.0
+        ground_w = 2.0 * (10.0 + alt) * math.tan(0.4)          # metres across the image (hfov 0.8 rad)
+        scale = S / ground_w
         if top is not None:
-            img[0:S, 0:S] = cv2.resize(top, (S, S))
-        scale = S / 30.9
-
-        def tp(n, e):
-            return (int(S / 2 + e * scale), int(S / 2 - n * scale))
-        n0, n1, e0, e1 = self.area
-        cv2.rectangle(img, tp(n1, e0), tp(n0, e1), (210, 235, 210), 1)
-        tr = self.trail[-self.trail_keep:] if self.trail_keep else self.trail
-        for i in range(1, len(tr)):
-            f = i / max(1, len(tr) - 1)              # 0 = oldest (faint) ... 1 = newest (bright)
-            col = (int(60 + 195 * f), int(90 + 110 * f), int(40 + 50 * f))
-            cv2.line(img, tp(*tr[i - 1]), tp(*tr[i]), col, 1 + int(2 * f), cv2.LINE_AA)
-        for k, (n, e) in enumerate(self.verified, 1):
-            p = tp(n, e)
-            cv2.circle(img, p, 22, GREEN, 3, cv2.LINE_AA)
-            cv2.rectangle(img, (p[0] + 26, p[1] - 22), (p[0] + 26 + 44, p[1] - 2), (20, 20, 20), -1)
-            put(img, f'P{k}', (p[0] + 32, p[1] - 6), 0.6, (255, 255, 255), 1)
+            M = cv2.getRotationMatrix2D((top.shape[1] / 2.0, top.shape[0] / 2.0), -math.degrees(heading), 1.0)
+            rot = cv2.warpAffine(top, M, (top.shape[1], top.shape[0]), flags=cv2.INTER_LINEAR, borderValue=(24, 20, 18))
+            view = cv2.resize(rot, (S, S), interpolation=cv2.INTER_CUBIC)
+        else:
+            view = np.full((S, S, 3), (60, 60, 60), np.uint8)
+        mask = np.zeros((S, S), np.uint8)
+        cv2.circle(mask, (S // 2, S // 2), S // 2 - 6, 255, -1)
+        img[0:S, 0:S] = cv2.bitwise_and(view, view, mask=mask)
+        cv2.circle(img, (S // 2, S // 2), S // 2 - 6, (230, 230, 230), 2, cv2.LINE_AA)
+        # verified people that are inside the window: rings + labels (north-up, drone at the centre)
         if self.pose is not None:
-            n, e, _, hd = self.pose
-            p = tp(n, e)
-            cv2.circle(img, p, 20, (40, 140, 255), 2, cv2.LINE_AA)
-            tip = (int(p[0] + 28 * math.sin(hd)), int(p[1] - 28 * math.cos(hd)))
-            cv2.arrowedLine(img, p, tip, (40, 140, 255), 3, cv2.LINE_AA, tipLength=0.4)
-            put(img, 'UAV', (p[0] + 24, p[1] + 34), 0.55, (40, 170, 255), 1)
-        cv2.rectangle(img, (0, 0), (300, 34), (0, 0, 0), -1)
-        put(img, 'GAZEBO OVERHEAD VIEW', (10, 24), 0.55, (255, 255, 255))
-        put(img, 'N', (S - 30, 30), 0.7, (255, 255, 255), 2)
-        cv2.arrowedLine(img, (S - 22, 70), (S - 22, 40), (255, 255, 255), 2, tipLength=0.4)
+            for k, (n, e) in enumerate(self.verified, 1):
+                px = int(S / 2 + (e - self.pose[1]) * scale)
+                py = int(S / 2 - (n - self.pose[0]) * scale)
+                if math.hypot(px - S / 2, py - S / 2) < S / 2 - 40:
+                    cv2.circle(img, (px, py), 34, GREEN, 3, cv2.LINE_AA)
+                    put(img, f'P{k}', (px + 38, py - 26), 0.7, (255, 255, 255), 2)
+        cv2.rectangle(img, (0, 0), (330, 34), (0, 0, 0), -1)
+        put(img, 'GAZEBO VIEW FROM ABOVE THE DRONE', (10, 24), 0.55, (255, 255, 255))
+        cv2.arrowedLine(img, (S - 40, 92), (S - 40, 46), (255, 255, 255), 3, tipLength=0.35)
+        put(img, 'N', (S - 51, 36), 0.8, (255, 255, 255), 2)
+        cv2.line(img, (60, S - 40), (60 + int(scale), S - 40), (255, 255, 255), 3)
+        put(img, '1 m', (60, S - 50), 0.6, (255, 255, 255), 1)
         # status panel
         x0 = S + 24
         cv2.rectangle(img, (S, 0), (W, H), (30, 25, 22), -1)
@@ -258,21 +259,43 @@ class Scene:
         for i, name in enumerate(STAGES):
             y = 232 + i * 34
             col = ACC if i == st else ((90, 110, 90) if i < st else (70, 70, 70))
-            cv2.rectangle(img, (x0, y), (x0 + 200, y + 26), col, -1 if i == st else 1)
+            cv2.rectangle(img, (x0, y), (x0 + 190, y + 26), col, -1 if i == st else 1)
             put(img, f'{i + 1}  {name}', (x0 + 10, y + 19), 0.5, (20, 20, 20) if i == st else (200, 200, 200))
+        # mini map (whole search area, drawn) for context
+        MS, mx0, my0 = 290, x0 + 230, 200
+        n0, n1, e0, e1 = self.area
+        bn0, bn1, be0, be1 = n0 - 2.5, n1 + 2.5, e0 - 2.5, e1 + 2.5
+        ms = MS / (bn1 - bn0)
+
+        def mm(n, e):
+            return (int(mx0 + (e - be0) * ms), int(my0 + (bn1 - n) * ms))
+        cv2.rectangle(img, (mx0, my0), (mx0 + MS, my0 + MS), (46, 60, 44), -1)
+        cv2.rectangle(img, mm(n1, e0), mm(n0, e1), (150, 200, 150), 1)
+        for o in self.obst:
+            cv2.rectangle(img, mm(o[1], o[2]), mm(o[0], o[3]), (90, 110, 130), -1)
+        tr = self.trail[-self.trail_keep:] if self.trail_keep else self.trail
+        for i in range(1, len(tr)):
+            cv2.line(img, mm(*tr[i - 1]), mm(*tr[i]), (255, 200, 90), 1, cv2.LINE_AA)
+        for k, (n, e) in enumerate(self.verified, 1):
+            cv2.circle(img, mm(n, e), 5, GREEN, -1)
+            put(img, f'P{k}', (mm(n, e)[0] + 7, mm(n, e)[1] - 4), 0.4, (255, 255, 255), 1)
+        if self.pose is not None:
+            p = mm(self.pose[0], self.pose[1])
+            cv2.circle(img, p, 4, (40, 140, 255), -1)
+            cv2.line(img, p, (int(p[0] + 12 * math.sin(heading)), int(p[1] - 12 * math.cos(heading))), (40, 140, 255), 2)
+        put(img, 'search area', (mx0, my0 + MS + 16), 0.4, (170, 170, 170))
         el = self.now() - self.t0
-        put(img, f'TIME {int(el // 60):02d}:{int(el % 60):02d}', (x0, 500), 0.75, (255, 255, 255))
-        alt = f'{-self.pose[2]:.1f} m' if self.pose else '--'
-        put(img, f'ALT {alt}', (x0 + 210, 500), 0.75, (255, 255, 255))
-        put(img, f'FOUND {len(self.verified)}', (x0, 550), 1.0, GREEN, 2)
+        put(img, f'TIME {int(el // 60):02d}:{int(el % 60):02d}', (x0, 520), 0.75, (255, 255, 255))
+        put(img, f'ALT {alt:.1f} m', (x0 + 210, 520), 0.75, (255, 255, 255))
+        put(img, f'FOUND {len(self.verified)}', (x0, 570), 1.0, GREEN, 2)
         for k, (n, e) in enumerate(self.verified[-5:], max(1, len(self.verified) - 4)):
-            put(img, f'P{k}  ({n:.1f}, {e:.1f}) m', (x0 + 210, 528 + (k - max(1, len(self.verified) - 4)) * 22), 0.45, (190, 240, 190))
+            put(img, f'P{k}  ({n:.1f}, {e:.1f}) m', (x0 + 210, 548 + (k - max(1, len(self.verified) - 4)) * 20), 0.45, (190, 240, 190))
         b = self.batt if self.batt is not None else 100.0
-        put(img, 'BATTERY', (x0, 640), 0.5, (200, 200, 200))
-        cv2.rectangle(img, (x0 + 100, 624), (x0 + 340, 646), (90, 90, 90), 1)
-        cv2.rectangle(img, (x0 + 102, 626), (x0 + 102 + int(236 * max(0, min(100, b)) / 100), 644),
+        put(img, 'BATTERY', (x0, 660), 0.5, (200, 200, 200))
+        cv2.rectangle(img, (x0 + 100, 644), (x0 + 340, 666), (90, 90, 90), 1)
+        cv2.rectangle(img, (x0 + 102, 646), (x0 + 102 + int(236 * max(0, min(100, b)) / 100), 664),
                       GREEN if b > 30 else (60, 60, 230), -1)
-        put(img, f'{b:.0f}%', (x0 + 352, 643), 0.55, (255, 255, 255))
+        put(img, f'{b:.0f}%', (x0 + 352, 663), 0.55, (255, 255, 255))
         put(img, f'{self.speed:g}x speed', (x0, 700), 0.5, (150, 150, 150))
         return img
 
@@ -378,8 +401,12 @@ def main():
         still('selftest', frame)
         emit(frame, 48)
         emit(sc.title_card([('MISSION COMPLETE', 1.6, GREEN)], ['3 / 3 people found']), 48)
-        fake = np.full((800, 800, 3), (80, 140, 90), np.uint8)
-        cv2.rectangle(fake, (300, 300), (420, 380), (120, 130, 150), -1)
+        fake = np.full((448, 448, 3), (80, 140, 90), np.uint8)
+        cv2.rectangle(fake, (60, 60), (160, 130), (120, 130, 150), -1)
+        cv2.line(fake, (204, 204), (244, 244), (30, 30, 30), 6)
+        cv2.line(fake, (204, 244), (244, 204), (30, 30, 30), 6)
+        for c_ in ((204, 204), (244, 244), (204, 244), (244, 204)):
+            cv2.circle(fake, c_, 9, (60, 60, 60), -1)
         tf = sc.compose_top(fake)
         still('selftest_top', tf)
         emit(tf, 48, top=True)

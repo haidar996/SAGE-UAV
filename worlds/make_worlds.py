@@ -194,14 +194,7 @@ def build_rescue(world='sage_rescue'):
                                        ('crate_a', -10.0, 4.0, 1.0, 1.0, 0.8, '0.6 0.45 0.25'),
                                        ('crate_b', 9.5, 2.0, 1.0, 1.0, 0.8, '0.6 0.45 0.25')]:
         body += box(name, n, e, sn, se, h, rgb, False)
-    # fixed overhead camera for the demo video: 30 m above the origin, looking straight down,
-    # image up = north, image right = east (yaw pi/2 after pitch pi/2); ~32.6 m of ground across the image
-    body += '''
-    <model name="overview_cam"><static>true</static><pose>0 0 30 0 1.5708 1.5708</pose>
-      <link name="link"><sensor name="cam" type="camera"><always_on>1</always_on><update_rate>2</update_rate>
-        <topic>overview_cam</topic>
-        <camera><horizontal_fov>0.95</horizontal_fov><image><width>384</width><height>384</height></image>
-        <clip><near>0.5</near><far>100</far></clip></camera></sensor></link></model>'''
+    # (the demo top view comes from a camera mounted on the drone model: models/x500_mono_cam/model.sdf)
     open(os.path.join(HERE, f'{world}.sdf'), 'w', encoding='utf-8').write(head + body + '\n  </world>\n</sdf>\n')
 
     truth = [{'id': k, 'type': 'static', 'points': [list(p)]} for k, p in RESCUE_STATIC.items()]

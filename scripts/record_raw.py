@@ -30,7 +30,7 @@ class Raw(Node):
         super().__init__('sage_raw_recorder')
         q = qos_profile_sensor_data
         self.create_subscription(CompressedImage, '/sage/perception/annotated/compressed', self.on_cam, q)
-        self.create_subscription(CompressedImage, '/overview_cam/compressed', self.on_top, q)
+        self.create_subscription(CompressedImage, '/uav_top_cam/compressed', self.on_top, q)
         self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.on_pos, q)
         self.create_subscription(Float32MultiArray, '/sage/energy/status', self.on_energy, q)
         self.pose = open(os.path.join(a.out, 'pose.jsonl'), 'a')

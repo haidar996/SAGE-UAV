@@ -15,7 +15,8 @@ B=~/PX4-Autopilot/build/px4_sitl_default/rootfs
 # the EKF flag the compass as disturbed (yaw never aligned, random heading
 # error, preflight failures).
 rm -f $B/parameters.bson $B/parameters_backup.bson
-cd $B && HEADLESS=1 PX4_GZ_WORLD=$SAGE_WORLD PX4_SYS_AUTOSTART=4019 PX4_SIM_MODEL=gz_x500_mono_cam run px4 ../bin/px4 -d ../etc
+HL=1; [ -n "$SAGE_GUI" ] && HL=""   # SAGE_GUI=1: show the Gazebo window
+cd $B && HEADLESS=$HL PX4_GZ_WORLD=$SAGE_WORLD PX4_SYS_AUTOSTART=4019 PX4_SIM_MODEL=gz_x500_mono_cam run px4 ../bin/px4 -d ../etc
 cd ~/Micro-XRCE-DDS-Agent/build && run xrce ./MicroXRCEAgent udp4 -p 8888
 wait_for(){ pat=$1; limit=$2; for i in $(seq 1 $limit); do grep -q "$pat" $S/px4.log 2>/dev/null && return 0; sleep 2; done; return 1; }
 wait_for "Startup script returned" 60 || { echo "STARTUP_TIMEOUT"; exit 2; }
@@ -31,7 +32,7 @@ echo "arming_state=$a"
 sleep 10
 P=/world/$SAGE_WORLD/model/x500_mono_cam_0/link/camera_link/sensor/imager
 run bridge_img ros2 run ros_gz_bridge parameter_bridge "$P/image@sensor_msgs/msg/Image[gz.msgs.Image"
-run bridge_top ros2 run ros_gz_image image_bridge /overview_cam
+run bridge_top ros2 run ros_gz_image image_bridge /uav_top_cam
 run bridge_info ros2 run ros_gz_bridge parameter_bridge "$P/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo"
 run yolo env SAGE_YOLO_ANNOTATE=${SAGE_RECORD:+1} ~/sage_vision_env/bin/python ~/sage_ws/install/sage_px4_interface/lib/sage_px4_interface/yolo_detector_launcher.py
 # Localizer attitude source: px4 (default, the PX4 estimate) or gz_truth
