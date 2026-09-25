@@ -3,7 +3,7 @@
 S=/tmp/sage_logs
 DRAIN=${1:-600}
 export SAGE_WORLD=${SAGE_WORLD:-sage_test}
-for pat in "sage_energy_monitor" "sage_viewpoint_planner" "sage_mission_manager" "offboard_position_nod" "sage_semantic_world" "sage_target_localizer" "yolo_detector_launcher" "parameter_bridge" "MicroXRCEAgent" "bin/px4 -d" "gz sim"; do
+for pat in "sage_energy_monitor" "sage_viewpoint_planner" "sage_mission_manager" "offboard_position_nod" "sage_semantic_world" "sage_target_localizer" "yolo_detector_launcher" "parameter_bridge" "image_bridge" "MicroXRCEAgent" "bin/px4 -d" "gz sim"; do
   ps -eo pid,args | grep -F "$pat" | grep -v grep | grep -v "bash -c" | grep -v "stack.sh" | awk '{print $1}' | xargs -r kill -9
 done
 sleep 3
@@ -31,6 +31,7 @@ echo "arming_state=$a"
 sleep 10
 P=/world/$SAGE_WORLD/model/x500_mono_cam_0/link/camera_link/sensor/imager
 run bridge_img ros2 run ros_gz_bridge parameter_bridge "$P/image@sensor_msgs/msg/Image[gz.msgs.Image"
+run bridge_top ros2 run ros_gz_image image_bridge /overview_cam
 run bridge_info ros2 run ros_gz_bridge parameter_bridge "$P/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo"
 run yolo env SAGE_YOLO_ANNOTATE=${SAGE_RECORD:+1} ~/sage_vision_env/bin/python ~/sage_ws/install/sage_px4_interface/lib/sage_px4_interface/yolo_detector_launcher.py
 # Localizer attitude source: px4 (default, the PX4 estimate) or gz_truth

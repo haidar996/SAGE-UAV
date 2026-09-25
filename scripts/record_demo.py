@@ -66,6 +66,7 @@ class Scene:
         self.my0 = HDR + 10
         self.scale = self.msize / (self.bounds[1] - self.bounds[0])
         self.base = self.make_base()
+        self.top = None
 
     def m2p(self, n, e):
         b = self.bounds
@@ -198,7 +199,75 @@ class Scene:
         cv2.rectangle(img, (112, y0 + 136), (112 + int(216 * max(0, min(100, b)) / 100), y0 + 152),
                       GREEN if b > 30 else (60, 60, 230), -1)
         put(img, f'{b:.0f}%', (342, y0 + 151), 0.55, (255, 255, 255))
-        put(img, f'{self.speed:g}x time-lapse', (W - 200, y0 + 170), 0.5, (150, 150, 150))
+        put(img, f'{self.speed:g}x speed', (W - 170, y0 + 170), 0.5, (150, 150, 150))
+        return img
+
+    def compose_top(self, top):
+        """Gazebo overhead view (fixed camera 30 m up, north up) + overlays + status panel."""
+        img = np.full((H, W, 3), BG, np.uint8)
+        S = 720
+        if top is not None:
+            img[0:S, 0:S] = cv2.resize(top, (S, S))
+        scale = S / 30.9
+
+        def tp(n, e):
+            return (int(S / 2 + e * scale), int(S / 2 - n * scale))
+        n0, n1, e0, e1 = self.area
+        cv2.rectangle(img, tp(n1, e0), tp(n0, e1), (210, 235, 210), 1)
+        for i in range(1, len(self.trail)):
+            cv2.line(img, tp(*self.trail[i - 1]), tp(*self.trail[i]), (255, 200, 90), 2, cv2.LINE_AA)
+        for k, (n, e) in enumerate(self.verified, 1):
+            p = tp(n, e)
+            cv2.circle(img, p, 22, GREEN, 3, cv2.LINE_AA)
+            cv2.rectangle(img, (p[0] + 26, p[1] - 22), (p[0] + 26 + 44, p[1] - 2), (20, 20, 20), -1)
+            put(img, f'P{k}', (p[0] + 32, p[1] - 6), 0.6, (255, 255, 255), 1)
+        if self.pose is not None:
+            n, e, _, hd = self.pose
+            p = tp(n, e)
+            cv2.circle(img, p, 20, (40, 140, 255), 2, cv2.LINE_AA)
+            tip = (int(p[0] + 28 * math.sin(hd)), int(p[1] - 28 * math.cos(hd)))
+            cv2.arrowedLine(img, p, tip, (40, 140, 255), 3, cv2.LINE_AA, tipLength=0.4)
+            put(img, 'UAV', (p[0] + 24, p[1] + 34), 0.55, (40, 170, 255), 1)
+        cv2.rectangle(img, (0, 0), (300, 34), (0, 0, 0), -1)
+        put(img, 'GAZEBO OVERHEAD VIEW', (10, 24), 0.55, (255, 255, 255))
+        put(img, 'N', (S - 30, 30), 0.7, (255, 255, 255), 2)
+        cv2.arrowedLine(img, (S - 22, 70), (S - 22, 40), (255, 255, 255), 2, tipLength=0.4)
+        # status panel
+        x0 = S + 24
+        cv2.rectangle(img, (S, 0), (W, H), (30, 25, 22), -1)
+        cv2.line(img, (S, 0), (S, H), ACC, 2)
+        put(img, 'SAGE-UAV', (x0, 46), 1.0, (255, 255, 255), 2)
+        put(img, 'Semantic AI-Guided Exploration', (x0, 76), 0.5, (190, 190, 190))
+        put(img, 'MISSION', (x0, 122), 0.5, ACC)
+        words, line, lines = self.mission.split(), '', []
+        for w_ in words:
+            if len(line) + len(w_) > 30:
+                lines.append(line)
+                line = ''
+            line = (line + ' ' + w_).strip()
+        lines.append(line)
+        for i, ln in enumerate(lines[:3]):
+            put(img, ('"' if i == 0 else '') + ln + ('"' if i == len(lines[:3]) - 1 else ''), (x0, 150 + i * 26), 0.6, (255, 255, 255))
+        st = self.stage()
+        for i, name in enumerate(STAGES):
+            y = 232 + i * 34
+            col = ACC if i == st else ((90, 110, 90) if i < st else (70, 70, 70))
+            cv2.rectangle(img, (x0, y), (x0 + 200, y + 26), col, -1 if i == st else 1)
+            put(img, f'{i + 1}  {name}', (x0 + 10, y + 19), 0.5, (20, 20, 20) if i == st else (200, 200, 200))
+        el = time.time() - self.t0
+        put(img, f'TIME {int(el // 60):02d}:{int(el % 60):02d}', (x0, 500), 0.75, (255, 255, 255))
+        alt = f'{-self.pose[2]:.1f} m' if self.pose else '--'
+        put(img, f'ALT {alt}', (x0 + 210, 500), 0.75, (255, 255, 255))
+        put(img, f'FOUND {len(self.verified)}', (x0, 550), 1.0, GREEN, 2)
+        for k, (n, e) in enumerate(self.verified[-5:], max(1, len(self.verified) - 4)):
+            put(img, f'P{k}  ({n:.1f}, {e:.1f}) m', (x0 + 210, 528 + (k - max(1, len(self.verified) - 4)) * 22), 0.45, (190, 240, 190))
+        b = self.batt if self.batt is not None else 100.0
+        put(img, 'BATTERY', (x0, 640), 0.5, (200, 200, 200))
+        cv2.rectangle(img, (x0 + 100, 624), (x0 + 340, 646), (90, 90, 90), 1)
+        cv2.rectangle(img, (x0 + 102, 626), (x0 + 102 + int(236 * max(0, min(100, b)) / 100), 644),
+                      GREEN if b > 30 else (60, 60, 230), -1)
+        put(img, f'{b:.0f}%', (x0 + 352, 643), 0.55, (255, 255, 255))
+        put(img, f'{self.speed:g}x speed', (x0, 700), 0.5, (150, 150, 150))
         return img
 
     def title_card(self, lines, sub=None):
@@ -249,28 +318,45 @@ def main():
     ap.add_argument('--world', default='sage_rescue')
     ap.add_argument('--out', required=True)
     ap.add_argument('--mission', default='Find all people in this area and report their locations')
-    ap.add_argument('--speed', type=float, default=4.0, help='time-lapse factor (one frame per YOLO result = 5 Hz, played at 20 fps)')
+    ap.add_argument('--speed', type=float, default=2.0, help='playback speed vs real time (frames are timed to real time)')
+    ap.add_argument('--fps', type=int, default=20)
     ap.add_argument('--tail-s', type=float, default=25.0)
     ap.add_argument('--planner-log', default='/tmp/sage_logs/planner.log')
     ap.add_argument('--selftest', action='store_true')
     a = ap.parse_args()
     os.makedirs(os.path.join(a.out, 'stills'), exist_ok=True)
     sc = Scene(a.world, a.mission, a.speed)
-    writer, codec = open_writer(os.path.join(a.out, 'demo.mp4'), 20)
-    still_n = {'k': 0}
+    writer, codec = open_writer(os.path.join(a.out, 'demo.mp4'), a.fps)
+    writer_top, _ = open_writer(os.path.join(a.out, 'demo_top.mp4'), a.fps)
     last_frame = [None]
+    last_top = [None]
+
+    class Timeline:
+        """Writes each frame as many times as its real-time gap needs, so playback is exactly --speed x."""
+        def __init__(self, w):
+            self.w, self.last = w, None
+
+        def write(self, frame):
+            now = time.time()
+            n = 1 if self.last is None else max(1, int(round(min(now - self.last, 1.5) * a.fps / a.speed)))
+            self.last = now
+            for _ in range(n):
+                self.w.write(frame)
+
+    tl_a, tl_b = Timeline(writer), Timeline(writer_top)
 
     def still(name, img):
         cv2.imwrite(os.path.join(a.out, 'stills', name + '.png'), img)
 
-    def emit(img, n=1):
+    def emit(img, n=1, top=False):
         for _ in range(n):
-            writer.write(img)
+            (writer_top if top else writer).write(img)
 
-    emit(sc.title_card([('SAGE-UAV', 2.4, (255, 255, 255)),
-                        ('Semantic AI-Guided Exploration & Active Search', 0.95, (210, 210, 210))],
-                       ['Autonomous search-and-rescue drone  |  ROS 2 - PX4 - Gazebo - YOLO',
-                        f'Mission: "{a.mission}"']), 20 * 4)
+    for is_top, view in ((False, 'Onboard camera view'), (True, 'Gazebo overhead view')):
+        emit(sc.title_card([('SAGE-UAV', 2.4, (255, 255, 255)),
+                            ('Semantic AI-Guided Exploration & Active Search', 0.95, (210, 210, 210))],
+                           [f'{view}  |  ROS 2 - PX4 - Gazebo - YOLO',
+                            f'Mission: "{a.mission}"']), a.fps * 4, top=is_top)
 
     if a.selftest:
         sc.events.update(accepted=True, wp=(6, 9))
@@ -286,7 +372,13 @@ def main():
         still('selftest', frame)
         emit(frame, 48)
         emit(sc.title_card([('MISSION COMPLETE', 1.6, GREEN)], ['3 / 3 people found']), 48)
+        fake = np.full((800, 800, 3), (80, 140, 90), np.uint8)
+        cv2.rectangle(fake, (300, 300), (420, 380), (120, 130, 150), -1)
+        tf = sc.compose_top(fake)
+        still('selftest_top', tf)
+        emit(tf, 48, top=True)
         writer.release()
+        writer_top.release()
         print('selftest written to', a.out, 'codec', codec)
         return
 
@@ -304,6 +396,7 @@ def main():
             q = qos_profile_sensor_data
             p = f'/world/{a.world}/model/x500_mono_cam_0/link/camera_link/sensor/imager/image'
             self.create_subscription(CompressedImage, '/sage/perception/annotated/compressed', self.on_annotated, q)
+            self.create_subscription(CompressedImage, '/overview_cam/compressed', self.on_top, q)
             self.create_subscription(Detection2DArray, '/sage/perception/detections', self.on_det, q)
             self.create_subscription(Detection3DArray, '/sage/world_model/targets', self.on_tracks, q)
             self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.on_pos, q)
@@ -314,6 +407,8 @@ def main():
             self.t_done = None
             self.first_det_saved = False
             self.frames = 0
+            self.frames_top = 0
+            self.pending_top = None
 
         def on_pos(self, m):
             if not (m.xy_valid and m.z_valid):
@@ -343,7 +438,7 @@ def main():
             if arr is None:
                 return
             frame = sc.compose(cv2.resize(arr, (1280, 960)), ())
-            writer.write(frame)
+            tl_a.write(frame)
             self.frames += 1
             if sc.boxes and not self.first_det_saved:
                 still('first_detection', frame)
@@ -354,6 +449,21 @@ def main():
             if self.frames == 40:
                 still('search_start', frame)
             last_frame[0] = frame
+
+        def on_top(self, m):
+            """Fixed overhead camera from Gazebo (JPEG via image_transport)."""
+            arr = cv2.imdecode(np.frombuffer(m.data, np.uint8), cv2.IMREAD_COLOR)
+            if arr is None:
+                return
+            frame = sc.compose_top(arr)
+            tl_b.write(frame)
+            self.frames_top += 1
+            last_top[0] = frame
+            if self.pending_top:
+                still(self.pending_top, frame)
+                self.pending_top = None
+            if self.frames_top == 40:
+                still('top_search_start', frame)
 
         def on_tracks(self, m):
             sc.tracks = [(d.results[0].pose.pose.position.x, d.results[0].pose.pose.position.y)
@@ -385,6 +495,7 @@ def main():
                     sc.events['candidate'] = False
                     sc.verified.append((float(m[1]), float(m[2])))
                     self.pending_still = f'verified_{len(sc.verified)}'
+                    self.pending_top = f'top_verified_{len(sc.verified)}'
                 m = re.search(r'MISSION COMPLETE \| status=(\S+) \| found=(\d+) \| locations=(.*?) \| duration=(\d+) s', line)
                 if m:
                     sc.events['complete'] = True
@@ -411,20 +522,27 @@ def main():
         if sc.report:
             tp, errs = score(sc.truth, sc.report['locations'])
             mean = sum(errs) / len(errs) if errs else float('nan')
-            emit(last, 20)
+            emit(last, a.fps)
             still('mission_complete', last)
+            lt = last_top[0] if last_top[0] is not None else sc.compose_top(None)
+            emit(lt, a.fps, top=True)
+            still('top_mission_complete', lt)
+            extra = len(sc.report['locations']) - tp
             card = sc.title_card(
                 [('MISSION COMPLETE', 1.8, GREEN),
                  (f"{tp} / {len(sc.truth)} people found", 1.2, (255, 255, 255))],
                 [f"mean position error {mean:.2f} m   |   mission time {sc.report['duration_s']} s   |   "
                  f"battery {sc.batt if sc.batt is not None else 0:.0f}% left",
-                 (f"{len(sc.report['locations']) - tp} extra report(s): the walking person was reported twice"
-                  if len(sc.report['locations']) > tp else 'Returned home and landed autonomously')])
+                 (f"{extra} extra report(s): the walking person was reported twice"
+                  if extra > 0 else 'Returned home and landed autonomously')])
             still('result_card', card)
-            emit(card, 20 * 5)
+            emit(card, a.fps * 5)
+            emit(card, a.fps * 5, top=True)
             json.dump({'world': a.world, 'report': sc.report, 'true_positives': tp, 'errors_m': errs,
-                       'codec': codec, 'frames': node.frames}, open(os.path.join(a.out, 'summary.json'), 'w'))
+                       'codec': codec, 'frames': node.frames, 'frames_top': node.frames_top, 'speed': a.speed},
+                      open(os.path.join(a.out, 'summary.json'), 'w'))
         writer.release()
+        writer_top.release()
         node.destroy_node()
         rclpy.shutdown()
 
