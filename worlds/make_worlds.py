@@ -203,7 +203,8 @@ def build_rescue(world='sage_rescue'):
               open(os.path.join(CONF, f'truth_{world}.json'), 'w'), indent=1)
     obst = ';'.join(f'{a},{b},{c},{d}' for a, b, c, d in rects)
     open(os.path.join(CONF, f'{world}.env'), 'w').write(
-        f'SAGE_AREA="[{AREA[0]},{AREA[1]},{AREA[2]},{AREA[3]}]"\nSAGE_OBSTACLES="{obst}"\nSAGE_DRAIN=1800\n')
+        f'SAGE_AREA="[{AREA[0]},{AREA[1]},{AREA[2]},{AREA[3]}]"\nSAGE_OBSTACLES="{obst}"\nSAGE_DRAIN=1800\n'
+        'SAGE_PLANNER_ARGS="-p obstacle_margin:=2.5"\n')     # keep 2.5 m clear of walls/buildings (hover wobble ~1 m)
     infl = [(a - 1.5, b + 1.5, c - 1.5, d + 1.5) for a, b, c, d in rects]
     pts = list(RESCUE_STATIC.values()) + [p for ab in RESCUE_WALKERS.values() for p in ab]
     for p in pts:
