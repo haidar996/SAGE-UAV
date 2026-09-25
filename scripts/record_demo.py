@@ -293,7 +293,7 @@ def main():
     import rclpy
     from rclpy.node import Node
     from rclpy.qos import qos_profile_sensor_data
-    from sensor_msgs.msg import Image
+    from sensor_msgs.msg import Image, CompressedImage
     from std_msgs.msg import Float32MultiArray
     from vision_msgs.msg import Detection2DArray, Detection3DArray
     from px4_msgs.msg import VehicleLocalPosition
@@ -303,7 +303,7 @@ def main():
             super().__init__('sage_demo_recorder')
             q = qos_profile_sensor_data
             p = f'/world/{a.world}/model/x500_mono_cam_0/link/camera_link/sensor/imager/image'
-            self.create_subscription(Image, '/sage/perception/annotated', self.on_annotated, q)
+            self.create_subscription(CompressedImage, '/sage/perception/annotated/compressed', self.on_annotated, q)
             self.create_subscription(Detection2DArray, '/sage/perception/detections', self.on_det, q)
             self.create_subscription(Detection3DArray, '/sage/world_model/targets', self.on_tracks, q)
             self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.on_pos, q)
@@ -339,7 +339,9 @@ def main():
         def on_annotated(self, m):
             """Frames arrive from yolo_detector with the boxes already drawn on the analysed image."""
             self.poll_log()
-            arr = np.frombuffer(m.data, np.uint8).reshape(m.height, m.width, -1)[:, :, :3]
+            arr = cv2.imdecode(np.frombuffer(m.data, np.uint8), cv2.IMREAD_COLOR)
+            if arr is None:
+                return
             frame = sc.compose(cv2.resize(arr, (1280, 960)), ())
             writer.write(frame)
             self.frames += 1

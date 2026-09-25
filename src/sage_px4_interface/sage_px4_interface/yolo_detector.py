@@ -6,7 +6,7 @@ import cv2
 import rclpy
 from rclpy.node import Node
 
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CompressedImage
 from vision_msgs.msg import Detection2DArray, Detection2D
 from vision_msgs.msg import ObjectHypothesisWithPose
 from cv_bridge import CvBridge
@@ -39,7 +39,7 @@ class YOLODetector(Node):
         # on the exact frame the detector analysed, so video and boxes cannot drift apart.
         self.annotate = os.environ.get("SAGE_YOLO_ANNOTATE") == "1"
         self.annotated_pub = (
-            self.create_publisher(Image, "/sage/perception/annotated", 2)
+            self.create_publisher(CompressedImage, "/sage/perception/annotated/compressed", 2)
             if self.annotate else None
         )
 
@@ -152,14 +152,13 @@ class YOLODetector(Node):
                     cv2.rectangle(vis, (p1[0], p1[1] - 20), (p1[0] + 118, p1[1]), (96, 201, 66), -1)
                     cv2.putText(vis, f"person {confidence:.2f}", (p1[0] + 4, p1[1] - 6),
                                 cv2.FONT_HERSHEY_DUPLEX, 0.5, (20, 20, 20), 1, cv2.LINE_AA)
-                # built by hand: cv_bridge.cv2_to_imgmsg fails inside the vision venv
-                out = Image()
+                # JPEG keeps each message ~100 kB; raw 2.4 MB frames were dropped under load
+                ok, buf = cv2.imencode(".jpg", vis, [cv2.IMWRITE_JPEG_QUALITY, 88])
+                out = CompressedImage()
                 if header is not None:
                     out.header = header
-                out.height, out.width = vis.shape[0], vis.shape[1]
-                out.encoding = "bgr8"
-                out.step = vis.shape[1] * 3
-                out.data = vis.tobytes()
+                out.format = "jpeg"
+                out.data = buf.tobytes()
                 self.annotated_pub.publish(out)
 
             detection_msg = Detection2DArray()
