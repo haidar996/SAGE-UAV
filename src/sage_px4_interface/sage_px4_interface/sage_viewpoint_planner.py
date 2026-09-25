@@ -289,6 +289,7 @@ class SageViewpointPlanner(Node):
         self.evidence_pts = []
         self.localization_gate = 2.0        # m, must match the track
         self.verified_merge_dist = 2.5      # m, duplicates are merged
+        self.early_dup_dist = 2.0           # m, refined candidate on a verified person is dropped
         self.moving_speed_threshold = 0.25  # m/s; static <=0.16, walkers >=0.30 in sage_hard
         self.walker_speed = 1.2             # m/s, dedupe growth radius
 
@@ -359,7 +360,7 @@ class SageViewpointPlanner(Node):
         self.phantom_silence_s = 10.0
 
         # Give up (report what was found) after this long.
-        self.declare_parameter('mission_timeout_s', 900.0)
+        self.declare_parameter('mission_timeout_s', 1200.0)
         self.mission_timeout_s = float(
             self.get_parameter('mission_timeout_s').value
         )
@@ -1751,6 +1752,31 @@ class SageViewpointPlanner(Node):
             now = self.get_clock().now()
 
             self.refine_candidate()
+
+            # A ghost track refined onto an already verified person would
+            # only be merged at verification (all merge rules are >= 2.5 m),
+            # so drop it now instead of spending candidate_timeout_s on it.
+            if self.latest_target is not None:
+                rx, ry, _ = self.latest_target
+                dup = next(
+                    (
+                        v for v in self.verified.values()
+                        if math.hypot(v['x'] - rx, v['y'] - ry)
+                        < self.early_dup_dist
+                    ),
+                    None
+                )
+
+                if dup is not None:
+                    self.rejected_ids.add(self.current_target_id)
+                    self.get_logger().info(
+                        'DUPLICATE CANDIDATE DROPPED | '
+                        f'id={self.current_target_id} | '
+                        f'position=({rx:.2f}, {ry:.2f}) | '
+                        f"on verified id={dup['id']}"
+                    )
+                    self.reset_target_state()
+                    return
 
             suff = self.observation_is_sufficient()
             match = suff and self.localized_matches_target()
