@@ -275,3 +275,5 @@ Problem list and what is left (importance / rough effort):
 4. MEDIUM - experiments A-F from steps.md not run (no controlled comparisons yet) and the energy model is time-based only. 1-2 days mostly sim time.
 5. LOW (parked): Claude parser live test (needs API key; rule parser is the default), world-model motion label quality, energy-model realism.
 6. Push: git repository has no remote; final step below.
+
+Push: repository pushed to a PRIVATE GitHub repo https://github.com/haidar996/SAGE-UAV (branch main, all commits, demo video, figures, logs). Make it public only after deciding about docs/review.md (77 KB chat transcript) and the `SAGE-UAV` plan-paste file, which are tracked.
