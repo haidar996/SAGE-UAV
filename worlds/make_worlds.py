@@ -20,6 +20,10 @@ STATIC_PEOPLE = {'S1': (0.0, 5.0), 'S2': (-9.0, 9.0), 'S3': (8.0, -8.0)}
 WALKERS = {'W1': ((4.5, -11.0), (4.5, -5.0)),      # (start, end) NED
            'W2': ((-5.0, 5.0), (-5.0, 11.0))}
 WALK_SPEED = 0.6                                    # m/s
+# variant with long walker paths (reversals every ~20-24 s instead of ~10 s):
+# W1 12 m along north 4.5; W2 8.9 m along north -3 (just clear of inflated building_1)
+WALKERS_LONG = {'W1': ((4.5, -11.0), (4.5, 1.0)),
+                'W2': ((-3.0, 2.6), (-3.0, 11.5))}
 # solid obstacles: (name, north0, north1, east0, east1, height)
 OBSTACLES = [('building_1', -8.0, -4.0, -4.0, 1.0, 4.0),
              ('building_2', 4.0, 8.0, 3.0, 9.0, 4.0),
@@ -76,14 +80,15 @@ def box(name, cn, ce, sn, se, h, rgb, collision):
       <material><ambient>{rgb} 1</ambient><diffuse>{rgb} 1</diffuse></material></visual></link></model>'''
 
 
-def build():
+def build(world='sage_hard', walkers=None):
+    walkers = walkers or WALKERS
     base = open(os.path.join(HERE, 'sage_sar.sdf'), encoding='utf-8').read()
     head = base[:base.index('<actor name="person_1">')]
-    head = head.replace('<world name="sage_sar">', '<world name="sage_hard">')
+    head = head.replace('<world name="sage_sar">', f'<world name="{world}">')
     body = ''
     for i, (k, (n, e)) in enumerate(STATIC_PEOPLE.items()):
         body += static_actor(k, n, e, 0.5 * i)
-    for k, (a, b) in WALKERS.items():
+    for k, (a, b) in walkers.items():
         body += walker(k, a, b)
     rects = []
     for name, n0, n1, e0, e1, h in OBSTACLES:
@@ -92,28 +97,29 @@ def build():
         rects.append((n0, n1, e0, e1))
     for name, n, e, sn, se, h, rgb in DISTRACTORS:
         body += box(name, n, e, sn, se, h, rgb, False)
-    open(os.path.join(HERE, 'sage_hard.sdf'), 'w', encoding='utf-8').write(head + body + '\n  </world>\n</sdf>\n')
+    open(os.path.join(HERE, f'{world}.sdf'), 'w', encoding='utf-8').write(head + body + '\n  </world>\n</sdf>\n')
 
     truth = [{'id': k, 'type': 'static', 'points': [list(p)]} for k, p in STATIC_PEOPLE.items()]
-    truth += [{'id': k, 'type': 'path', 'points': [list(a), list(b)]} for k, (a, b) in WALKERS.items()]
-    json.dump({'world': 'sage_hard', 'tolerance_m': 1.5, 'people': truth},
-              open(os.path.join(CONF, 'truth_sage_hard.json'), 'w'), indent=1)
+    truth += [{'id': k, 'type': 'path', 'points': [list(a), list(b)]} for k, (a, b) in walkers.items()]
+    json.dump({'world': world, 'tolerance_m': 1.5, 'people': truth},
+              open(os.path.join(CONF, f'truth_{world}.json'), 'w'), indent=1)
     json.dump({'world': 'sage_sar', 'tolerance_m': 1.5, 'people': [
         {'id': 'P1', 'type': 'static', 'points': [[0.0, 4.0]]},
         {'id': 'P2', 'type': 'static', 'points': [[-6.0, 7.0]]},
         {'id': 'P3', 'type': 'static', 'points': [[5.0, -6.0]]}]},
         open(os.path.join(CONF, 'truth_sage_sar.json'), 'w'), indent=1)
     obst = ';'.join(f'{a},{b},{c},{d}' for a, b, c, d in rects)
-    open(os.path.join(CONF, 'sage_hard.env'), 'w').write(
+    open(os.path.join(CONF, f'{world}.env'), 'w').write(
         f'SAGE_AREA="[{AREA[0]},{AREA[1]},{AREA[2]},{AREA[3]}]"\nSAGE_OBSTACLES="{obst}"\nSAGE_DRAIN=1800\n')
     # sanity: people must be outside the (1.5 m inflated) obstacles
     from itertools import product
     infl = [(a - 1.5, b + 1.5, c - 1.5, d + 1.5) for a, b, c, d in rects]
-    pts = list(STATIC_PEOPLE.values()) + [p for ab in WALKERS.values() for p in ab]
+    pts = list(STATIC_PEOPLE.values()) + [p for ab in walkers.values() for p in ab]
     for p in pts:
         assert not any(a < p[0] < b and c < p[1] < d for a, b, c, d in infl), f'person {p} inside inflated obstacle'
-    print('sage_hard.sdf written;', len(rects), 'obstacles;', len(pts), 'person anchor points ok')
+    print(f'{world}.sdf written;', len(rects), 'obstacles;', len(pts), 'person anchor points ok')
 
 
 if __name__ == '__main__':
     build()
+    build('sage_hard_long', WALKERS_LONG)
