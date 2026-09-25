@@ -1,0 +1,1 @@
+{"world": "sage_rescue", "report": {"status": "area_covered", "found": 3, "duration_s": 827, "locations": [[0.7, 5.3], [-8.3, 9.1], [9.2, -9.1]]}, "true_positives": 3, "errors_m": [0.7615773105863907, 0.7071067811865468, 0.8062257748298556], "codec": "avc1", "frames": 3003}

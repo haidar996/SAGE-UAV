@@ -1,6 +1,6 @@
 # LinkedIn post - SAGE-UAV
 
-Attach: `demo/sage_uav_demo.mp4` (about 1-2 min time-lapse), then the pictures in this order:
+Attach: `demo/sage_uav_demo.mp4` (96 s, 12x time-lapse of a real run: 4 of 4 people found, no duplicates; full 4.5 min version in `demo/sage_uav_demo_full.mp4`), then the pictures in this order:
 1. `results/figures/linkedin_card.png`  2. `demo/pictures/collage_2x2.png`  3. `results/figures/architecture.png`  4. `results/figures/results_overview.png`
 
 ---
@@ -12,13 +12,13 @@ SAGE-UAV (Semantic AI-Guided Exploration & Active Search) is an autonomous searc
 You type one sentence. The drone then:
 - turns it into a validated mission,
 - sweeps the search area with an onboard camera and YOLO,
-- localizes every person in 3D (about @ERR@ m average error),
+- localizes every person in 3D (about 0.3 m average error),
 - keeps a semantic memory and re-observes a candidate until it is really a person,
 - flies around obstacles, watches its own battery,
 - and returns home and lands, with a report of who was found and where.
 
 **The numbers (simulation)**
-- Rescue scene with buildings, trees, cars and one person walking: @RESCUE@
+- Rescue scene with buildings, trees, cars and one person walking: 17 of 20 people found over 5 flights (0.44 m average error). Standing people are found reliably; the walking person is the hard part, and in 3 flights it was reported twice.
 - Simpler scene, 3 standing people: 100% found, 0 false alarms, 0.3 m average error, about 4 minutes.
 - Every flight command passes a safety check before it reaches the autopilot.
 
@@ -35,4 +35,4 @@ Everything is simulation, with documented shortcuts, and the code, logs and hone
 
 ---
 Short version (for a comment or a repost):
-An autonomous drone that takes "find all people in this area", searches, detects and localizes them in 3D (@ERR@ m), verifies each one, and lands by itself. ROS 2 + PX4 + Gazebo + YOLO. Simulation only, limitations documented. Video below.
+An autonomous drone that takes "find all people in this area", searches, detects and localizes them in 3D (0.3 m), verifies each one, and lands by itself. ROS 2 + PX4 + Gazebo + YOLO. Simulation only, limitations documented. Video below.

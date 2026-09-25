@@ -2,3 +2,5 @@ trial,date,world,status,found,tp,fp,fn,mean_err_m,max_err_m,duration_s,rejected_
 0925_062308,2026-09-25,sage_rescue,area_covered,3,2,1,2,0.66,1.10,630,11,0,1,2
 0925_063805,2026-09-25,sage_rescue,area_covered,5,4,1,0,0.34,0.45,570,8,0,1,0
 0925_065952,2026-09-25,sage_rescue,area_covered,5,4,1,0,0.13,0.32,518,6,0,1,0
+0925_071213,2026-09-25,sage_rescue,timeout,4,4,0,0,0.31,0.45,1200,10,0,0,0
+0925_073827,2026-09-25,sage_rescue,area_covered,3,3,0,1,0.76,0.81,827,17,0,0,1
