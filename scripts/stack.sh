@@ -19,7 +19,7 @@ cd $B && HEADLESS=1 PX4_GZ_WORLD=$SAGE_WORLD PX4_SYS_AUTOSTART=4019 PX4_SIM_MODE
 cd ~/Micro-XRCE-DDS-Agent/build && run xrce ./MicroXRCEAgent udp4 -p 8888
 wait_for(){ pat=$1; limit=$2; for i in $(seq 1 $limit); do grep -q "$pat" $S/px4.log 2>/dev/null && return 0; sleep 2; done; return 1; }
 wait_for "Startup script returned" 60 || { echo "STARTUP_TIMEOUT"; exit 2; }
-cd $B; ../bin/px4-param set NAV_DLL_ACT 0 >/dev/null; ../bin/px4-param set MPC_XY_VEL_MAX 3.5 >/dev/null; for kv in COM_ARM_MAG_STR:0 COM_ARM_MAG_ANG:180 COM_ARM_IMU_ACC:2 COM_ARM_IMU_GYR:1; do ../bin/px4-param set ${kv%%:*} ${kv##*:} >/dev/null; done; ../bin/px4-param set MPC_TILTMAX_AIR 30 >/dev/null; ../bin/px4-param set SIM_BAT_DRAIN $DRAIN >/dev/null; ../bin/px4-param set SIM_BAT_MIN_PCT 0 >/dev/null
+cd $B; ../bin/px4-param set NAV_DLL_ACT 0 >/dev/null; ../bin/px4-param set MPC_XY_VEL_MAX 3.5 >/dev/null; for kv in COM_ARM_MAG_STR:0 COM_ARM_MAG_ANG:180 COM_ARM_IMU_ACC:2 COM_ARM_IMU_GYR:1; do ../bin/px4-param set ${kv%%:*} ${kv##*:} >/dev/null; done; ../bin/px4-param set MPC_TILTMAX_AIR 30 >/dev/null; ../bin/px4-param set COM_OF_LOSS_T 2 >/dev/null; ../bin/px4-param set COM_OBL_RC_ACT 5 >/dev/null; ../bin/px4-param set SIM_BAT_DRAIN $DRAIN >/dev/null; ../bin/px4-param set SIM_BAT_MIN_PCT 0 >/dev/null
 wait_for "Ready for takeoff" 60 || { echo "PREFLIGHT_NOT_READY: $(grep -E 'Preflight Fail' $S/px4.log | tail -1)"; exit 3; }
 run offboard ros2 run sage_px4_interface offboard_position_node
 # Arm BEFORE loading the CPU with perception (load starves the sim IMU).

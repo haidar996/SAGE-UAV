@@ -289,7 +289,14 @@ class SageViewpointPlanner(Node):
         self.evidence_pts = []
         self.localization_gate = 2.0        # m, must match the track
         self.verified_merge_dist = 2.5      # m, duplicates are merged
-        self.early_dup_dist = 2.0           # m, refined candidate on a verified person is dropped
+        self.early_dup_dist = 2.0           # m, no refinement onto detections this close to a verified person
+        # UAV-lost guard: outside the area (+margin) or on the ground for
+        # this long during a mission -> end it with the partial report
+        # (a flown-away UAV made the Mission Manager reject every viewpoint
+        # forever, 'too far from UAV').
+        self.lost_margin_m = 6.0
+        self.lost_confirm_s = 8.0
+        self.lost_since = None
         self.moving_speed_threshold = 0.25  # m/s; static <=0.16, walkers >=0.30 in sage_hard
         self.walker_speed = 1.2             # m/s, dedupe growth radius
 
@@ -600,6 +607,15 @@ class SageViewpointPlanner(Node):
         tx, ty, tz = self.latest_target
 
         if math.hypot(lx - tx, ly - ty) > self.refine_gate:
+            return
+
+        # A detection on an already verified person is no evidence for this
+        # candidate: refining onto it dragged a real neighbour (S3, 3.5 m
+        # from walker W1) onto W1, where it was merged and its track lost.
+        if any(
+            math.hypot(v['x'] - lx, v['y'] - ly) < self.early_dup_dist
+            for v in self.verified.values()
+        ):
             return
 
         a = self.refine_alpha
@@ -1703,6 +1719,29 @@ class SageViewpointPlanner(Node):
                 self.complete_mission('timeout')
                 return
 
+            if self.vehicle_position is not None:
+                ux, uy, uz = self.vehicle_position
+                x0, x1, y0, y1 = self.area
+                m = self.lost_margin_m
+                lost = (
+                    not (x0 - m <= ux <= x1 + m and y0 - m <= uy <= y1 + m)
+                    or uz > -0.5
+                )
+                now_s = self.get_clock().now().nanoseconds / 1e9
+
+                if not lost:
+                    self.lost_since = None
+                elif self.lost_since is None:
+                    self.lost_since = now_s
+                elif now_s - self.lost_since > self.lost_confirm_s:
+                    self.get_logger().error(
+                        'UAV LOST | '
+                        f'position=({ux:.1f}, {uy:.1f}, {uz:.1f}) | '
+                        'ending mission with the partial report.'
+                    )
+                    self.complete_mission('uav_lost', request_return=False)
+                    return
+
         # ---------------------------------------------------------
         # Step 21: no candidate -> sweep the search area.
         # ---------------------------------------------------------
@@ -1752,31 +1791,6 @@ class SageViewpointPlanner(Node):
             now = self.get_clock().now()
 
             self.refine_candidate()
-
-            # A ghost track refined onto an already verified person would
-            # only be merged at verification (all merge rules are >= 2.5 m),
-            # so drop it now instead of spending candidate_timeout_s on it.
-            if self.latest_target is not None:
-                rx, ry, _ = self.latest_target
-                dup = next(
-                    (
-                        v for v in self.verified.values()
-                        if math.hypot(v['x'] - rx, v['y'] - ry)
-                        < self.early_dup_dist
-                    ),
-                    None
-                )
-
-                if dup is not None:
-                    self.rejected_ids.add(self.current_target_id)
-                    self.get_logger().info(
-                        'DUPLICATE CANDIDATE DROPPED | '
-                        f'id={self.current_target_id} | '
-                        f'position=({rx:.2f}, {ry:.2f}) | '
-                        f"on verified id={dup['id']}"
-                    )
-                    self.reset_target_state()
-                    return
 
             suff = self.observation_is_sufficient()
             match = suff and self.localized_matches_target()

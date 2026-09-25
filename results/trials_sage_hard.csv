@@ -15,3 +15,4 @@ trial,date,world,status,found,tp,fp,fn,mean_err_m,max_err_m,duration_s,rejected_
 0925_030627,2026-09-25,sage_hard,timeout,5,5,0,0,0.62,1.12,900,14
 0925_032505,2026-09-25,sage_hard,area_covered,6,5,1,0,0.27,0.57,707,7
 0925_040416,2026-09-25,sage_hard,area_covered,5,4,1,1,0.45,0.60,875,9
+0925_052638,2026-09-25,sage_hard,area_covered,4,3,1,2,0.47,0.86,445,1,0,1,2
