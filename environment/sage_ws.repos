@@ -1,0 +1,6 @@
+# vcs import file for the ROS 2 workspace:  mkdir -p ~/sage_ws/src && vcs import ~/sage_ws/src < environment/sage_ws.repos
+repositories:
+  px4_msgs:
+    type: git
+    url: https://github.com/PX4/px4_msgs.git
+    version: v1.16.2          # commit 392e831 (must match the PX4 version)
