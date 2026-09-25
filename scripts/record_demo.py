@@ -408,6 +408,8 @@ def main():
             self.first_det_saved = False
             self.frames = 0
             self.frames_top = 0
+            self.top_img = None
+            self.create_timer(0.1, self.tick_top)
             self.pending_top = None
 
         def on_pos(self, m):
@@ -451,18 +453,23 @@ def main():
             last_frame[0] = frame
 
         def on_top(self, m):
-            """Fixed overhead camera from Gazebo (JPEG via image_transport)."""
+            """Fixed overhead camera from Gazebo (JPEG via image_transport); frames are drawn by tick_top."""
             arr = cv2.imdecode(np.frombuffer(m.data, np.uint8), cv2.IMREAD_COLOR)
-            if arr is None:
+            if arr is not None:
+                self.top_img = arr
+
+        def tick_top(self):
+            """10 Hz: latest overhead image + smooth overlays (the render itself only updates at 4 Hz)."""
+            if self.top_img is None:
                 return
-            frame = sc.compose_top(arr)
+            frame = sc.compose_top(self.top_img)
             tl_b.write(frame)
             self.frames_top += 1
             last_top[0] = frame
             if self.pending_top:
                 still(self.pending_top, frame)
                 self.pending_top = None
-            if self.frames_top == 40:
+            if self.frames_top == 80:
                 still('top_search_start', frame)
 
         def on_tracks(self, m):
