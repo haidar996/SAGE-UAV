@@ -223,3 +223,9 @@ Tools (scratch, /tmp, not in repo): perc_debug.py (projects the known people/box
 - Mission Manager: 57-74 "viewpoint jump too large" rejections per run (3.1-4.3 m), in bursts; effect not traced.
 - Change: run_trials.sh wait cutoff raised 800 s -> 1600 s (mission_timeout_s is 900 s, so a report is always produced). candidate_timeout_s is already 25 s in code (older entries say 45 s); not changed.
 - Next: rerun the batch; look at why so many phantom candidates arise (world model tracks from distractors / walkers) rather than only shortening timeouts; check the flyaway cause.
+
+## sage_hard batch 2 (1600 s cutoff) + W2 duplicate analysis (2026-09-25)
+- Trials: 020852 area_covered TP5/FP1 859 s; 022758 TP5/FP0 895 s; 024917 skipped (UAV flew away 24 m out and sat on the ground; Mission Manager then rejected every viewpoint as "too far", 2133 times - deadlock; cause of the flyaway NOT found, logs in results/logs/0925_024917); 030627 timeout(900 s) TP5/FP0; 032505 area_covered TP5/FP1 707 s. Recall 20/20, 2 FP, mean err 0.27-0.62 m.
+- Both FPs are walker W2 (path (-5,5)-(-5,11)) verified twice: 2.7 m apart (trial 1; missed by the 2.5 m rule) and 6.0 m apart (trial 5; second reading speed 0.25, not > threshold). S1, S2, S3, W1 never duplicated.
+- sage_sar (easy world) has 0 FP in 12 scored trials; the duplicates, long runs (707-900 s vs 200-610 s) and phantom candidates (7-14 vs 0-8) are sage_hard specific.
+- Change: static-vs-walker merge radius 2.5 -> 3.2 m (fixes the trial-1 pattern; capped below 4.0 m because static S2 sits 4.0 m from the W2 path). The 6 m pattern (trial 5) is NOT fixed: a distance rule that large would swallow S2. Needs path/time-aware merging or a better speed estimate.

@@ -9,3 +9,8 @@ trial,date,world,status,found,tp,fp,fn,mean_err_m,max_err_m,duration_s,rejected_
 0925_011600_skipped,2026-09-25,sage_hard,skipped_flyaway,,,,,,,,
 0925_012934,2026-09-25,sage_hard,no_report,0,0,0,5,,,,8
 0925_014632,2026-09-25,sage_hard,no_report,0,0,0,5,,,,14
+0925_020852,2026-09-25,sage_hard,area_covered,6,5,1,0,0.38,1.08,859,10
+0925_022758,2026-09-25,sage_hard,area_covered,5,5,0,0,0.43,1.00,895,13
+0925_024917,2026-09-25,sage_hard,skipped_flyaway_stranded,,,,,,,,
+0925_030627,2026-09-25,sage_hard,timeout,5,5,0,0,0.62,1.12,900,14
+0925_032505,2026-09-25,sage_hard,area_covered,6,5,1,0,0.27,0.57,707,7

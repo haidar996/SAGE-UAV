@@ -698,7 +698,10 @@ class SageViewpointPlanner(Node):
                 # static candidate vs verified walker: it can only be
                 # the walker if close to the same spot; 2.5 m covers
                 # static persons first misread as moving (sage_hard S3).
-                return d < 2.5
+                # 3.2 m also covers a walker re-seen 2.7 m along its path;
+                # kept < 4.0 m (S2 to the W2 path) so a real static
+                # person next to a walker is not swallowed.
+                return d < 3.2
 
             # verified person is static: a 'moving' reading of a static
             # person is speed noise (localization jitter), so both
