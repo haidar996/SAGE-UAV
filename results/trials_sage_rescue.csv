@@ -1,2 +1,3 @@
 trial,date,world,status,found,tp,fp,fn,mean_err_m,max_err_m,duration_s,rejected_candidates
 0925_062308,2026-09-25,sage_rescue,area_covered,3,2,1,2,0.66,1.10,630,11,0,1,2
+0925_063805,2026-09-25,sage_rescue,area_covered,5,4,1,0,0.34,0.45,570,8,0,1,0

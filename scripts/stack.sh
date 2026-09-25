@@ -32,7 +32,7 @@ sleep 10
 P=/world/$SAGE_WORLD/model/x500_mono_cam_0/link/camera_link/sensor/imager
 run bridge_img ros2 run ros_gz_bridge parameter_bridge "$P/image@sensor_msgs/msg/Image[gz.msgs.Image"
 run bridge_info ros2 run ros_gz_bridge parameter_bridge "$P/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo"
-run yolo ~/sage_vision_env/bin/python ~/sage_ws/install/sage_px4_interface/lib/sage_px4_interface/yolo_detector_launcher.py
+run yolo env SAGE_YOLO_ANNOTATE=${SAGE_RECORD:+1} ~/sage_vision_env/bin/python ~/sage_ws/install/sage_px4_interface/lib/sage_px4_interface/yolo_detector_launcher.py
 # Localizer attitude source: px4 (default, the PX4 estimate) or gz_truth
 # (Gazebo ground truth, for evaluation): ATT=gz_truth.
 run bridge_pose ros2 run ros_gz_bridge parameter_bridge "/world/$SAGE_WORLD/dynamic_pose/info@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V"

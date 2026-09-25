@@ -1,39 +1,50 @@
 # SAGE-UAV
 
-**Semantic AI-Guided Exploration and Active Search for Autonomous UAVs**
+**Semantic AI-Guided Exploration and Active Search for autonomous UAVs**
 
-An autonomous UAV that interprets a high-level mission ("Find all people and report their locations"), searches an environment, detects and localizes targets with computer vision, keeps a semantic world model, picks informative viewpoints, and searches in an energy- and safety-aware way. ROS 2 Humble + PX4 SITL + Gazebo.
+An autonomous quadrotor that understands a mission such as *"Find all people in this area and report their locations"*, searches the area, detects people with YOLO, localizes them in 3D, keeps a semantic world model, verifies every finding with repeated observations, watches its battery, and returns home and lands by itself. ROS 2 Humble, PX4 SITL and Gazebo.
 
-## Pipeline
+![architecture](results/figures/architecture.png)
 
-```
-mission text -> mission parser (Claude LLM or rules) -> /sage/mission/spec
-camera -> YOLO -> 3D target localizer -> semantic world model
-      -> viewpoint planner (active vision, energy-aware) -> mission manager (safety checks)
-      -> offboard node -> PX4        energy monitor -> abort / return home / land
-mission completion -> /sage/mission/report (JSON: what was found, where)
-```
+## What it does
+
+| stage | how |
+|---|---|
+| Mission understanding | rule-based parser (default, keyless) or Claude LLM front end; free text -> validated JSON spec |
+| Perception | onboard camera + YOLO person detector (5 Hz) |
+| 3D localization | image ray + delayed PX4 pose/attitude -> ground position (about 0.3 m median error) |
+| Semantic memory | tracks with motion state, duplicate merging, persistent IDs |
+| Active search | serpentine coverage sweep with a 360 degree scan per waypoint; candidate viewpoints; evidence accumulation before a person is "verified" |
+| Safety | every planner viewpoint is validated (obstacle map, step limit, altitude); energy monitor triggers return-home; UAV-lost guard; PX4 offboard-loss failsafe |
+| Report | JSON: who was found, where, when, how confident |
+
+## Results (simulation)
+
+See `results/summary.md`, `results/figures/`, `docs/progress.md` (full log), `docs/limitations.md` (read this before quoting numbers).
+
+![results](results/figures/results_overview.png)
 
 ## Layout
 
-- `src/sage_px4_interface/` ROS 2 package (all nodes, unit tests in `test/`)
-- `worlds/sage_test.sdf` Gazebo world (copy into `PX4-Autopilot/Tools/simulation/gz/worlds/`)
-- `scripts/` helper scripts (`stack.sh` full restart, `start_mission_nodes.sh`, ...)
-- `docs/` roadmap (`steps.md`), progress log (`progress.md`), specification
-- `results/` recorded data and analysis
+- `src/sage_px4_interface/` ROS 2 package: all nodes, unit tests in `test/`
+- `worlds/` Gazebo worlds (`sage_sar`, `sage_hard`, `sage_hard_long`, `sage_rescue`) and `make_worlds.py`; `config/` per-world truth, area and obstacle map
+- `scripts/` `stack.sh` (full restart), `stack_verified.sh` (health-gated start), `run_trials.sh` (repeat + score), `score_trial.py`, `record_demo.py` (demo video), `make_figures.py`, `make_collage.py`
+- `docs/` roadmap, progress log, design notes, limitations
+- `results/` trial tables, saved logs, figures, demo
 
-## Run (summary)
+## Run
 
-1. PX4 SITL: model `gz_x500_mono_cam`, world `sage_test`; Micro XRCE-DDS agent on UDP 8888.
-2. `colcon build --packages-select sage_px4_interface` in a workspace that also contains `px4_msgs`.
-3. `scripts/stack.sh` brings up the stack; `scripts/start_mission_nodes.sh` starts parser, mission manager and planner.
-4. Send a mission:
-   `ros2 topic pub --once /sage/mission/command std_msgs/msg/String "{data: 'Find all people'}"`
+1. PX4 SITL (`gz_x500_mono_cam`), Micro XRCE-DDS agent on UDP 8888, ROS 2 Humble, `px4_msgs` v1.16 in the same workspace.
+2. `colcon build --packages-select sage_px4_interface`
+3. Copy `worlds/*.sdf` to `PX4-Autopilot/Tools/simulation/gz/worlds/`.
+4. `SAGE_WORLD=sage_rescue scripts/stack_verified.sh 1800` then `SAGE_WORLD=sage_rescue scripts/start_mission_nodes.sh`
+5. `ros2 topic pub --once /sage/mission/command std_msgs/msg/String "{data: 'Find all people in this area and report their locations'}"`
+6. Film it: `python3 scripts/record_demo.py --world sage_rescue --out results/demo/run1` (before step 5), or `SAGE_RECORD=1 scripts/run_trials.sh 3 sage_rescue`.
 
 ## Mission understanding (optional LLM)
 
-The parser uses the Claude API when `ANTHROPIC_API_KEY` is set in the environment, and falls back to a rule-based parser otherwise. The key is never stored in the repository. Set `SAGE_LLM_MODEL` to override the model.
+The parser uses the Claude API when `ANTHROPIC_API_KEY` is set and falls back to the rule-based parser otherwise. The key is never stored in the repository. `SAGE_LLM_MODEL` overrides the model.
 
-## Status
+## Honest limitations
 
-See `docs/progress.md`. Simulation only; the perception stack detects `person` (COCO class 0).
+Simulation only. Localization uses a tuned camera delay; people are animated actors; obstacle avoidance uses a known map; only the `person` class is detected; walking people can be reported twice in the hard world. Details and numbers: `docs/limitations.md`.

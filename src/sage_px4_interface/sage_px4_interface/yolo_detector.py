@@ -35,6 +35,14 @@ class YOLODetector(Node):
             10,
         )
 
+        # Optional annotated frames for filming (SAGE_YOLO_ANNOTATE=1): the boxes are drawn
+        # on the exact frame the detector analysed, so video and boxes cannot drift apart.
+        self.annotate = os.environ.get("SAGE_YOLO_ANNOTATE") == "1"
+        self.annotated_pub = (
+            self.create_publisher(Image, "/sage/perception/annotated", 2)
+            if self.annotate else None
+        )
+
         self.latest_frame = None
         self.latest_header = None
         self.frame_lock = threading.Lock()
@@ -134,6 +142,20 @@ class YOLODetector(Node):
                     )
 
             self.inference_count += 1
+
+            if self.annotate:
+                vis = cv2.resize(frame, (1024, 768))
+                k = 1024.0 / frame.shape[1]
+                for confidence, x1, y1, x2, y2 in persons:
+                    p1, p2 = (int(x1 * k), int(y1 * k)), (int(x2 * k), int(y2 * k))
+                    cv2.rectangle(vis, p1, p2, (96, 201, 66), 2)
+                    cv2.rectangle(vis, (p1[0], p1[1] - 20), (p1[0] + 118, p1[1]), (96, 201, 66), -1)
+                    cv2.putText(vis, f"person {confidence:.2f}", (p1[0] + 4, p1[1] - 6),
+                                cv2.FONT_HERSHEY_DUPLEX, 0.5, (20, 20, 20), 1, cv2.LINE_AA)
+                out = self.bridge.cv2_to_imgmsg(vis, encoding="bgr8")
+                if header is not None:
+                    out.header = header
+                self.annotated_pub.publish(out)
 
             detection_msg = Detection2DArray()
 

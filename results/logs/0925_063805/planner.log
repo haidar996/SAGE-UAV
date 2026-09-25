@@ -1,0 +1,501 @@
+[INFO] [1790307611.504367578] [sage_viewpoint_planner]: OBSTACLE MAP | 6 known obstacles, margin 1.5 m
+[INFO] [1790307611.507031091] [sage_viewpoint_planner]: SAGE active-vision viewpoint planner started.
+[INFO] [1790307611.507857108] [sage_viewpoint_planner]: Standoff distance: 3.0 m
+[INFO] [1790307611.508551454] [sage_viewpoint_planner]: Viewpoint altitude: -2.0 m
+[INFO] [1790307611.509392549] [sage_viewpoint_planner]: Search viewpoints: 4
+[INFO] [1790307611.510283337] [sage_viewpoint_planner]: Arrival tolerance: 0.35 m
+[INFO] [1790307611.511300676] [sage_viewpoint_planner]: Maximum planner step: 0.7 m
+[INFO] [1790307611.512098163] [sage_viewpoint_planner]: Observation confidence threshold: 0.60
+[INFO] [1790307611.512846918] [sage_viewpoint_planner]: Observation bbox-area threshold: 0.0100 (1% of image)
+[INFO] [1790307611.513691479] [sage_viewpoint_planner]: Camera resolution for bbox measurement: 1280x960
+[INFO] [1790307611.514295898] [sage_viewpoint_planner]: Image-border margin threshold: 0.02
+[INFO] [1790307612.747291574] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.383 | bbox_area_fraction=0.0090 | bbox_center_px=(703.1, 613.0) | image_position=(0.549, 0.639) | bbox_margin=0.252
+[INFO] [1790307614.437139751] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.351 | bbox_area_fraction=0.0080 | bbox_center_px=(703.6, 624.3) | image_position=(0.550, 0.650) | bbox_margin=0.248
+[INFO] [1790307614.528884841] [sage_viewpoint_planner]: New target acquired | target_id=1
+[INFO] [1790307615.578451679] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.481 | bbox_area_fraction=0.0091 | bbox_center_px=(707.7, 629.8) | image_position=(0.553, 0.656) | bbox_margin=0.245
+[INFO] [1790307616.672733421] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.347 | bbox_area_fraction=0.0097 | bbox_center_px=(707.3, 628.6) | image_position=(0.553, 0.655) | bbox_margin=0.245
+[INFO] [1790307624.444873916] [sage_viewpoint_planner]: MISSION ACCEPTED | target=person | attribute=None | quantity=all | output=locations | text='Find all people in this area and report their locations'
+[INFO] [1790307624.507432995] [sage_viewpoint_planner]: CANDIDATE STATUS | id=None | track=(-0.5,4.4) | uav=(-0.0,-0.0) | range=4.4 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307625.976524586] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.309 | bbox_area_fraction=0.0156 | bbox_center_px=(967.7, 565.9) | image_position=(0.756, 0.590) | bbox_margin=0.201
+[INFO] [1790307627.208764290] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.644 | bbox_area_fraction=0.0035 | bbox_center_px=(190.8, 593.9) | image_position=(0.149, 0.619) | bbox_margin=0.130
+[INFO] [1790307627.637347638] [sage_viewpoint_planner]: New target acquired | target_id=1
+[INFO] [1790307628.284042697] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.771 | bbox_area_fraction=0.0487 | bbox_center_px=(133.2, 814.6) | image_position=(0.104, 0.849) | bbox_margin=0.000
+[INFO] [1790307628.507537147] [sage_viewpoint_planner]: CANDIDATE STATUS | id=1 | track=(-0.5,4.4) | uav=(2.5,3.6) | range=3.1 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307629.372177483] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.841 | bbox_area_fraction=0.0462 | bbox_center_px=(369.7, 775.8) | image_position=(0.289, 0.808) | bbox_margin=0.001
+[INFO] [1790307629.711426451] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.818 | bbox_area_fraction=0.0437 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.017 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307629.712472787] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=3.7 m | est_cost_incl_return=0.3 % | unaffordable_skipped=0
+[INFO] [1790307630.435320732] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.829 | bbox_area_fraction=0.0417 | bbox_center_px=(505.0, 777.6) | image_position=(0.394, 0.810) | bbox_margin=0.003
+[INFO] [1790307631.472866796] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.761 | bbox_area_fraction=0.0797 | bbox_center_px=(975.4, 715.5) | image_position=(0.762, 0.745) | bbox_margin=0.056
+[INFO] [1790307632.509165342] [sage_viewpoint_planner]: CANDIDATE STATUS | id=1 | track=(0.2,4.7) | uav=(0.6,2.9) | range=1.8 m | sufficient=False | matches_track=False | evidence=1.0/2.0 s
+[INFO] [1790307633.301325986] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.709 | bbox_area_fraction=0.0537 | bbox_center_px=(1032.2, 831.3) | image_position=(0.806, 0.866) | bbox_margin=0.003
+[INFO] [1790307634.312268984] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.784 | bbox_area_fraction=0.0460 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307634.314125484] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=4.6 m | est_cost_incl_return=0.5 % | unaffordable_skipped=0
+[INFO] [1790307634.378488146] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.812 | bbox_area_fraction=0.0414 | bbox_center_px=(572.7, 748.6) | image_position=(0.447, 0.780) | bbox_margin=0.023
+[INFO] [1790307635.457778448] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.577 | bbox_area_fraction=0.0260 | bbox_center_px=(632.7, 707.7) | image_position=(0.494, 0.737) | bbox_margin=0.105
+[INFO] [1790307636.315403791] [sage_viewpoint_planner]: TARGET VERIFIED | id=1 | position=(-0.20, 4.62) | confidence=0.630 | evidence_points=11 | speed=0.18 m/s | verified_total=1
+[INFO] [1790307636.512027088] [sage_viewpoint_planner]: COVERAGE START | area x[-12,12] y[-12,12] | 16 waypoints | continuous 45 deg/s yaw sweep each
+[INFO] [1790307637.060154069] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.610 | bbox_area_fraction=0.0062 | bbox_center_px=(220.7, 731.3) | image_position=(0.172, 0.762) | bbox_margin=0.151
+[INFO] [1790307637.538325597] [sage_viewpoint_planner]: New target acquired | target_id=2
+[INFO] [1790307637.712829987] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=2
+[INFO] [1790307637.715372763] [sage_viewpoint_planner]: CANDIDATE STATUS | id=2 | track=(-6.7,7.7) | uav=(-2.5,4.2) | range=5.5 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307638.181838682] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.589 | bbox_area_fraction=0.0054 | bbox_center_px=(104.4, 504.0) | image_position=(0.082, 0.525) | bbox_margin=0.057
+[INFO] [1790307639.228385732] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.837 | bbox_area_fraction=0.1048 | bbox_center_px=(316.6, 675.9) | image_position=(0.247, 0.704) | bbox_margin=0.102
+[INFO] [1790307640.445985906] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.718 | bbox_area_fraction=0.0093 | bbox_center_px=(621.8, 601.5) | image_position=(0.486, 0.627) | bbox_margin=0.297
+[INFO] [1790307641.111967113] [sage_viewpoint_planner]: OBSERVATION SUFFICIENT | viewpoint=1/4 | person_confidence=0.796 | bbox_area_fraction=0.0189 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=True | bbox_margin=0.127 | confidence_threshold=0.60 | bbox_threshold=0.0100 | HOLDING VIEWPOINT.
+[INFO] [1790307641.512014126] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.785 | bbox_area_fraction=0.0221 | bbox_center_px=(208.8, 720.7) | image_position=(0.163, 0.751) | bbox_margin=0.115
+[INFO] [1790307641.719028811] [sage_viewpoint_planner]: CANDIDATE STATUS | id=2 | track=(-9.1,8.6) | uav=(-4.1,7.8) | range=5.1 m | sufficient=True | matches_track=True | evidence=0.8/2.0 s
+[INFO] [1790307642.553769462] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.707 | bbox_area_fraction=0.0135 | bbox_center_px=(635.2, 667.6) | image_position=(0.496, 0.695) | bbox_margin=0.203
+[INFO] [1790307643.315020525] [sage_viewpoint_planner]: TARGET VERIFIED | id=2 | position=(-9.12, 8.65) | confidence=0.699 | evidence_points=11 | speed=0.14 m/s | verified_total=2
+[INFO] [1790307643.330521058] [sage_viewpoint_planner]: New target acquired | target_id=3
+[INFO] [1790307643.641688457] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.730 | bbox_area_fraction=0.0137 | bbox_center_px=(598.1, 646.1) | image_position=(0.467, 0.673) | bbox_margin=0.227
+[INFO] [1790307644.844743484] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.689 | bbox_area_fraction=0.0146 | bbox_center_px=(591.3, 687.2) | image_position=(0.462, 0.716) | bbox_margin=0.182
+[INFO] [1790307645.908850452] [sage_viewpoint_planner]: CANDIDATE STATUS | id=3 | track=(4.6,-3.9) | uav=(-2.9,6.2) | range=12.6 m | sufficient=True | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307645.983014163] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.709 | bbox_area_fraction=0.0134 | bbox_center_px=(779.0, 720.2) | image_position=(0.609, 0.750) | bbox_margin=0.152
+[INFO] [1790307647.174408147] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.676 | bbox_area_fraction=0.0077 | bbox_center_px=(611.4, 611.0) | image_position=(0.478, 0.636) | bbox_margin=0.292
+[INFO] [1790307648.441896891] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.479 | bbox_area_fraction=0.0043 | bbox_center_px=(534.5, 570.9) | image_position=(0.418, 0.595) | bbox_margin=0.351
+[INFO] [1790307649.909543692] [sage_viewpoint_planner]: CANDIDATE STATUS | id=3 | track=(4.6,-3.9) | uav=(1.4,0.8) | range=5.7 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307650.573403165] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.534 | bbox_area_fraction=0.0196 | bbox_center_px=(45.2, 735.6) | image_position=(0.035, 0.766) | bbox_margin=0.000
+[INFO] [1790307651.617744841] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.767 | bbox_area_fraction=0.0220 | bbox_center_px=(135.4, 640.3) | image_position=(0.106, 0.667) | bbox_margin=0.058
+[INFO] [1790307652.750615577] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.724 | bbox_area_fraction=0.0126 | bbox_center_px=(188.8, 608.5) | image_position=(0.148, 0.634) | bbox_margin=0.112
+[INFO] [1790307653.903927185] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.618 | bbox_area_fraction=0.0079 | bbox_center_px=(205.2, 549.5) | image_position=(0.160, 0.572) | bbox_margin=0.128
+[INFO] [1790307653.913363464] [sage_viewpoint_planner]: CANDIDATE STATUS | id=3 | track=(4.6,-3.9) | uav=(6.0,-4.4) | range=1.5 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307654.943629987] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.632 | bbox_area_fraction=0.0034 | bbox_center_px=(248.5, 447.9) | image_position=(0.194, 0.467) | bbox_margin=0.178
+[INFO] [1790307655.112418171] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.632 | bbox_area_fraction=0.0034 | fresh=True | confidence_ok=True | bbox_size_ok=False | position_ok=True | bbox_margin=0.178 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307655.113436857] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=3.3 m | est_cost_incl_return=0.5 % | unaffordable_skipped=0
+[INFO] [1790307655.945221395] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.566 | bbox_area_fraction=0.0025 | bbox_center_px=(298.3, 441.5) | image_position=(0.233, 0.460) | bbox_margin=0.220
+[INFO] [1790307656.948658652] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.411 | bbox_area_fraction=0.0022 | bbox_center_px=(397.0, 463.7) | image_position=(0.310, 0.483) | bbox_margin=0.297
+[INFO] [1790307658.107701399] [sage_viewpoint_planner]: CANDIDATE STATUS | id=3 | track=(4.6,-3.9) | uav=(5.5,-6.4) | range=2.6 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307658.246636861] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.475 | bbox_area_fraction=0.0042 | bbox_center_px=(1255.9, 546.3) | image_position=(0.981, 0.569) | bbox_margin=0.001
+[INFO] [1790307659.111452503] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.675 | bbox_area_fraction=0.0027 | fresh=True | confidence_ok=True | bbox_size_ok=False | position_ok=True | bbox_margin=0.151 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307659.112154439] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=4.6 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[INFO] [1790307659.330643262] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.310 | bbox_area_fraction=0.0018 | bbox_center_px=(884.3, 544.8) | image_position=(0.691, 0.568) | bbox_margin=0.298
+[INFO] [1790307660.782123350] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.448 | bbox_area_fraction=0.0024 | bbox_center_px=(1049.0, 396.8) | image_position=(0.819, 0.413) | bbox_margin=0.168
+[INFO] [1790307662.163417600] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.779 | bbox_area_fraction=0.0274 | bbox_center_px=(62.4, 823.7) | image_position=(0.049, 0.858) | bbox_margin=0.000
+[INFO] [1790307662.317314379] [sage_viewpoint_planner]: CANDIDATE STATUS | id=3 | track=(4.6,-3.9) | uav=(2.8,-4.4) | range=1.8 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307663.519069804] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.779 | bbox_area_fraction=0.0274 | fresh=False | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307663.524142121] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=3.7 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[INFO] [1790307664.494200198] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.710 | bbox_area_fraction=0.0143 | bbox_center_px=(35.3, 573.9) | image_position=(0.028, 0.598) | bbox_margin=0.000
+[INFO] [1790307665.778388363] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.746 | bbox_area_fraction=0.0188 | bbox_center_px=(940.0, 588.9) | image_position=(0.734, 0.613) | bbox_margin=0.218
+[INFO] [1790307666.510394080] [sage_viewpoint_planner]: CANDIDATE STATUS | id=3 | track=(4.7,-7.2) | uav=(3.5,-1.5) | range=5.8 m | sufficient=False | matches_track=False | evidence=1.4/2.0 s
+[INFO] [1790307666.841372560] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.783 | bbox_area_fraction=0.0176 | bbox_center_px=(1032.1, 642.4) | image_position=(0.806, 0.669) | bbox_margin=0.156
+[INFO] [1790307667.309569343] [sage_viewpoint_planner]: TARGET VERIFIED | id=3 | position=(4.79, -7.06) | confidence=0.757 | evidence_points=11 | speed=0.45 m/s MOVING | verified_total=3
+[INFO] [1790307667.334363107] [sage_viewpoint_planner]: New target acquired | target_id=6
+[INFO] [1790307667.992686307] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.684 | bbox_area_fraction=0.0087 | bbox_center_px=(643.8, 580.5) | image_position=(0.503, 0.605) | bbox_margin=0.308
+[INFO] [1790307669.900109145] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.597 | bbox_area_fraction=0.0075 | bbox_center_px=(22.1, 764.9) | image_position=(0.017, 0.797) | bbox_margin=0.000
+[INFO] [1790307670.512751879] [sage_viewpoint_planner]: CANDIDATE STATUS | id=6 | track=(5.2,-6.2) | uav=(5.5,-3.6) | range=2.6 m | sufficient=False | matches_track=False | evidence=0.2/2.0 s
+[INFO] [1790307671.114334881] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.456 | bbox_area_fraction=0.0054 | bbox_center_px=(22.8, 682.4) | image_position=(0.018, 0.711) | bbox_margin=0.000
+[INFO] [1790307672.459413672] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.773 | bbox_area_fraction=0.0589 | bbox_center_px=(282.0, 768.7) | image_position=(0.220, 0.801) | bbox_margin=0.000
+[INFO] [1790307672.912868934] [sage_viewpoint_planner]: OBSERVATION SUFFICIENT | viewpoint=1/4 | person_confidence=0.763 | bbox_area_fraction=0.0415 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=True | bbox_margin=0.123 | confidence_threshold=0.60 | bbox_threshold=0.0100 | HOLDING VIEWPOINT.
+[INFO] [1790307673.916649085] [sage_viewpoint_planner]: OBSERVATION QUALITY LOST | fresh=False | confidence_ok=True | bbox_size_ok=True | position_ok=True | resuming active search.
+[INFO] [1790307674.003587349] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.338 | bbox_area_fraction=0.0107 | bbox_center_px=(214.5, 494.3) | image_position=(0.168, 0.515) | bbox_margin=0.128
+[INFO] [1790307674.708516954] [sage_viewpoint_planner]: CANDIDATE STATUS | id=6 | track=(3.8,-4.3) | uav=(8.5,-6.8) | range=5.3 m | sufficient=False | matches_track=False | evidence=1.0/2.0 s
+[INFO] [1790307675.127785573] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.554 | bbox_area_fraction=0.0102 | bbox_center_px=(159.4, 528.0) | image_position=(0.125, 0.550) | bbox_margin=0.085
+[INFO] [1790307676.800650777] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.450 | bbox_area_fraction=0.0107 | bbox_center_px=(103.1, 612.8) | image_position=(0.081, 0.638) | bbox_margin=0.048
+[INFO] [1790307677.319579172] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.450 | bbox_area_fraction=0.0107 | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.048 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307677.321074024] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=5.3 m | est_cost_incl_return=0.6 % | unaffordable_skipped=0
+[INFO] [1790307677.828367164] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.573 | bbox_area_fraction=0.0131 | bbox_center_px=(41.4, 633.5) | image_position=(0.032, 0.660) | bbox_margin=0.000
+[INFO] [1790307678.708684611] [sage_viewpoint_planner]: CANDIDATE STATUS | id=6 | track=(3.5,-1.8) | uav=(7.9,-6.5) | range=6.4 m | sufficient=False | matches_track=False | evidence=1.0/2.0 s
+[INFO] [1790307678.907147051] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.752 | bbox_area_fraction=0.0117 | bbox_center_px=(185.8, 501.1) | image_position=(0.145, 0.522) | bbox_margin=0.115
+[INFO] [1790307680.075766784] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.653 | bbox_area_fraction=0.0029 | bbox_center_px=(1081.3, 497.7) | image_position=(0.845, 0.518) | bbox_margin=0.138
+[INFO] [1790307681.082346135] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.649 | bbox_area_fraction=0.0025 | bbox_center_px=(1011.0, 576.3) | image_position=(0.790, 0.600) | bbox_margin=0.196
+[INFO] [1790307681.709817458] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.649 | bbox_area_fraction=0.0025 | fresh=True | confidence_ok=True | bbox_size_ok=False | position_ok=True | bbox_margin=0.196 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307681.710638770] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=5.5 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[INFO] [1790307682.324381866] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.637 | bbox_area_fraction=0.0079 | bbox_center_px=(502.3, 628.7) | image_position=(0.392, 0.655) | bbox_margin=0.265
+[INFO] [1790307682.709930907] [sage_viewpoint_planner]: CANDIDATE STATUS | id=6 | track=(3.7,-1.1) | uav=(2.8,-6.0) | range=5.0 m | sufficient=False | matches_track=False | evidence=1.4/2.0 s
+[INFO] [1790307683.488716885] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.470 | bbox_area_fraction=0.0053 | bbox_center_px=(828.8, 432.7) | image_position=(0.648, 0.451) | bbox_margin=0.334
+[INFO] [1790307686.513716446] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.470 | bbox_area_fraction=0.0053 | fresh=False | confidence_ok=False | bbox_size_ok=False | position_ok=True | bbox_margin=0.334 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307686.514436967] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=3.9 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[INFO] [1790307686.714043896] [sage_viewpoint_planner]: CANDIDATE STATUS | id=6 | track=(3.7,-1.1) | uav=(0.9,-1.2) | range=2.9 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307687.326195266] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.623 | bbox_area_fraction=0.0235 | bbox_center_px=(1224.7, 757.1) | image_position=(0.957, 0.789) | bbox_margin=0.001
+[INFO] [1790307690.110791261] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=2/4 | person_confidence=0.705 | bbox_area_fraction=0.0295 | fresh=False | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.002 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307690.111355270] [sage_viewpoint_planner]: SEARCH CYCLE COMPLETE | starting next cycle.
+[INFO] [1790307690.111901550] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=2.5 m | est_cost_incl_return=0.3 % | unaffordable_skipped=0
+[INFO] [1790307690.910288775] [sage_viewpoint_planner]: CANDIDATE STATUS | id=6 | track=(4.0,1.5) | uav=(3.9,1.7) | range=0.2 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[WARN] [1790307692.508960502] [sage_viewpoint_planner]: CANDIDATE REJECTED | id=6 | not confirmed in 25 s | resuming coverage.
+[INFO] [1790307693.955867953] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.541 | bbox_area_fraction=0.0309 | bbox_center_px=(73.1, 535.9) | image_position=(0.057, 0.558) | bbox_margin=0.000
+[INFO] [1790307694.979681250] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.594 | bbox_area_fraction=0.0241 | bbox_center_px=(409.3, 391.0) | image_position=(0.320, 0.407) | bbox_margin=0.273
+[INFO] [1790307707.310530361] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 1/16 at (-8.0, -9.0) | scanning
+[INFO] [1790307720.910998387] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 2/16 at (-9.6, -3.0) | scanning
+[INFO] [1790307723.156504770] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.395 | bbox_area_fraction=0.0019 | bbox_center_px=(443.0, 574.6) | image_position=(0.346, 0.599) | bbox_margin=0.334
+[INFO] [1790307723.241754458] [sage_viewpoint_planner]: New target acquired | target_id=8
+[INFO] [1790307723.307094292] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=8
+[INFO] [1790307723.307742581] [sage_viewpoint_planner]: CANDIDATE STATUS | id=8 | track=(3.0,-5.8) | uav=(-9.5,-2.9) | range=12.9 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307727.310277583] [sage_viewpoint_planner]: CANDIDATE STATUS | id=8 | track=(3.0,-5.8) | uav=(-6.6,-7.2) | range=9.7 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307731.507124075] [sage_viewpoint_planner]: CANDIDATE STATUS | id=8 | track=(3.0,-5.8) | uav=(0.2,-10.7) | range=5.6 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307735.508196673] [sage_viewpoint_planner]: CANDIDATE STATUS | id=8 | track=(3.0,-5.8) | uav=(5.5,-6.7) | range=2.6 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307736.308584229] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.534 | bbox_area_fraction=0.0055 | fresh=False | confidence_ok=False | bbox_size_ok=False | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307736.310322007] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=4.0 m | est_cost_incl_return=0.6 % | unaffordable_skipped=0
+[INFO] [1790307737.297877486] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.320 | bbox_area_fraction=0.0324 | bbox_center_px=(99.9, 855.8) | image_position=(0.078, 0.891) | bbox_margin=0.001
+[INFO] [1790307738.439981481] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.596 | bbox_area_fraction=0.0515 | bbox_center_px=(793.9, 810.0) | image_position=(0.620, 0.844) | bbox_margin=0.001
+[INFO] [1790307739.509155942] [sage_viewpoint_planner]: CANDIDATE STATUS | id=8 | track=(3.0,-5.8) | uav=(3.9,-7.9) | range=2.3 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307739.660008858] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.802 | bbox_area_fraction=0.0244 | bbox_center_px=(867.0, 758.7) | image_position=(0.677, 0.790) | bbox_margin=0.058
+[INFO] [1790307740.311872899] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.482 | bbox_area_fraction=0.0144 | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.251 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307740.312679441] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=5.8 m | est_cost_incl_return=0.5 % | unaffordable_skipped=0
+[INFO] [1790307740.685018391] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.619 | bbox_area_fraction=0.0106 | bbox_center_px=(459.6, 571.3) | image_position=(0.359, 0.595) | bbox_margin=0.317
+[INFO] [1790307741.918924538] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.631 | bbox_area_fraction=0.0049 | bbox_center_px=(628.2, 440.2) | image_position=(0.491, 0.459) | bbox_margin=0.389
+[INFO] [1790307743.710300169] [sage_viewpoint_planner]: CANDIDATE STATUS | id=8 | track=(4.1,-4.0) | uav=(2.7,-5.8) | range=2.2 m | sufficient=False | matches_track=False | evidence=0.4/2.0 s
+[INFO] [1790307743.811204452] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.564 | bbox_area_fraction=0.0058 | bbox_center_px=(1010.0, 590.1) | image_position=(0.789, 0.615) | bbox_margin=0.178
+[INFO] [1790307746.513130705] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.422 | bbox_area_fraction=0.0050 | fresh=False | confidence_ok=False | bbox_size_ok=False | position_ok=True | bbox_margin=0.189 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307746.514199620] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=4.1 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[INFO] [1790307747.711806799] [sage_viewpoint_planner]: CANDIDATE STATUS | id=8 | track=(4.1,-4.0) | uav=(0.3,-3.1) | range=3.9 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[WARN] [1790307748.310020358] [sage_viewpoint_planner]: CANDIDATE REJECTED | id=8 | not confirmed in 25 s | resuming coverage.
+[INFO] [1790307764.109311756] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 2/16 at (-9.6, -3.0) | scanning
+[INFO] [1790307765.000528566] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.466 | bbox_area_fraction=0.0017 | bbox_center_px=(853.0, 596.4) | image_position=(0.666, 0.621) | bbox_margin=0.323
+[INFO] [1790307765.055662838] [sage_viewpoint_planner]: New target acquired | target_id=9
+[INFO] [1790307765.113363213] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=9
+[INFO] [1790307765.114319690] [sage_viewpoint_planner]: CANDIDATE STATUS | id=9 | track=(3.8,-1.2) | uav=(-9.8,-3.0) | range=13.7 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307766.187210042] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.545 | bbox_area_fraction=0.0033 | bbox_center_px=(1261.2, 591.6) | image_position=(0.985, 0.616) | bbox_margin=0.001
+[INFO] [1790307769.114449319] [sage_viewpoint_planner]: CANDIDATE STATUS | id=9 | track=(3.8,-1.2) | uav=(-7.4,-6.8) | range=12.6 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307773.308071763] [sage_viewpoint_planner]: CANDIDATE STATUS | id=9 | track=(3.8,-1.2) | uav=(-1.8,-10.5) | range=10.9 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307777.311659963] [sage_viewpoint_planner]: CANDIDATE STATUS | id=9 | track=(3.8,-1.2) | uav=(3.8,-7.2) | range=6.1 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[WARN] [1790307780.108174179] [sage_viewpoint_planner]: CANDIDATE REJECTED | id=9 | no person visible (phantom) | resuming coverage.
+[INFO] [1790307781.395968253] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.426 | bbox_area_fraction=0.0211 | bbox_center_px=(84.2, 712.3) | image_position=(0.066, 0.742) | bbox_margin=0.008
+[INFO] [1790307783.236499781] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.402 | bbox_area_fraction=0.0023 | bbox_center_px=(54.8, 533.6) | image_position=(0.043, 0.556) | bbox_margin=0.026
+[INFO] [1790307783.353131177] [sage_viewpoint_planner]: New target acquired | target_id=5
+[INFO] [1790307783.507509334] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=5
+[INFO] [1790307783.508350314] [sage_viewpoint_planner]: CANDIDATE STATUS | id=5 | track=(5.3,-9.9) | uav=(5.0,-4.8) | range=5.1 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307787.510660194] [sage_viewpoint_planner]: CANDIDATE STATUS | id=5 | track=(5.3,-9.9) | uav=(7.9,-8.9) | range=2.8 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307787.888112859] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.849 | bbox_area_fraction=0.0421 | bbox_center_px=(1196.9, 672.5) | image_position=(0.935, 0.701) | bbox_margin=0.001
+[INFO] [1790307788.513263832] [sage_viewpoint_planner]: OBSERVATION SUFFICIENT | viewpoint=1/4 | person_confidence=0.806 | bbox_area_fraction=0.0310 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=True | bbox_margin=0.142 | confidence_threshold=0.60 | bbox_threshold=0.0100 | HOLDING VIEWPOINT.
+[INFO] [1790307789.159721580] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.806 | bbox_area_fraction=0.0310 | bbox_center_px=(1032.1, 647.6) | image_position=(0.806, 0.675) | bbox_margin=0.142
+[INFO] [1790307790.187093643] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.806 | bbox_area_fraction=0.0310 | bbox_center_px=(1032.1, 647.6) | image_position=(0.806, 0.675) | bbox_margin=0.142
+[INFO] [1790307790.511755121] [sage_viewpoint_planner]: TARGET VERIFIED | id=5 | position=(4.60, -11.09) | confidence=0.806 | evidence_points=11 | speed=0.00 m/s | verified_total=4
+[INFO] [1790307791.219040867] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.633 | bbox_area_fraction=0.0153 | bbox_center_px=(662.3, 636.4) | image_position=(0.517, 0.663) | bbox_margin=0.212
+[INFO] [1790307791.241352970] [sage_viewpoint_planner]: New target acquired | target_id=11
+[INFO] [1790307791.307079627] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=11
+[INFO] [1790307791.710656896] [sage_viewpoint_planner]: CANDIDATE STATUS | id=11 | track=(12.4,-8.7) | uav=(8.2,-9.9) | range=4.4 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307792.261377079] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.616 | bbox_area_fraction=0.0238 | bbox_center_px=(737.8, 582.9) | image_position=(0.576, 0.607) | bbox_margin=0.251
+[INFO] [1790307793.579206322] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.656 | bbox_area_fraction=0.0229 | bbox_center_px=(533.0, 826.3) | image_position=(0.416, 0.861) | bbox_margin=0.000
+[INFO] [1790307795.429521365] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.845 | bbox_area_fraction=0.0769 | bbox_center_px=(416.4, 812.9) | image_position=(0.325, 0.847) | bbox_margin=0.000
+[INFO] [1790307795.718447346] [sage_viewpoint_planner]: CANDIDATE STATUS | id=11 | track=(11.5,-8.7) | uav=(13.5,-9.0) | range=2.1 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307796.909032525] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.586 | bbox_area_fraction=0.0224 | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.199 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307796.913947100] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=5.7 m | est_cost_incl_return=0.9 % | unaffordable_skipped=0
+[INFO] [1790307797.776724178] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.481 | bbox_area_fraction=0.0128 | bbox_center_px=(633.8, 517.3) | image_position=(0.495, 0.539) | bbox_margin=0.353
+[INFO] [1790307799.907845806] [sage_viewpoint_planner]: CANDIDATE STATUS | id=11 | track=(10.0,-8.8) | uav=(12.8,-10.3) | range=3.2 m | sufficient=False | matches_track=False | evidence=0.2/2.0 s
+[INFO] [1790307801.713321341] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.494 | bbox_area_fraction=0.0155 | fresh=False | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.378 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307801.715151324] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=4.5 m | est_cost_incl_return=0.7 % | unaffordable_skipped=0
+[INFO] [1790307802.161220772] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.373 | bbox_area_fraction=0.0542 | bbox_center_px=(796.3, 756.5) | image_position=(0.622, 0.788) | bbox_margin=0.012
+[INFO] [1790307803.241182263] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.315 | bbox_area_fraction=0.0322 | bbox_center_px=(847.3, 606.7) | image_position=(0.662, 0.632) | bbox_margin=0.200
+[INFO] [1790307803.908309300] [sage_viewpoint_planner]: CANDIDATE STATUS | id=11 | track=(9.8,-8.9) | uav=(8.8,-10.9) | range=2.2 m | sufficient=True | matches_track=True | evidence=0.2/2.0 s
+[INFO] [1790307805.500590414] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.807 | bbox_area_fraction=0.0491 | bbox_center_px=(936.5, 787.1) | image_position=(0.732, 0.820) | bbox_margin=0.000
+[INFO] [1790307805.712367493] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.807 | bbox_area_fraction=0.0491 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307805.715057422] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=4.1 m | est_cost_incl_return=0.7 % | unaffordable_skipped=0
+[INFO] [1790307806.543695723] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.797 | bbox_area_fraction=0.0398 | bbox_center_px=(616.4, 710.6) | image_position=(0.482, 0.740) | bbox_margin=0.087
+[INFO] [1790307807.509885472] [sage_viewpoint_planner]: TARGET VERIFIED | id=11 | position=(9.76, -8.75) | confidence=0.848 | evidence_points=11 | speed=0.16 m/s | verified_total=5
+[INFO] [1790307807.687146375] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.869 | bbox_area_fraction=0.0572 | bbox_center_px=(1115.0, 550.9) | image_position=(0.871, 0.574) | bbox_margin=0.050
+[INFO] [1790307809.364526560] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.871 | bbox_area_fraction=0.0627 | bbox_center_px=(1036.9, 797.8) | image_position=(0.810, 0.831) | bbox_margin=0.000
+[INFO] [1790307809.440341521] [sage_viewpoint_planner]: New target acquired | target_id=10
+[INFO] [1790307809.512307765] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=10
+[INFO] [1790307809.514612932] [sage_viewpoint_planner]: CANDIDATE STATUS | id=10 | track=(4.0,2.1) | uav=(9.8,-6.1) | range=10.0 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307810.410598158] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.837 | bbox_area_fraction=0.0257 | bbox_center_px=(609.6, 686.5) | image_position=(0.476, 0.715) | bbox_margin=0.130
+[INFO] [1790307812.738084580] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.580 | bbox_area_fraction=0.0014 | bbox_center_px=(548.4, 492.2) | image_position=(0.428, 0.513) | bbox_margin=0.418
+[INFO] [1790307813.707336781] [sage_viewpoint_planner]: CANDIDATE STATUS | id=10 | track=(4.0,2.1) | uav=(9.3,-0.6) | range=6.0 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307814.070080712] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.567 | bbox_area_fraction=0.0095 | bbox_center_px=(631.3, 519.1) | image_position=(0.493, 0.541) | bbox_margin=0.378
+[INFO] [1790307815.419871459] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.685 | bbox_area_fraction=0.0242 | bbox_center_px=(862.3, 638.8) | image_position=(0.674, 0.665) | bbox_margin=0.204
+[INFO] [1790307815.915472057] [sage_viewpoint_planner]: OBSERVATION SUFFICIENT | viewpoint=1/4 | person_confidence=0.790 | bbox_area_fraction=0.0423 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=True | bbox_margin=0.140 | confidence_threshold=0.60 | bbox_threshold=0.0100 | HOLDING VIEWPOINT.
+[INFO] [1790307816.450317925] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.779 | bbox_area_fraction=0.0538 | bbox_center_px=(1056.3, 727.1) | image_position=(0.825, 0.757) | bbox_margin=0.067
+[INFO] [1790307816.711641151] [sage_viewpoint_planner]: OBSERVATION QUALITY LOST | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=True | resuming active search.
+[INFO] [1790307816.721284435] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.510 | bbox_area_fraction=0.0327 | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.041 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307816.723863585] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=2.5 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[INFO] [1790307817.708536551] [sage_viewpoint_planner]: CANDIDATE STATUS | id=10 | track=(4.5,-0.2) | uav=(6.6,1.6) | range=2.8 m | sufficient=False | matches_track=False | evidence=1.2/2.0 s
+[INFO] [1790307817.718494035] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.823 | bbox_area_fraction=0.0549 | bbox_center_px=(1173.5, 798.0) | image_position=(0.917, 0.831) | bbox_margin=0.000
+[INFO] [1790307818.770965335] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.779 | bbox_area_fraction=0.0385 | bbox_center_px=(707.6, 626.8) | image_position=(0.553, 0.653) | bbox_margin=0.166
+[INFO] [1790307819.712403233] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=2/4 | person_confidence=0.794 | bbox_area_fraction=0.0808 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307819.716243077] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=3.2 m | est_cost_incl_return=0.3 % | unaffordable_skipped=0
+[INFO] [1790307821.908315480] [sage_viewpoint_planner]: CANDIDATE STATUS | id=10 | track=(4.7,0.3) | uav=(3.3,1.2) | range=1.7 m | sufficient=False | matches_track=False | evidence=1.8/2.0 s
+[INFO] [1790307823.245392924] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.633 | bbox_area_fraction=0.0283 | bbox_center_px=(299.0, 840.1) | image_position=(0.234, 0.875) | bbox_margin=0.004
+[INFO] [1790307823.921497361] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.310 | bbox_area_fraction=0.0350 | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307823.922289195] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=4.6 m | est_cost_incl_return=0.5 % | unaffordable_skipped=0
+[INFO] [1790307824.377417390] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.531 | bbox_area_fraction=0.0540 | bbox_center_px=(634.0, 761.6) | image_position=(0.495, 0.793) | bbox_margin=0.008
+[INFO] [1790307825.909342077] [sage_viewpoint_planner]: CANDIDATE STATUS | id=10 | track=(4.3,0.2) | uav=(2.4,-0.2) | range=2.0 m | sufficient=True | matches_track=True | evidence=1.0/2.0 s
+[INFO] [1790307826.559663005] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.766 | bbox_area_fraction=0.0171 | bbox_center_px=(930.7, 759.5) | image_position=(0.727, 0.791) | bbox_margin=0.088
+[INFO] [1790307827.709205047] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.594 | bbox_area_fraction=0.0060 | bbox_center_px=(869.3, 582.6) | image_position=(0.679, 0.607) | bbox_margin=0.299
+[INFO] [1790307828.323022279] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.726 | bbox_area_fraction=0.0096 | fresh=True | confidence_ok=True | bbox_size_ok=False | position_ok=True | bbox_margin=0.140 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307828.323738237] [sage_viewpoint_planner]: SEARCH CYCLE COMPLETE | starting next cycle.
+[INFO] [1790307828.324434283] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=1/4 | distance=3.7 m | est_cost_incl_return=0.5 % | unaffordable_skipped=0
+[INFO] [1790307829.006003208] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.710 | bbox_area_fraction=0.0105 | bbox_center_px=(1115.7, 495.5) | image_position=(0.872, 0.516) | bbox_margin=0.093
+[INFO] [1790307829.911193278] [sage_viewpoint_planner]: CANDIDATE STATUS | id=10 | track=(4.4,-0.3) | uav=(5.3,-2.6) | range=2.5 m | sufficient=False | matches_track=False | evidence=1.4/2.0 s
+[INFO] [1790307830.042282575] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.850 | bbox_area_fraction=0.0660 | bbox_center_px=(518.7, 736.3) | image_position=(0.405, 0.767) | bbox_margin=0.003
+[INFO] [1790307831.251738574] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.366 | bbox_area_fraction=0.0108 | bbox_center_px=(370.4, 907.4) | image_position=(0.289, 0.945) | bbox_margin=0.003
+[INFO] [1790307832.290494720] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.830 | bbox_area_fraction=0.0504 | bbox_center_px=(1025.5, 783.1) | image_position=(0.801, 0.816) | bbox_margin=0.000
+[INFO] [1790307832.510593622] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.830 | bbox_area_fraction=0.0504 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307832.511215969] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=3.2 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[INFO] [1790307833.305456329] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.712 | bbox_area_fraction=0.0056 | bbox_center_px=(338.6, 595.4) | image_position=(0.265, 0.620) | bbox_margin=0.243
+[INFO] [1790307834.107761527] [sage_viewpoint_planner]: CANDIDATE STATUS | id=10 | track=(4.4,-1.9) | uav=(6.9,0.4) | range=3.4 m | sufficient=True | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307834.351758857] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.486 | bbox_area_fraction=0.0153 | bbox_center_px=(770.0, 556.4) | image_position=(0.602, 0.580) | bbox_margin=0.311
+[WARN] [1790307834.507118751] [sage_viewpoint_planner]: CANDIDATE REJECTED | id=10 | not confirmed in 25 s | resuming coverage.
+[INFO] [1790307835.340320663] [sage_viewpoint_planner]: New target acquired | target_id=13
+[INFO] [1790307835.508517881] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=13
+[INFO] [1790307835.519502917] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.631 | bbox_area_fraction=0.0206 | bbox_center_px=(262.8, 691.3) | image_position=(0.205, 0.720) | bbox_margin=0.155
+[INFO] [1790307836.829683099] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.757 | bbox_area_fraction=0.0241 | bbox_center_px=(1166.6, 508.1) | image_position=(0.911, 0.529) | bbox_margin=0.041
+[INFO] [1790307837.946860403] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.635 | bbox_area_fraction=0.0098 | bbox_center_px=(34.2, 592.8) | image_position=(0.027, 0.618) | bbox_margin=0.000
+[INFO] [1790307838.108108310] [sage_viewpoint_planner]: CANDIDATE STATUS | id=13 | track=(-11.8,11.7) | uav=(5.4,-2.1) | range=22.1 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307840.603658844] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.349 | bbox_area_fraction=0.0014 | bbox_center_px=(283.0, 411.4) | image_position=(0.221, 0.429) | bbox_margin=0.210
+[INFO] [1790307841.795572806] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.431 | bbox_area_fraction=0.0023 | bbox_center_px=(230.4, 518.6) | image_position=(0.180, 0.540) | bbox_margin=0.165
+[INFO] [1790307842.108854997] [sage_viewpoint_planner]: CANDIDATE STATUS | id=13 | track=(-11.3,11.4) | uav=(1.9,1.8) | range=16.3 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307843.081323629] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.613 | bbox_area_fraction=0.0033 | bbox_center_px=(212.0, 534.2) | image_position=(0.166, 0.556) | bbox_margin=0.147
+[INFO] [1790307844.328327469] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.578 | bbox_area_fraction=0.0045 | bbox_center_px=(291.6, 530.6) | image_position=(0.228, 0.553) | bbox_margin=0.204
+[INFO] [1790307845.352714993] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.570 | bbox_area_fraction=0.0050 | bbox_center_px=(297.1, 540.9) | image_position=(0.232, 0.563) | bbox_margin=0.210
+[INFO] [1790307846.111289246] [sage_viewpoint_planner]: CANDIDATE STATUS | id=13 | track=(-11.3,11.4) | uav=(-3.3,6.5) | range=9.4 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307846.477261251] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.675 | bbox_area_fraction=0.0072 | bbox_center_px=(329.0, 570.1) | image_position=(0.257, 0.594) | bbox_margin=0.231
+[INFO] [1790307847.486731248] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.763 | bbox_area_fraction=0.0127 | bbox_center_px=(405.0, 614.8) | image_position=(0.316, 0.640) | bbox_margin=0.264
+[INFO] [1790307848.655083448] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.768 | bbox_area_fraction=0.0220 | bbox_center_px=(493.2, 643.5) | image_position=(0.385, 0.670) | bbox_margin=0.202
+[INFO] [1790307849.712010792] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.877 | bbox_area_fraction=0.0615 | bbox_center_px=(866.3, 776.1) | image_position=(0.677, 0.808) | bbox_margin=0.000
+[INFO] [1790307850.307689721] [sage_viewpoint_planner]: CANDIDATE STATUS | id=13 | track=(-11.3,11.4) | uav=(-8.6,11.3) | range=2.7 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307850.510408555] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.877 | bbox_area_fraction=0.0615 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307850.511027490] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=3.9 m | est_cost_incl_return=0.8 % | unaffordable_skipped=0
+[INFO] [1790307854.115178610] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.877 | bbox_area_fraction=0.0615 | fresh=False | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307854.116057771] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=4.2 m | est_cost_incl_return=0.9 % | unaffordable_skipped=0
+[INFO] [1790307854.309490431] [sage_viewpoint_planner]: CANDIDATE STATUS | id=13 | track=(-11.3,11.4) | uav=(-11.2,8.6) | range=2.9 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307856.191409739] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.796 | bbox_area_fraction=0.0600 | bbox_center_px=(354.5, 805.4) | image_position=(0.277, 0.839) | bbox_margin=0.002
+[INFO] [1790307857.211756113] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.741 | bbox_area_fraction=0.0235 | bbox_center_px=(734.8, 700.3) | image_position=(0.574, 0.729) | bbox_margin=0.136
+[INFO] [1790307858.314143786] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.557 | bbox_area_fraction=0.0121 | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.294 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307858.315583904] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=4.4 m | est_cost_incl_return=0.9 % | unaffordable_skipped=0
+[INFO] [1790307858.510230467] [sage_viewpoint_planner]: CANDIDATE STATUS | id=13 | track=(-11.3,11.4) | uav=(-14.3,11.3) | range=3.0 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307858.549494651] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.557 | bbox_area_fraction=0.0121 | bbox_center_px=(538.7, 583.6) | image_position=(0.421, 0.608) | bbox_margin=0.294
+[INFO] [1790307859.643395116] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.403 | bbox_area_fraction=0.0103 | bbox_center_px=(367.7, 522.2) | image_position=(0.287, 0.544) | bbox_margin=0.261
+[WARN] [1790307860.507460248] [sage_viewpoint_planner]: CANDIDATE REJECTED | id=13 | not confirmed in 25 s | resuming coverage.
+[INFO] [1790307860.702559562] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.694 | bbox_area_fraction=0.0256 | bbox_center_px=(1113.3, 504.4) | image_position=(0.870, 0.525) | bbox_margin=0.077
+[INFO] [1790307862.015855241] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.524 | bbox_area_fraction=0.0180 | bbox_center_px=(1118.4, 638.0) | image_position=(0.874, 0.665) | bbox_margin=0.087
+[INFO] [1790307863.129177854] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.599 | bbox_area_fraction=0.0082 | bbox_center_px=(776.3, 571.8) | image_position=(0.607, 0.596) | bbox_margin=0.319
+[INFO] [1790307864.313806100] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.726 | bbox_area_fraction=0.0072 | bbox_center_px=(826.2, 578.6) | image_position=(0.645, 0.603) | bbox_margin=0.313
+[INFO] [1790307865.429998659] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.578 | bbox_area_fraction=0.0094 | bbox_center_px=(787.2, 504.6) | image_position=(0.615, 0.526) | bbox_margin=0.359
+[INFO] [1790307866.480568555] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.717 | bbox_area_fraction=0.0222 | bbox_center_px=(948.0, 627.1) | image_position=(0.741, 0.653) | bbox_margin=0.202
+[INFO] [1790307874.308015209] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 2/16 at (-9.6, -3.0) | scanning
+[INFO] [1790307876.990799541] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.624 | bbox_area_fraction=0.0051 | bbox_center_px=(1247.0, 551.7) | image_position=(0.974, 0.575) | bbox_margin=0.003
+[INFO] [1790307878.324557162] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.451 | bbox_area_fraction=0.0016 | bbox_center_px=(584.8, 544.4) | image_position=(0.457, 0.567) | bbox_margin=0.397
+[INFO] [1790307884.323196789] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.687 | bbox_area_fraction=0.0042 | bbox_center_px=(1088.1, 369.5) | image_position=(0.850, 0.385) | bbox_margin=0.129
+[INFO] [1790307885.340223593] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.478 | bbox_area_fraction=0.0039 | bbox_center_px=(239.1, 492.3) | image_position=(0.187, 0.513) | bbox_margin=0.169
+[INFO] [1790307888.049838308] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.619 | bbox_area_fraction=0.0045 | bbox_center_px=(888.9, 525.8) | image_position=(0.694, 0.548) | bbox_margin=0.288
+[INFO] [1790307889.060128655] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.681 | bbox_area_fraction=0.0215 | bbox_center_px=(1116.7, 524.9) | image_position=(0.872, 0.547) | bbox_margin=0.072
+[INFO] [1790307891.383011582] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.468 | bbox_area_fraction=0.0077 | bbox_center_px=(1090.5, 612.5) | image_position=(0.852, 0.638) | bbox_margin=0.113
+[INFO] [1790307894.910034365] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 3/16 at (-9.0, 3.0) | scanning
+[INFO] [1790307899.694060650] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.739 | bbox_area_fraction=0.0126 | bbox_center_px=(1174.6, 593.3) | image_position=(0.918, 0.618) | bbox_margin=0.040
+[INFO] [1790307901.239644113] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.392 | bbox_area_fraction=0.0114 | bbox_center_px=(1247.4, 675.9) | image_position=(0.975, 0.704) | bbox_margin=0.001
+[INFO] [1790307902.330769200] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.724 | bbox_area_fraction=0.0079 | bbox_center_px=(593.8, 615.6) | image_position=(0.464, 0.641) | bbox_margin=0.278
+[INFO] [1790307903.366585890] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.790 | bbox_area_fraction=0.0170 | bbox_center_px=(45.5, 688.4) | image_position=(0.036, 0.717) | bbox_margin=0.001
+[INFO] [1790307905.401428076] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.763 | bbox_area_fraction=0.0152 | bbox_center_px=(111.1, 500.2) | image_position=(0.087, 0.521) | bbox_margin=0.056
+[INFO] [1790307906.617798295] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.751 | bbox_area_fraction=0.0135 | bbox_center_px=(680.5, 634.7) | image_position=(0.532, 0.661) | bbox_margin=0.204
+[INFO] [1790307907.900371117] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.689 | bbox_area_fraction=0.0185 | bbox_center_px=(471.9, 880.8) | image_position=(0.369, 0.917) | bbox_margin=0.000
+[INFO] [1790307907.908135962] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 4/16 at (-9.0, 9.0) | scanning
+[INFO] [1790307914.323753245] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.685 | bbox_area_fraction=0.0051 | bbox_center_px=(1075.6, 592.7) | image_position=(0.840, 0.617) | bbox_margin=0.138
+[INFO] [1790307918.871057187] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.500 | bbox_area_fraction=0.0045 | bbox_center_px=(346.4, 525.7) | image_position=(0.271, 0.548) | bbox_margin=0.251
+[INFO] [1790307919.988624064] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.704 | bbox_area_fraction=0.0176 | bbox_center_px=(176.7, 579.8) | image_position=(0.138, 0.604) | bbox_margin=0.097
+[INFO] [1790307920.908312276] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 5/16 at (-3.0, 9.0) | scanning
+[INFO] [1790307922.151603217] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.695 | bbox_area_fraction=0.0264 | bbox_center_px=(153.6, 739.7) | image_position=(0.120, 0.771) | bbox_margin=0.070
+[INFO] [1790307923.176586723] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.625 | bbox_area_fraction=0.0236 | bbox_center_px=(219.2, 729.0) | image_position=(0.171, 0.759) | bbox_margin=0.114
+[INFO] [1790307925.852795172] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.789 | bbox_area_fraction=0.0298 | bbox_center_px=(1151.0, 648.4) | image_position=(0.899, 0.675) | bbox_margin=0.033
+[INFO] [1790307927.223229829] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.698 | bbox_area_fraction=0.0086 | bbox_center_px=(500.2, 614.6) | image_position=(0.391, 0.640) | bbox_margin=0.271
+[INFO] [1790307928.890456936] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.790 | bbox_area_fraction=0.0205 | bbox_center_px=(1113.9, 681.3) | image_position=(0.870, 0.710) | bbox_margin=0.093
+[INFO] [1790307930.077611573] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.695 | bbox_area_fraction=0.0124 | bbox_center_px=(471.7, 633.6) | image_position=(0.368, 0.660) | bbox_margin=0.237
+[INFO] [1790307931.382177940] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.661 | bbox_area_fraction=0.0136 | bbox_center_px=(493.6, 457.0) | image_position=(0.386, 0.476) | bbox_margin=0.351
+[INFO] [1790307933.641754040] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.566 | bbox_area_fraction=0.0017 | bbox_center_px=(882.0, 601.6) | image_position=(0.689, 0.627) | bbox_margin=0.299
+[INFO] [1790307934.109893154] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 6/16 at (-3.0, 3.0) | scanning
+[INFO] [1790307934.810151553] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.641 | bbox_area_fraction=0.0060 | bbox_center_px=(1237.4, 684.6) | image_position=(0.967, 0.713) | bbox_margin=0.009
+[INFO] [1790307936.631830393] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.694 | bbox_area_fraction=0.0059 | bbox_center_px=(1219.6, 601.9) | image_position=(0.953, 0.627) | bbox_margin=0.023
+[INFO] [1790307938.030609911] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.867 | bbox_area_fraction=0.0488 | bbox_center_px=(1186.0, 733.2) | image_position=(0.927, 0.764) | bbox_margin=0.002
+[INFO] [1790307939.244644716] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.380 | bbox_area_fraction=0.0168 | bbox_center_px=(595.7, 673.8) | image_position=(0.465, 0.702) | bbox_margin=0.181
+[INFO] [1790307940.363057213] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.746 | bbox_area_fraction=0.0123 | bbox_center_px=(1228.9, 619.5) | image_position=(0.960, 0.645) | bbox_margin=0.003
+[INFO] [1790307941.603513055] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.614 | bbox_area_fraction=0.0037 | bbox_center_px=(580.7, 572.2) | image_position=(0.454, 0.596) | bbox_margin=0.347
+[INFO] [1790307944.343451002] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.365 | bbox_area_fraction=0.0096 | bbox_center_px=(1210.1, 431.0) | image_position=(0.945, 0.449) | bbox_margin=0.024
+[INFO] [1790307947.509697401] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 7/16 at (-2.5, -3.0) | scanning
+[INFO] [1790307951.792666943] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.489 | bbox_area_fraction=0.0101 | bbox_center_px=(1033.5, 570.5) | image_position=(0.807, 0.594) | bbox_margin=0.162
+[INFO] [1790307951.858030315] [sage_viewpoint_planner]: New target acquired | target_id=15
+[INFO] [1790307951.909288223] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=15
+[INFO] [1790307951.910048270] [sage_viewpoint_planner]: CANDIDATE STATUS | id=15 | track=(4.4,-0.1) | uav=(-2.7,-3.1) | range=7.7 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307956.107741657] [sage_viewpoint_planner]: CANDIDATE STATUS | id=15 | track=(4.4,-0.1) | uav=(2.3,-1.4) | range=2.4 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307958.377886374] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.454 | bbox_area_fraction=0.0021 | bbox_center_px=(41.7, 556.9) | image_position=(0.033, 0.580) | bbox_margin=0.020
+[INFO] [1790307959.314072752] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.668 | bbox_area_fraction=0.0493 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307959.315039151] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=3.3 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[INFO] [1790307959.425588877] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.818 | bbox_area_fraction=0.0721 | bbox_center_px=(508.0, 760.1) | image_position=(0.397, 0.792) | bbox_margin=0.000
+[INFO] [1790307960.108319197] [sage_viewpoint_planner]: CANDIDATE STATUS | id=15 | track=(4.4,-0.1) | uav=(7.6,-0.4) | range=3.2 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790307960.601545787] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.694 | bbox_area_fraction=0.0084 | bbox_center_px=(87.5, 463.6) | image_position=(0.068, 0.483) | bbox_margin=0.040
+[INFO] [1790307963.053449104] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.859 | bbox_area_fraction=0.0442 | bbox_center_px=(354.7, 826.8) | image_position=(0.277, 0.861) | bbox_margin=0.000
+[INFO] [1790307963.316528193] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=2/4 | person_confidence=0.825 | bbox_area_fraction=0.0553 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307963.319791498] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=3.3 m | est_cost_incl_return=0.3 % | unaffordable_skipped=0
+[INFO] [1790307964.090503238] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.659 | bbox_area_fraction=0.0247 | bbox_center_px=(679.0, 717.2) | image_position=(0.530, 0.747) | bbox_margin=0.090
+[INFO] [1790307964.309716635] [sage_viewpoint_planner]: CANDIDATE STATUS | id=15 | track=(3.9,-1.7) | uav=(4.2,1.5) | range=3.2 m | sufficient=True | matches_track=True | evidence=0.4/2.0 s
+[INFO] [1790307965.228422506] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.705 | bbox_area_fraction=0.0532 | bbox_center_px=(99.9, 567.4) | image_position=(0.078, 0.591) | bbox_margin=0.003
+[INFO] [1790307967.111544787] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.705 | bbox_area_fraction=0.0532 | fresh=False | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.003 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307967.112493179] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=5.4 m | est_cost_incl_return=0.5 % | unaffordable_skipped=0
+[INFO] [1790307967.849228407] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.831 | bbox_area_fraction=0.0288 | bbox_center_px=(63.7, 698.3) | image_position=(0.050, 0.727) | bbox_margin=0.000
+[INFO] [1790307968.518597483] [sage_viewpoint_planner]: CANDIDATE STATUS | id=15 | track=(4.1,-3.3) | uav=(1.3,-0.4) | range=4.1 m | sufficient=False | matches_track=False | evidence=1.4/2.0 s
+[INFO] [1790307969.635352361] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.737 | bbox_area_fraction=0.0153 | bbox_center_px=(877.4, 736.9) | image_position=(0.685, 0.768) | bbox_margin=0.130
+[INFO] [1790307971.414863553] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.447 | bbox_area_fraction=0.0037 | bbox_center_px=(903.6, 518.7) | image_position=(0.706, 0.540) | bbox_margin=0.279
+[INFO] [1790307971.918199318] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.321 | bbox_area_fraction=0.0035 | fresh=True | confidence_ok=False | bbox_size_ok=False | position_ok=True | bbox_margin=0.258 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307971.922687607] [sage_viewpoint_planner]: SEARCH CYCLE COMPLETE | starting next cycle.
+[INFO] [1790307971.923460251] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=2.7 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[INFO] [1790307972.709901749] [sage_viewpoint_planner]: CANDIDATE STATUS | id=15 | track=(4.3,-4.1) | uav=(3.8,-5.0) | range=1.0 m | sufficient=False | matches_track=False | evidence=1.6/2.0 s
+[INFO] [1790307973.278643031] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.394 | bbox_area_fraction=0.0027 | bbox_center_px=(904.7, 411.0) | image_position=(0.707, 0.428) | bbox_margin=0.280
+[INFO] [1790307974.611068843] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.634 | bbox_area_fraction=0.0046 | bbox_center_px=(242.4, 646.8) | image_position=(0.189, 0.674) | bbox_margin=0.156
+[INFO] [1790307975.513641230] [sage_viewpoint_planner]: OBSERVATION SUFFICIENT | viewpoint=3/4 | person_confidence=0.773 | bbox_area_fraction=0.0285 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=True | bbox_margin=0.210 | confidence_threshold=0.60 | bbox_threshold=0.0100 | HOLDING VIEWPOINT.
+[INFO] [1790307975.618741429] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.776 | bbox_area_fraction=0.0276 | bbox_center_px=(372.8, 613.9) | image_position=(0.291, 0.639) | bbox_margin=0.227
+[INFO] [1790307976.657993280] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.701 | bbox_area_fraction=0.0177 | bbox_center_px=(41.3, 567.9) | image_position=(0.032, 0.592) | bbox_margin=0.000
+[INFO] [1790307976.708800999] [sage_viewpoint_planner]: OBSERVATION QUALITY LOST | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | resuming active search.
+[INFO] [1790307976.710434716] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.701 | bbox_area_fraction=0.0177 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790307976.711307456] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=3.9 m | est_cost_incl_return=0.4 % | unaffordable_skipped=0
+[WARN] [1790307976.908724321] [sage_viewpoint_planner]: CANDIDATE REJECTED | id=15 | not confirmed in 25 s | resuming coverage.
+[INFO] [1790307977.673649242] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.665 | bbox_area_fraction=0.0275 | bbox_center_px=(78.3, 597.1) | image_position=(0.061, 0.622) | bbox_margin=0.005
+[INFO] [1790307978.816701999] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.616 | bbox_area_fraction=0.0118 | bbox_center_px=(385.1, 695.5) | image_position=(0.301, 0.724) | bbox_margin=0.182
+[INFO] [1790307980.515479889] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 7/16 at (-2.5, -3.0) | scanning
+[INFO] [1790308000.907898233] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 8/16 at (-3.0, -9.0) | scanning
+[INFO] [1790308013.884657829] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.598 | bbox_area_fraction=0.0049 | bbox_center_px=(1160.7, 435.9) | image_position=(0.907, 0.454) | bbox_margin=0.073
+[INFO] [1790308014.984077243] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.697 | bbox_area_fraction=0.0053 | bbox_center_px=(324.4, 664.6) | image_position=(0.253, 0.692) | bbox_margin=0.234
+[INFO] [1790308015.712969640] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 9/16 at (3.0, -9.0) | scanning
+[INFO] [1790308016.138117542] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.379 | bbox_area_fraction=0.0028 | bbox_center_px=(1188.7, 546.7) | image_position=(0.929, 0.570) | bbox_margin=0.056
+[INFO] [1790308021.682168723] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.809 | bbox_area_fraction=0.0161 | bbox_center_px=(1104.9, 621.6) | image_position=(0.863, 0.647) | bbox_margin=0.092
+[INFO] [1790308022.769922500] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.549 | bbox_area_fraction=0.0046 | bbox_center_px=(615.5, 587.0) | image_position=(0.481, 0.611) | bbox_margin=0.322
+[INFO] [1790308024.218722803] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.359 | bbox_area_fraction=0.0022 | bbox_center_px=(663.3, 560.4) | image_position=(0.518, 0.584) | bbox_margin=0.371
+[INFO] [1790308025.751811621] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.455 | bbox_area_fraction=0.0056 | bbox_center_px=(233.4, 346.8) | image_position=(0.182, 0.361) | bbox_margin=0.163
+[INFO] [1790308027.028229689] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.676 | bbox_area_fraction=0.0043 | bbox_center_px=(592.6, 528.4) | image_position=(0.463, 0.550) | bbox_margin=0.386
+[INFO] [1790308028.106207178] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.687 | bbox_area_fraction=0.0088 | bbox_center_px=(481.5, 587.5) | image_position=(0.376, 0.612) | bbox_margin=0.293
+[INFO] [1790308029.113714863] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 10/16 at (3.0, -3.0) | scanning
+[INFO] [1790308029.184312430] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.790 | bbox_area_fraction=0.0194 | bbox_center_px=(401.5, 711.5) | image_position=(0.314, 0.741) | bbox_margin=0.119
+[INFO] [1790308030.638455356] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.327 | bbox_area_fraction=0.0044 | bbox_center_px=(873.2, 627.0) | image_position=(0.682, 0.653) | bbox_margin=0.283
+[INFO] [1790308031.668388776] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.519 | bbox_area_fraction=0.0045 | bbox_center_px=(420.7, 595.2) | image_position=(0.329, 0.620) | bbox_margin=0.311
+[INFO] [1790308034.636770246] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.343 | bbox_area_fraction=0.0045 | bbox_center_px=(1139.7, 571.7) | image_position=(0.890, 0.595) | bbox_margin=0.078
+[INFO] [1790308034.744326395] [sage_viewpoint_planner]: New target acquired | target_id=16
+[INFO] [1790308034.907142525] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=16
+[INFO] [1790308034.907810373] [sage_viewpoint_planner]: CANDIDATE STATUS | id=16 | track=(12.0,-11.6) | uav=(3.1,-2.9) | range=12.5 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308035.857303021] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.803 | bbox_area_fraction=0.0338 | bbox_center_px=(555.4, 806.0) | image_position=(0.434, 0.840) | bbox_margin=0.000
+[INFO] [1790308037.018946120] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.828 | bbox_area_fraction=0.0532 | bbox_center_px=(680.8, 627.6) | image_position=(0.532, 0.654) | bbox_margin=0.139
+[INFO] [1790308038.748740626] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.705 | bbox_area_fraction=0.0059 | bbox_center_px=(67.2, 638.7) | image_position=(0.053, 0.665) | bbox_margin=0.030
+[INFO] [1790308038.914267596] [sage_viewpoint_planner]: CANDIDATE STATUS | id=16 | track=(12.0,-11.6) | uav=(7.0,-5.7) | range=7.7 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308039.869942095] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.761 | bbox_area_fraction=0.0173 | bbox_center_px=(681.3, 758.0) | image_position=(0.532, 0.790) | bbox_margin=0.077
+[INFO] [1790308042.368950485] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.386 | bbox_area_fraction=0.0121 | bbox_center_px=(973.6, 903.9) | image_position=(0.761, 0.942) | bbox_margin=0.001
+[INFO] [1790308043.108396057] [sage_viewpoint_planner]: CANDIDATE STATUS | id=16 | track=(12.0,-11.6) | uav=(13.3,-10.3) | range=1.9 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308043.500675294] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.861 | bbox_area_fraction=0.0524 | bbox_center_px=(437.5, 799.8) | image_position=(0.342, 0.833) | bbox_margin=0.000
+[INFO] [1790308044.512669063] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.469 | bbox_area_fraction=0.0225 | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.241 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790308044.513564260] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=4.0 m | est_cost_incl_return=0.8 % | unaffordable_skipped=0
+[INFO] [1790308045.564855166] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.383 | bbox_area_fraction=0.0137 | bbox_center_px=(347.1, 543.8) | image_position=(0.271, 0.566) | bbox_margin=0.231
+[INFO] [1790308047.108577364] [sage_viewpoint_planner]: CANDIDATE STATUS | id=16 | track=(12.0,-11.6) | uav=(13.5,-10.0) | range=2.2 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308048.513907187] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=2/4 | person_confidence=0.560 | bbox_area_fraction=0.0139 | fresh=False | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.216 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790308048.518690356] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=4.3 m | est_cost_incl_return=0.8 % | unaffordable_skipped=0
+[INFO] [1790308051.308264051] [sage_viewpoint_planner]: CANDIDATE STATUS | id=16 | track=(12.0,-11.6) | uav=(9.9,-10.4) | range=2.4 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308052.511759562] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.560 | bbox_area_fraction=0.0139 | fresh=False | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.216 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790308052.515345899] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=4.5 m | est_cost_incl_return=1.0 % | unaffordable_skipped=0
+[INFO] [1790308054.451290846] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.451 | bbox_area_fraction=0.0999 | bbox_center_px=(920.6, 808.7) | image_position=(0.719, 0.842) | bbox_margin=0.000
+[INFO] [1790308055.316006583] [sage_viewpoint_planner]: CANDIDATE STATUS | id=16 | track=(12.0,-11.6) | uav=(10.7,-13.4) | range=2.3 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308055.527466170] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.595 | bbox_area_fraction=0.0270 | bbox_center_px=(465.6, 769.6) | image_position=(0.364, 0.802) | bbox_margin=0.034
+[INFO] [1790308056.708841134] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.466 | bbox_area_fraction=0.0106 | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.246 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790308056.712687988] [sage_viewpoint_planner]: SEARCH CYCLE COMPLETE | starting next cycle.
+[INFO] [1790308056.713477261] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=4.0 m | est_cost_incl_return=0.8 % | unaffordable_skipped=0
+[INFO] [1790308059.507020735] [sage_viewpoint_planner]: CANDIDATE STATUS | id=16 | track=(12.0,-11.6) | uav=(10.2,-12.8) | range=2.2 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[WARN] [1790308059.913425215] [sage_viewpoint_planner]: CANDIDATE REJECTED | id=16 | not confirmed in 25 s | resuming coverage.
+[INFO] [1790308061.474147295] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.793 | bbox_area_fraction=0.0463 | bbox_center_px=(951.5, 703.8) | image_position=(0.743, 0.733) | bbox_margin=0.074
+[INFO] [1790308062.705026305] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.374 | bbox_area_fraction=0.0112 | bbox_center_px=(704.4, 581.6) | image_position=(0.550, 0.606) | bbox_margin=0.285
+[INFO] [1790308063.756411004] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.619 | bbox_area_fraction=0.0380 | bbox_center_px=(1001.2, 743.0) | image_position=(0.782, 0.774) | bbox_margin=0.033
+[INFO] [1790308067.507882876] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 10/16 at (3.0, -3.0) | scanning
+[INFO] [1790308068.284929365] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.506 | bbox_area_fraction=0.0038 | bbox_center_px=(532.4, 667.3) | image_position=(0.416, 0.695) | bbox_margin=0.245
+[INFO] [1790308069.745670594] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.725 | bbox_area_fraction=0.0070 | bbox_center_px=(211.0, 658.7) | image_position=(0.165, 0.686) | bbox_margin=0.143
+[INFO] [1790308072.313229941] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.847 | bbox_area_fraction=0.0410 | bbox_center_px=(1107.4, 844.0) | image_position=(0.865, 0.879) | bbox_margin=0.002
+[INFO] [1790308073.354711379] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.792 | bbox_area_fraction=0.0295 | bbox_center_px=(725.9, 838.9) | image_position=(0.567, 0.874) | bbox_margin=0.001
+[INFO] [1790308075.777208741] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.782 | bbox_area_fraction=0.0082 | bbox_center_px=(1080.4, 612.3) | image_position=(0.844, 0.638) | bbox_margin=0.129
+[INFO] [1790308076.886288694] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.437 | bbox_area_fraction=0.0035 | bbox_center_px=(590.7, 526.2) | image_position=(0.462, 0.548) | bbox_margin=0.394
+[INFO] [1790308078.189465376] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.725 | bbox_area_fraction=0.0067 | bbox_center_px=(901.8, 474.6) | image_position=(0.705, 0.494) | bbox_margin=0.271
+[INFO] [1790308079.347682967] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.614 | bbox_area_fraction=0.0105 | bbox_center_px=(963.1, 611.9) | image_position=(0.752, 0.637) | bbox_margin=0.220
+[INFO] [1790308080.509389551] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 11/16 at (2.5, 3.0) | scanning
+[INFO] [1790308080.577818810] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.793 | bbox_area_fraction=0.0605 | bbox_center_px=(1071.7, 809.7) | image_position=(0.837, 0.843) | bbox_margin=0.000
+[INFO] [1790308082.253307666] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.793 | bbox_area_fraction=0.0495 | bbox_center_px=(1031.7, 808.2) | image_position=(0.806, 0.842) | bbox_margin=0.000
+[INFO] [1790308083.355248723] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.853 | bbox_area_fraction=0.0345 | bbox_center_px=(469.2, 798.8) | image_position=(0.367, 0.832) | bbox_margin=0.000
+[INFO] [1790308085.620642763] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.832 | bbox_area_fraction=0.0393 | bbox_center_px=(1205.6, 792.4) | image_position=(0.942, 0.825) | bbox_margin=0.000
+[INFO] [1790308086.794482079] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.777 | bbox_area_fraction=0.0243 | bbox_center_px=(603.9, 746.2) | image_position=(0.472, 0.777) | bbox_margin=0.057
+[INFO] [1790308087.806619181] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.739 | bbox_area_fraction=0.0352 | bbox_center_px=(533.2, 796.6) | image_position=(0.417, 0.830) | bbox_margin=0.002
+[INFO] [1790308089.847582045] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.759 | bbox_area_fraction=0.0656 | bbox_center_px=(1121.2, 755.0) | image_position=(0.876, 0.786) | bbox_margin=0.000
+[INFO] [1790308093.716220588] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 12/16 at (2.5, 9.0) | scanning
+[INFO] [1790308096.192387024] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.662 | bbox_area_fraction=0.0046 | bbox_center_px=(1093.6, 571.0) | image_position=(0.854, 0.595) | bbox_margin=0.126
+[INFO] [1790308097.271651460] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.675 | bbox_area_fraction=0.0024 | bbox_center_px=(496.3, 554.4) | image_position=(0.388, 0.577) | bbox_margin=0.375
+[INFO] [1790308098.352369527] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.470 | bbox_area_fraction=0.0035 | bbox_center_px=(1064.2, 557.9) | image_position=(0.831, 0.581) | bbox_margin=0.152
+[INFO] [1790308109.509726752] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 13/16 at (9.6, 9.0) | scanning
+[INFO] [1790308122.508740823] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 14/16 at (9.6, 3.0) | scanning
+[INFO] [1790308125.019472298] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.553 | bbox_area_fraction=0.0032 | bbox_center_px=(339.0, 577.6) | image_position=(0.265, 0.602) | bbox_margin=0.248
+[INFO] [1790308130.967556398] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.392 | bbox_area_fraction=0.0047 | bbox_center_px=(1253.6, 576.7) | image_position=(0.979, 0.601) | bbox_margin=0.001
+[INFO] [1790308132.050801354] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.301 | bbox_area_fraction=0.0019 | bbox_center_px=(611.6, 416.9) | image_position=(0.478, 0.434) | bbox_margin=0.396
+[INFO] [1790308133.477204180] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.507 | bbox_area_fraction=0.0023 | bbox_center_px=(575.8, 482.0) | image_position=(0.450, 0.502) | bbox_margin=0.437
+[INFO] [1790308134.669436370] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.626 | bbox_area_fraction=0.0042 | bbox_center_px=(619.3, 586.1) | image_position=(0.484, 0.611) | bbox_margin=0.333
+[INFO] [1790308135.309847426] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 15/16 at (10.0, -3.0) | scanning
+[INFO] [1790308135.774590037] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.755 | bbox_area_fraction=0.0084 | bbox_center_px=(648.9, 702.9) | image_position=(0.507, 0.732) | bbox_margin=0.189
+[INFO] [1790308136.778701389] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.775 | bbox_area_fraction=0.0110 | bbox_center_px=(730.4, 686.8) | image_position=(0.571, 0.715) | bbox_margin=0.194
+[INFO] [1790308137.894268410] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.683 | bbox_area_fraction=0.0120 | bbox_center_px=(463.6, 661.3) | image_position=(0.362, 0.689) | bbox_margin=0.217
+[INFO] [1790308140.985159187] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.575 | bbox_area_fraction=0.0045 | bbox_center_px=(1245.0, 576.7) | image_position=(0.973, 0.601) | bbox_margin=0.006
+[INFO] [1790308142.111389682] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.488 | bbox_area_fraction=0.0016 | bbox_center_px=(684.5, 538.7) | image_position=(0.535, 0.561) | bbox_margin=0.401
+[INFO] [1790308143.421612149] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.572 | bbox_area_fraction=0.0015 | bbox_center_px=(92.0, 528.7) | image_position=(0.072, 0.551) | bbox_margin=0.059
+[INFO] [1790308143.646067578] [sage_viewpoint_planner]: New target acquired | target_id=4
+[INFO] [1790308143.708137363] [sage_viewpoint_planner]: CANDIDATE FOUND | leaving sweep to verify target_id=4
+[INFO] [1790308143.708964697] [sage_viewpoint_planner]: CANDIDATE STATUS | id=4 | track=(-6.7,9.7) | uav=(10.0,-3.0) | range=20.9 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308144.589412786] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.744 | bbox_area_fraction=0.0080 | bbox_center_px=(854.9, 625.5) | image_position=(0.668, 0.652) | bbox_margin=0.265
+[INFO] [1790308145.654089186] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.719 | bbox_area_fraction=0.0139 | bbox_center_px=(1019.8, 773.6) | image_position=(0.797, 0.806) | bbox_margin=0.091
+[INFO] [1790308146.663137665] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.675 | bbox_area_fraction=0.0034 | bbox_center_px=(266.9, 485.9) | image_position=(0.209, 0.506) | bbox_margin=0.193
+[INFO] [1790308147.712053368] [sage_viewpoint_planner]: CANDIDATE STATUS | id=4 | track=(-6.5,9.7) | uav=(6.4,0.0) | range=16.1 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308147.754540644] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.672 | bbox_area_fraction=0.0180 | bbox_center_px=(583.6, 681.3) | image_position=(0.456, 0.710) | bbox_margin=0.145
+[INFO] [1790308148.903785605] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.756 | bbox_area_fraction=0.0136 | bbox_center_px=(54.4, 603.9) | image_position=(0.043, 0.629) | bbox_margin=0.006
+[INFO] [1790308149.995762580] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.780 | bbox_area_fraction=0.0233 | bbox_center_px=(71.5, 632.1) | image_position=(0.056, 0.658) | bbox_margin=0.008
+[INFO] [1790308151.057503517] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.763 | bbox_area_fraction=0.0205 | bbox_center_px=(46.7, 646.5) | image_position=(0.036, 0.673) | bbox_margin=0.000
+[INFO] [1790308151.907562374] [sage_viewpoint_planner]: CANDIDATE STATUS | id=4 | track=(-6.5,9.7) | uav=(0.6,3.8) | range=9.1 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308152.058545325] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.611 | bbox_area_fraction=0.0028 | bbox_center_px=(296.5, 519.0) | image_position=(0.232, 0.541) | bbox_margin=0.216
+[INFO] [1790308153.172135141] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.638 | bbox_area_fraction=0.0035 | bbox_center_px=(357.5, 541.8) | image_position=(0.279, 0.564) | bbox_margin=0.262
+[INFO] [1790308154.224323416] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.628 | bbox_area_fraction=0.0046 | bbox_center_px=(424.2, 550.8) | image_position=(0.331, 0.574) | bbox_margin=0.310
+[INFO] [1790308155.415189035] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.646 | bbox_area_fraction=0.0060 | bbox_center_px=(547.2, 595.6) | image_position=(0.428, 0.620) | bbox_margin=0.310
+[INFO] [1790308155.913004486] [sage_viewpoint_planner]: CANDIDATE STATUS | id=4 | track=(-6.7,8.9) | uav=(-3.6,9.5) | range=3.1 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308155.914377280] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=1/4 | person_confidence=0.470 | bbox_area_fraction=0.0080 | fresh=True | confidence_ok=False | bbox_size_ok=False | position_ok=True | bbox_margin=0.239 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790308155.918537307] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=2/4 | distance=3.9 m | est_cost_incl_return=0.7 % | unaffordable_skipped=0
+[INFO] [1790308156.621285022] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.684 | bbox_area_fraction=0.0124 | bbox_center_px=(718.3, 680.3) | image_position=(0.561, 0.709) | bbox_margin=0.194
+[INFO] [1790308157.928370808] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.657 | bbox_area_fraction=0.0118 | bbox_center_px=(394.2, 518.9) | image_position=(0.308, 0.541) | bbox_margin=0.280
+[INFO] [1790308159.091047174] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.345 | bbox_area_fraction=0.0046 | bbox_center_px=(934.2, 518.1) | image_position=(0.730, 0.540) | bbox_margin=0.252
+[INFO] [1790308159.311056440] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=2/4 | person_confidence=0.345 | bbox_area_fraction=0.0046 | fresh=True | confidence_ok=False | bbox_size_ok=False | position_ok=True | bbox_margin=0.252 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790308159.312065067] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=4.3 m | est_cost_incl_return=0.7 % | unaffordable_skipped=0
+[INFO] [1790308160.107179939] [sage_viewpoint_planner]: CANDIDATE STATUS | id=4 | track=(-6.7,8.9) | uav=(-6.8,12.0) | range=3.1 m | sufficient=True | matches_track=False | evidence=0.8/2.0 s
+[INFO] [1790308160.206624270] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.812 | bbox_area_fraction=0.0349 | bbox_center_px=(292.7, 714.6) | image_position=(0.229, 0.744) | bbox_margin=0.111
+[INFO] [1790308162.470483337] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.615 | bbox_area_fraction=0.0091 | bbox_center_px=(67.9, 553.7) | image_position=(0.053, 0.577) | bbox_margin=0.023
+[INFO] [1790308163.311229734] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=3/4 | person_confidence=0.494 | bbox_area_fraction=0.0108 | fresh=True | confidence_ok=False | bbox_size_ok=True | position_ok=True | bbox_margin=0.052 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790308163.311844717] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=4/4 | distance=4.3 m | est_cost_incl_return=0.6 % | unaffordable_skipped=0
+[INFO] [1790308164.112350503] [sage_viewpoint_planner]: CANDIDATE STATUS | id=4 | track=(-6.7,8.9) | uav=(-9.7,8.9) | range=3.0 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[INFO] [1790308165.011972445] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.770 | bbox_area_fraction=0.0715 | bbox_center_px=(568.5, 849.7) | image_position=(0.444, 0.885) | bbox_margin=0.000
+[INFO] [1790308166.093059315] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.510 | bbox_area_fraction=0.0244 | bbox_center_px=(565.8, 870.9) | image_position=(0.442, 0.907) | bbox_margin=0.000
+[INFO] [1790308167.112398816] [sage_viewpoint_planner]: OBSERVATION INSUFFICIENT | viewpoint=4/4 | person_confidence=0.852 | bbox_area_fraction=0.0597 | fresh=True | confidence_ok=True | bbox_size_ok=True | position_ok=False | bbox_margin=0.000 | confidence_threshold=0.60 | bbox_threshold=0.0100
+[INFO] [1790308167.113801131] [sage_viewpoint_planner]: SEARCH CYCLE COMPLETE | starting next cycle.
+[INFO] [1790308167.114947382] [sage_viewpoint_planner]: ENERGY-AWARE SELECTION | chosen=3/4 | distance=4.0 m | est_cost_incl_return=0.7 % | unaffordable_skipped=0
+[INFO] [1790308167.289624187] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.843 | bbox_area_fraction=0.0696 | bbox_center_px=(1032.4, 695.0) | image_position=(0.807, 0.724) | bbox_margin=0.068
+[INFO] [1790308168.307577047] [sage_viewpoint_planner]: CANDIDATE STATUS | id=4 | track=(-6.7,8.9) | uav=(-6.7,5.8) | range=3.1 m | sufficient=False | matches_track=False | evidence=0.0/2.0 s
+[WARN] [1790308168.712277734] [sage_viewpoint_planner]: CANDIDATE REJECTED | id=4 | not confirmed in 25 s | resuming coverage.
+[INFO] [1790308169.156414083] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.717 | bbox_area_fraction=0.0216 | bbox_center_px=(223.8, 838.2) | image_position=(0.175, 0.873) | bbox_margin=0.025
+[INFO] [1790308170.294792841] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.549 | bbox_area_fraction=0.0048 | bbox_center_px=(704.1, 570.2) | image_position=(0.550, 0.594) | bbox_margin=0.349
+[INFO] [1790308171.464719641] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.335 | bbox_area_fraction=0.0035 | bbox_center_px=(456.6, 498.5) | image_position=(0.357, 0.519) | bbox_margin=0.339
+[INFO] [1790308173.336783231] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.414 | bbox_area_fraction=0.0040 | bbox_center_px=(764.6, 360.3) | image_position=(0.597, 0.375) | bbox_margin=0.325
+[INFO] [1790308174.442646193] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.735 | bbox_area_fraction=0.0097 | bbox_center_px=(1155.6, 571.2) | image_position=(0.903, 0.595) | bbox_margin=0.066
+[INFO] [1790308175.583320953] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.695 | bbox_area_fraction=0.0175 | bbox_center_px=(1073.8, 577.8) | image_position=(0.839, 0.602) | bbox_margin=0.114
+[INFO] [1790308178.875400789] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.354 | bbox_area_fraction=0.0019 | bbox_center_px=(519.0, 520.1) | image_position=(0.405, 0.542) | bbox_margin=0.394
+[INFO] [1790308180.071196460] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.491 | bbox_area_fraction=0.0025 | bbox_center_px=(479.2, 498.6) | image_position=(0.374, 0.519) | bbox_margin=0.361
+[INFO] [1790308181.441742796] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.445 | bbox_area_fraction=0.0040 | bbox_center_px=(402.7, 545.1) | image_position=(0.315, 0.568) | bbox_margin=0.298
+[INFO] [1790308182.631798225] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.741 | bbox_area_fraction=0.0069 | bbox_center_px=(333.3, 575.5) | image_position=(0.260, 0.600) | bbox_margin=0.239
+[INFO] [1790308183.695119221] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.802 | bbox_area_fraction=0.0211 | bbox_center_px=(123.3, 653.8) | image_position=(0.096, 0.681) | bbox_margin=0.053
+[INFO] [1790308184.890179715] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.800 | bbox_area_fraction=0.0180 | bbox_center_px=(767.7, 606.9) | image_position=(0.600, 0.632) | bbox_margin=0.263
+[INFO] [1790308186.006639458] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.874 | bbox_area_fraction=0.0632 | bbox_center_px=(869.4, 786.8) | image_position=(0.679, 0.820) | bbox_margin=0.000
+[INFO] [1790308186.510032158] [sage_viewpoint_planner]: COVERAGE WAYPOINT | 16/16 at (9.0, -9.0) | scanning
+[INFO] [1790308187.274599753] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.865 | bbox_area_fraction=0.0685 | bbox_center_px=(1056.8, 860.5) | image_position=(0.826, 0.896) | bbox_margin=0.002
+[INFO] [1790308192.848591286] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.555 | bbox_area_fraction=0.0306 | bbox_center_px=(1227.1, 775.2) | image_position=(0.959, 0.807) | bbox_margin=0.001
+[INFO] [1790308194.131203605] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.570 | bbox_area_fraction=0.0123 | bbox_center_px=(471.8, 678.3) | image_position=(0.369, 0.707) | bbox_margin=0.180
+[INFO] [1790308194.909369832] [sage_viewpoint_planner]: MISSION COMPLETE | status=area_covered | found=5 | locations=#1 (-0.2, 4.6); #2 (-9.1, 8.7); #3 (4.8, -7.1); #5 (4.6, -11.1); #11 (9.8, -8.8) | duration=570 s
+[INFO] [1790308194.910321273] [sage_viewpoint_planner]: Requesting return home + land.
+[INFO] [1790308194.948311203] [sage_viewpoint_planner]: New target acquired | target_id=1
+[INFO] [1790308197.508657279] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.443 | bbox_area_fraction=0.0138 | bbox_center_px=(652.2, 896.1) | image_position=(0.510, 0.933) | bbox_margin=0.001
+[INFO] [1790308198.705329893] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.863 | bbox_area_fraction=0.0499 | bbox_center_px=(341.6, 827.2) | image_position=(0.267, 0.862) | bbox_margin=0.000
+[INFO] [1790308199.902625023] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.847 | bbox_area_fraction=0.0362 | bbox_center_px=(387.8, 781.8) | image_position=(0.303, 0.814) | bbox_margin=0.000
+[INFO] [1790308201.096512111] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.817 | bbox_area_fraction=0.0300 | bbox_center_px=(266.5, 727.4) | image_position=(0.208, 0.758) | bbox_margin=0.086
+[INFO] [1790308202.251455400] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.777 | bbox_area_fraction=0.0210 | bbox_center_px=(241.9, 689.4) | image_position=(0.189, 0.718) | bbox_margin=0.148
+[INFO] [1790308203.398847202] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.804 | bbox_area_fraction=0.0126 | bbox_center_px=(220.8, 653.3) | image_position=(0.173, 0.680) | bbox_margin=0.139
+[INFO] [1790308204.577856358] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.654 | bbox_area_fraction=0.0077 | bbox_center_px=(201.0, 624.2) | image_position=(0.157, 0.650) | bbox_margin=0.129
+[INFO] [1790308205.646048369] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.650 | bbox_area_fraction=0.0059 | bbox_center_px=(185.3, 601.7) | image_position=(0.145, 0.627) | bbox_margin=0.116
+[INFO] [1790308206.818064375] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.515 | bbox_area_fraction=0.0045 | bbox_center_px=(173.9, 590.9) | image_position=(0.136, 0.616) | bbox_margin=0.110
+[INFO] [1790308208.046852921] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.788 | bbox_area_fraction=0.0392 | bbox_center_px=(322.6, 815.2) | image_position=(0.252, 0.849) | bbox_margin=0.001
+[INFO] [1790308209.355497750] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.692 | bbox_area_fraction=0.0483 | bbox_center_px=(401.5, 765.0) | image_position=(0.314, 0.797) | bbox_margin=0.004
+[INFO] [1790308210.511728306] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.751 | bbox_area_fraction=0.0367 | bbox_center_px=(422.4, 704.1) | image_position=(0.330, 0.733) | bbox_margin=0.114
+[INFO] [1790308212.358614793] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.592 | bbox_area_fraction=0.0178 | bbox_center_px=(476.1, 614.4) | image_position=(0.372, 0.640) | bbox_margin=0.242
+[INFO] [1790308213.670548717] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.380 | bbox_area_fraction=0.0122 | bbox_center_px=(527.3, 598.1) | image_position=(0.412, 0.623) | bbox_margin=0.273
+[INFO] [1790308215.357519185] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.636 | bbox_area_fraction=0.0089 | bbox_center_px=(591.3, 534.0) | image_position=(0.462, 0.556) | bbox_margin=0.340
+[INFO] [1790308216.377018045] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.566 | bbox_area_fraction=0.0142 | bbox_center_px=(625.6, 489.7) | image_position=(0.489, 0.510) | bbox_margin=0.385
+[INFO] [1790308217.434857748] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.695 | bbox_area_fraction=0.0088 | bbox_center_px=(670.5, 450.7) | image_position=(0.524, 0.470) | bbox_margin=0.361
+[INFO] [1790308218.612567033] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.397 | bbox_area_fraction=0.0099 | bbox_center_px=(722.5, 407.2) | image_position=(0.564, 0.424) | bbox_margin=0.319
+[INFO] [1790308219.919516210] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.434 | bbox_area_fraction=0.0162 | bbox_center_px=(753.8, 402.6) | image_position=(0.589, 0.419) | bbox_margin=0.316
+[INFO] [1790308221.137663909] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.528 | bbox_area_fraction=0.0131 | bbox_center_px=(762.0, 402.6) | image_position=(0.595, 0.419) | bbox_margin=0.319
+[INFO] [1790308222.978531862] [sage_viewpoint_planner]: PERSON OBSERVATION | confidence=0.622 | bbox_area_fraction=0.0088 | bbox_center_px=(756.6, 404.3) | image_position=(0.591, 0.421) | bbox_margin=0.320

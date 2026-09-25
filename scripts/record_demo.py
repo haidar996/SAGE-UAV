@@ -303,7 +303,7 @@ def main():
             super().__init__('sage_demo_recorder')
             q = qos_profile_sensor_data
             p = f'/world/{a.world}/model/x500_mono_cam_0/link/camera_link/sensor/imager/image'
-            self.create_subscription(Image, p, self.on_image, q)
+            self.create_subscription(Image, '/sage/perception/annotated', self.on_annotated, q)
             self.create_subscription(Detection2DArray, '/sage/perception/detections', self.on_det, q)
             self.create_subscription(Detection3DArray, '/sage/world_model/targets', self.on_tracks, q)
             self.create_subscription(VehicleLocalPosition, '/fmu/out/vehicle_local_position', self.on_pos, q)
@@ -326,21 +326,24 @@ def main():
 
         def on_energy(self, m):
             if len(m.data) >= 1:
-                sc.batt = float(m.data[0])
+                b = float(m.data[0])
+                sc.batt = b * 100.0 if b <= 1.0 else b
 
         def on_det(self, m):
             boxes = [(d.bbox.center.position.x, d.bbox.center.position.y, d.bbox.size_x, d.bbox.size_y,
                       d.results[0].hypothesis.score if d.results else 0.0) for d in m.detections]
             sc.boxes, sc.boxes_t = boxes, time.time()
             self.poll_log()
-            key = (m.header.stamp.sec, m.header.stamp.nanosec)
-            cam = self.ring.get(key)
-            if cam is None:               # frame already dropped from the ring: skip, never misalign
-                return
-            frame = sc.compose(cam, boxes)
+            return
+
+        def on_annotated(self, m):
+            """Frames arrive from yolo_detector with the boxes already drawn on the analysed image."""
+            self.poll_log()
+            arr = np.frombuffer(m.data, np.uint8).reshape(m.height, m.width, -1)[:, :, :3]
+            frame = sc.compose(cv2.resize(arr, (1280, 960)), ())
             writer.write(frame)
             self.frames += 1
-            if boxes and not self.first_det_saved:
+            if sc.boxes and not self.first_det_saved:
                 still('first_detection', frame)
                 self.first_det_saved = True
             if self.pending_still:
@@ -390,13 +393,6 @@ def main():
 
         pending_still = None
 
-        def on_image(self, m):
-            """Keep every recent camera frame, keyed by its stamp; frames are written when YOLO answers."""
-            arr = np.frombuffer(m.data, np.uint8).reshape(m.height, m.width, -1)
-            cam = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR) if m.encoding == 'rgb8' else arr[:, :, :3].copy()
-            self.ring[(m.header.stamp.sec, m.header.stamp.nanosec)] = cv2.resize(cam, (1280, 960))
-            while len(self.ring) > 45:
-                self.ring.popitem(last=False)
 
     rclpy.init()
     node = Rec()
@@ -420,7 +416,8 @@ def main():
                  (f"{tp} / {len(sc.truth)} people found", 1.2, (255, 255, 255))],
                 [f"mean position error {mean:.2f} m   |   mission time {sc.report['duration_s']} s   |   "
                  f"battery {sc.batt if sc.batt is not None else 0:.0f}% left",
-                 'Returned home and landed autonomously'])
+                 (f"{len(sc.report['locations']) - tp} extra report(s): the walking person was reported twice"
+                  if len(sc.report['locations']) > tp else 'Returned home and landed autonomously')])
             still('result_card', card)
             emit(card, 20 * 5)
             json.dump({'world': a.world, 'report': sc.report, 'true_positives': tp, 'errors_m': errs,
