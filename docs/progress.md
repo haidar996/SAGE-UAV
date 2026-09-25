@@ -284,3 +284,10 @@ Request: a flight that finds ALL people, the battery must be correct (early reco
 - Demo flight 0925_141115: area_covered, 4/4 people, 0 false reports, mean error 0.57 m, 611 s, normal landing. Videos: demo/sage_uav_camera_view.mp4 and demo/sage_uav_gazebo_overhead.mp4 (2x speed, 5.3 min each), pictures in demo/pictures/, zip demo/linkedin_pictures.zip. Earlier videos moved to demo/archive/.
 - The overhead render updates only ~1.2 Hz (the sim was near its limit); overlays (drone, trail) are smooth. The walker phase in the overhead view is the real one of that flight.
 - Excluded from statistics (disclosed in docs/results.md): 0925_133529 and 0925_135407 (`uav_lost`).
+
+## Final demo flight (2026-09-25, evening) - "the last time"
+- User feedback: zoom so the real drone is clear (not a drawn circle); the drone hit the wall at the start of a GUI test flight; do not run the Gazebo GUI (it slows the sim).
+- Changes: nadir camera link on the drone model (5 m above the drone; negligible mass) instead of a fixed overhead camera; video B is that view rotated north-up in a circular window with a side map; rings on people removed (they were ~1 m off because the camera tilts with the drone); planner obstacle margin 2.5 m for sage_rescue; GUI switch SAGE_GUI=1 exists but was NOT used for the final flight.
+- Flight 0925_180639: area_covered, 4/4 people, 0 false reports, mean error 0.44 m, 706 s; closest approach wall 2.15 m, building 0.64 m; all four found by 4:14. Videos + pictures in demo/, older versions in demo/archive/.
+- sage_rescue totals now: 7 scored runs, 25/28 found, 3 false (walker), 0.46 m.
+- Gazebo GUI test flight (0925_175151) was aborted by the user: the drone reportedly hit the wall; logs of that flight show normal operation to waypoint 3 (no loss), cause not established (hover wobble + first waypoint near the wall is the likely reason).

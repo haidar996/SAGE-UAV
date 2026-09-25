@@ -208,7 +208,7 @@ class Scene:
     def compose_top(self, top):
         """Gazebo view from a camera 5 m above the drone (drone-mounted, looks straight down).
         The raw image has the drone's nose up; it is rotated so that NORTH is up, shown in a circular window.
-        Nothing is drawn over the drone itself; verified people appear as rings when they are in view."""
+        Nothing is drawn over the drone or the people; positions are listed in the panel and on the map."""
         img = np.full((H, W, 3), BG, np.uint8)
         S = 720
         alt = max(0.5, -self.pose[2]) if self.pose else 2.0
@@ -225,14 +225,8 @@ class Scene:
         cv2.circle(mask, (S // 2, S // 2), S // 2 - 6, 255, -1)
         img[0:S, 0:S] = cv2.bitwise_and(view, view, mask=mask)
         cv2.circle(img, (S // 2, S // 2), S // 2 - 6, (230, 230, 230), 2, cv2.LINE_AA)
-        # verified people that are inside the window: rings + labels (north-up, drone at the centre)
-        if self.pose is not None:
-            for k, (n, e) in enumerate(self.verified, 1):
-                px = int(S / 2 + (e - self.pose[1]) * scale)
-                py = int(S / 2 - (n - self.pose[0]) * scale)
-                if math.hypot(px - S / 2, py - S / 2) < S / 2 - 40:
-                    cv2.circle(img, (px, py), 34, GREEN, 3, cv2.LINE_AA)
-                    put(img, f'P{k}', (px + 38, py - 26), 0.7, (255, 255, 255), 2)
+        # (no rings drawn on people: the drone-mounted camera tilts with the drone, so a ring computed from the
+        #  level-camera geometry can be ~1 m off; the real render shows the people, the map lists their positions)
         cv2.rectangle(img, (0, 0), (330, 34), (0, 0, 0), -1)
         put(img, 'GAZEBO VIEW FROM ABOVE THE DRONE', (10, 24), 0.55, (255, 255, 255))
         cv2.arrowedLine(img, (S - 40, 92), (S - 40, 46), (255, 255, 255), 3, tipLength=0.35)

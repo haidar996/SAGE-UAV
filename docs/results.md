@@ -8,7 +8,7 @@ Read `docs/limitations.md` before quoting any of it.
 |---|---|---|---|---|---|---|
 | `sage_sar` - 3 standing people | 5 | 100% (15/15) | 100% | 0 | 0.30 m | 242 s (199-311 s) |
 | `sage_hard` - 3 standing + 2 walking people, 6 obstacles | 4 | 100% (20/20) | 91% | 2 | 0.43 m | 895 s (707-900 s) |
-| `sage_rescue` - 3 standing + 1 walking, rich scene | 6 | 88% (21/24) | 88% | 3 | 0.46 m | 630 s (518-1200 s) |
+| `sage_rescue` - 3 standing + 1 walking, rich scene | 7 | 89% (25/28) | 89% | 3 | 0.46 m | 630 s (518-1200 s) |
 
 (`sage_sar`: the 5 runs of the final configuration; an earlier 5-run baseline found 14/15 with 0 false reports.
 `sage_hard`: the 4 scored runs of the final merge configuration; other runs were skipped or cut off, see progress.md.)
@@ -22,7 +22,8 @@ Read `docs/limitations.md` before quoting any of it.
 | 0925_065952 | 5 | 4 | 1 | 0 | 0.13 m | 518 s | walker reported twice |
 | 0925_071213 | 4 | 4 | 0 | 0 | 0.31 m | 1200 s | all found, no duplicate; hit the 1200 s mission timeout (sweep 5/16 for a long time); this run is the demo video |
 | 0925_073827 | 3 | 3 | 0 | 1 | 0.76 m | 827 s | walker missed |
-| 0925_141115 | 4 | 4 | 0 | 0 | 0.57 m | 611 s | all found, no duplicate, completed normally: THE DEMO FLIGHT (both videos) |
+| 0925_141115 | 4 | 4 | 0 | 0 | 0.57 m | 611 s | all found, no duplicate (earlier demo flight, fixed overhead camera; archived) |
+| 0925_180639 | 4 | 4 | 0 | 0 | 0.44 m | 706 s | all found, no duplicate, completed normally: THE FINAL DEMO FLIGHT (both videos) |
 
 ## What the numbers say
 - Standing people: found in 14 of 15 rescue attempts (the miss is a 1.6 m localization error), 15 of 15 in `sage_sar`.
@@ -49,8 +50,14 @@ rescue flights without it completed normally. The overhead camera was cut to 384
 completed normally. One unexplained 17 s stall + flyaway had already happened without any overhead camera (0925_024917), so the
 camera is a suspected contributor, not a proven cause. These two runs are not in the table above.
 
-## Demo videos (same flight, 0925_141115, 2x real-time speed, 5.3 min each)
-- `demo/sage_uav_camera_view.mp4`: onboard camera with YOLO boxes, live mission map, stage bar, battery.
-- `demo/sage_uav_gazebo_overhead.mp4`: fixed overhead Gazebo camera (30 m up) with the drone trail, verified people and the same HUD.
-- Rendered offline from a light in-flight log (`scripts/record_raw.py` + `scripts/render_demo.py`), so recording did not load the simulator.
-  The overhead render only updates about once per second (the sim was already near its limit); the drone marker and trail are smooth.
+## Final demo videos (same flight 0925_180639, 2x real-time speed, 6.1 min each)
+- `demo/sage_uav_camera_view.mp4`: onboard camera with YOLO boxes, live mission map, stage bar, battery. All 4 people are found by 4:14;
+  the rest of the video is the drone finishing the coverage sweep, returning home and landing.
+- `demo/sage_uav_drone_top_view.mp4`: Gazebo view from a camera mounted 5 m above the drone (looks straight down, rendered north-up in a
+  circular window). The real drone model is visible at the centre; nothing is drawn over it or over people. A small map and the list of
+  verified positions are in the side panel.
+- Pictures: `demo/pictures/` (collage, key frames, `drone_top_view/`), `demo/linkedin_pictures.zip`. Earlier versions: `demo/archive/`.
+- Recorded with only a light in-flight logger (`scripts/record_raw.py`) and rendered afterwards (`scripts/render_demo.py`); no Gazebo GUI was
+  running (it would slow the simulation). The drone-mounted camera renders at 2 Hz, so scenery updates in steps while the drone view stays centred.
+- Safety margin for this flight: planner obstacle margin 2.5 m (config/sage_rescue.env); the closest the drone came to the wall was 2.15 m and to a
+  building 0.64 m; it never touched anything. The drone model gained a negligible-mass camera link (`models/x500_mono_cam/model.sdf`).

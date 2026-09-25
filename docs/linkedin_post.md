@@ -1,7 +1,7 @@
 # LinkedIn post - SAGE-UAV
 
-Attach the two videos of the SAME flight: `demo/sage_uav_camera_view.mp4` (onboard camera + YOLO + map) and `demo/sage_uav_gazebo_overhead.mp4` (Gazebo overhead view), each 5.3 min at 2x real speed (4 of 4 people found, no duplicate). Then the pictures in this order:
-1. `results/figures/linkedin_card.png`  2. `demo/pictures/collage_2x2.png` (and `demo/pictures/overhead/top_verified_4.png`)  3. `results/figures/architecture.png`  4. `results/figures/results_overview.png`
+Attach the two videos of the SAME flight: `demo/sage_uav_camera_view.mp4` (onboard camera + YOLO + map) and `demo/sage_uav_drone_top_view.mp4` (Gazebo view from above the drone), each 6.1 min at 2x real speed (4 of 4 people found, no duplicate). Then the pictures in this order:
+1. `results/figures/linkedin_card.png`  2. `demo/pictures/collage_2x2.png` (and `demo/pictures/drone_top_view/top_verified_4.png`)  3. `results/figures/architecture.png`  4. `results/figures/results_overview.png`
 
 ---
 
@@ -18,7 +18,7 @@ You type one sentence. The drone then:
 - and returns home and lands, with a report of who was found and where.
 
 **The numbers (simulation)**
-- Rescue scene with buildings, trees, cars and one person walking: 21 of 24 people found over 6 flights (0.46 m average error). Standing people are found reliably; the walking person is the hard part, and in 3 flights it was reported twice.
+- Rescue scene with buildings, trees, cars and one person walking: 25 of 28 people found over 7 flights (0.46 m average error). Standing people are found reliably; the walking person is the hard part, and in 3 flights it was reported twice.
 - Simpler scene, 3 standing people: 100% found, 0 false alarms, 0.3 m average error, about 4 minutes.
 - Every flight command passes a safety check before it reaches the autopilot.
 
