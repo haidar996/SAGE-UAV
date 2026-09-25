@@ -7,3 +7,6 @@ __pycache__/
 build/
 install/
 log/
+
+# per-world config (area, obstacle map) is not a secret
+!config/*.env
